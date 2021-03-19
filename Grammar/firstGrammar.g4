@@ -1,72 +1,92 @@
 grammar firstGrammar;
 
-prog: lines;
+prog: lines EOF;
 
 lines:
-    dcl SEMICOLON lines | 
-    stmt ';' lines;
+    (dcl SEMICOLON lines |
+    stmt SEMICOLON lines )?;
 
 dcl:
-    type ID |
-    FUNDCL type? ID LPAREN (type ID)? RPAREN LBRACE (lines)* RBRACE |
-    FUNDCL type? ID LPAREN (type ID)(type ID COMMA)+ RPAREN LBRACE (lines)* RBRACE |
-    ID type LBRACK INT RBRACK;
+    type ID (ASSIGN expr_stmt)? |
+    FUNDCL type? ID LPAREN (type ID (COMMA type ID)*)? RPAREN LBRACE lines RBRACE |;
+    //type ID LBRACK INT RBRACK (ASSIGN expr)?; // arrays
 
 stmt:
-    ID ASSIGN equality_expr |
-    ID ASSIGN LBRACK arraydata RBRACE |
+    WHILE LPAREN expr_stmt RPAREN LBRACE lines RBRACE |
+    ID LPAREN ID RPAREN |  //method call
     ID BACKWARDS |
-    WHILE LPAREN equality_expr RPAREN LBRACE lines RBRACE;
+    RETURN expr_stmt |
+    expr_stmt;
 
-arraydata:
-    FNUM |
-    FNUM COMMA arraydata;
+//arraydata:
+//   (factor (COMMA factor)*);
+
+expr_stmt:
+    ID ASSIGN expr_stmt |
+    //ID ASSIGN LBRACK arraydata RBRACE |
+    equality_expr;
 
 equality_expr:
     relational_expr (EQUALS | NOTEQUALS) equality_expr |
-    relational_expr;
+    relational_expr |;
 
 relational_expr:
-    plinus_expr (GTHAN | LTHAN | GETHAN | LTHAN) relational_expr |
+    plinus_expr (GTHAN | LTHAN | GETHAN | LETHAN) relational_expr |
     plinus_expr;
 
 plinus_expr:
     muldiv_expr (PLUS | MINUS) plinus_expr |
     muldiv_expr;
-    
+
 muldiv_expr:
-    factor (MUL | DIV) muldiv_expr |
+    power_expr (MUL | DIV) muldiv_expr |
+    power_expr;
+
+power_expr:
+    factor POWER power_expr |
     factor;
 
 factor:
     ID |
+    ID DOT ID |
     INUM |
     FNUM |
-    LPAREN equality_expr RPAREN;
+    LPAREN expr_stmt RPAREN |
+    method_invocation;
+
+method_invocation:
+    ID LPAREN argument_list RPAREN;
+
+argument_list:
+    (relational_expr (COMMA relational_expr)*)?;
 
 type:
     FLOAT |
-    INT |
-    TENSOR;
+    DOUBLE |
+    INT;
+//    TENSOR;
 
 
+
+
+DOT: '.';
+FOR: 'for';
+WHILE: 'while';
 FLOAT: 'float';
+DOUBLE: 'double';
 INT: 'int';
-TENSOR: 'tensor';
+//TENSOR: 'tensor';
+RETURN: 'return ';
 BACKWARDS: '<-';
 FUNDCL: 'fun';
-PRINT: 'p';
+//PRINT: 'p';
 ASSIGN: '=';
-PLUS: '+';
-MINUS: '-';
+POWER: '**';
 MUL: '*';
 DIV: '/';
-POWER: '**';
-INUM: [0-9]+;
-FNUM: [0-9]+ [.][0-9]+;
-ID: [b-e]+; //placeholder
+PLUS: '+';
+MINUS: '-';
 COMMA: ',';
-SEMICOLON: ';';
 LPAREN: '(';
 RPAREN: ')';
 LBRACE: '{';
@@ -79,10 +99,8 @@ GTHAN: '>';
 LTHAN: '<';
 GETHAN: '>=';
 LETHAN: '<=';
-FOR: 'for';
-WHILE: 'while';
-
-
-
-
-
+SEMICOLON: ';';
+WS: [ \t\r\n]+ -> skip;
+INUM: [-]?[0-9]+;
+FNUM: [-]?[0-9]+ [.][0-9]+;
+ID: [A-z]([0-9A-z])*;
