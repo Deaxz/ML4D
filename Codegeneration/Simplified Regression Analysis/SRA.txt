@@ -1,0 +1,96 @@
+// ORIGINAL FRA VEJLEDER //
+
+a = torch.tensor(-1.0, requires_grad=True)
+b = torch.tensor(2.0, requires_grad=True)
+
+f = lambda x: a * x + b 
+
+x = torch.arange(5) # vector: [0, 1, ..., 4]
+y = torch.arange(5) # vector: [0, 1, ..., 4]
+
+step_size = torch.tensor(0.1)
+
+y_hats = []
+
+for _ in range(100):
+  y_hat = f(x)
+  y_hats.append(y_hat.detach())
+
+  loss = (y_hat - y).abs().mean()
+  loss.backward()
+
+  a.data -= a.grad * step_size
+  b.data -= b.grad * step_size
+
+  a.grad.zero_()
+  b.grad.zero_()
+
+-----------------------------------
+
+// OMSKREVET TIL VORES SPROG //
+
+tensor a;
+tensor b;
+a = -1.0;
+b = 2.0;
+
+fun tensor linearFunction(tensor x){
+  return a * x + b;
+}
+
+//tensor x;
+//tensor y;
+//x = [0, 1, 2, 3, 4];
+//y = [0, 1, 2, 3, 4];
+
+tensor x0;
+tensor x1;
+tensor x2;
+tensor x3;
+tensor x4;
+x0 = 0;
+x1 = 1;
+x2 = 2;
+x3 = 3;
+x4 = 4;
+
+tensor y0;
+tensor y1;
+tensor y2;
+tensor y3;
+tensor y4;
+y0 = 0;
+y1 = 1;
+y2 = 2;
+y3 = 3;
+y4 = 4;
+
+tensor step_size;
+step_size = 0.1;
+
+int i;
+i = 0;
+while (i < 100) {
+
+  tensor y_hat0;
+  tensor y_hat1;
+  tensor y_hat2;
+  tensor y_hat3;
+  tensor y_hat4;
+  y_hat0 = (f(x0) - y0)**2;
+  y_hat1 = (f(x1) - y1)**2;
+  y_hat2 = (f(x2) - y2)**2;
+  y_hat3 = (f(x3) - y3)**2;
+  y_hat4 = (f(x4) - y4)**2;  
+
+  loss = (y_hat0 + y_hat1 + y_hat2 + y_hat3 + y_hat4);
+  loss<-;
+
+  a = a - (a.grad * step_size);
+  b = b - (b.grad * step_size);
+  
+  zero(a);
+  zero(b);
+
+  i = i + 1;
+}
