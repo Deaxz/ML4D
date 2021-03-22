@@ -1,7 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Codegeneration",
+    "\\Codegeneration\\Micrograd-in-C",
+    "\\Codegeneration\\Simplified Regression Analysis",
+    "\\Grammar"
   ],
-  "SelectedNode": "\\Value.c",
+  "SelectedNode": "\\Grammar\\firstGrammar.g4",
   "PreviewInSolutionExplorer": false
 }

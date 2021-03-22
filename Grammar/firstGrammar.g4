@@ -9,7 +9,6 @@ lines:
 dcl:
     type ID (ASSIGN expr_stmt)? |
     FUNDCL type? ID LPAREN (type ID (COMMA type ID)*)? RPAREN LBRACE lines RBRACE |;
-    //type ID LBRACK INT RBRACK (ASSIGN expr)?; // arrays
 
 stmt:
     WHILE LPAREN expr_stmt RPAREN LBRACE lines RBRACE |
@@ -18,12 +17,8 @@ stmt:
     RETURN expr_stmt |
     expr_stmt;
 
-//arraydata:
-//   (factor (COMMA factor)*);
-
 expr_stmt:
     ID ASSIGN expr_stmt |
-    //ID ASSIGN LBRACK arraydata RBRACE |
     equality_expr;
 
 equality_expr:
@@ -64,10 +59,6 @@ type:
     FLOAT |
     DOUBLE |
     INT;
-//    TENSOR;
-
-
-
 
 DOT: '.';
 FOR: 'for';
