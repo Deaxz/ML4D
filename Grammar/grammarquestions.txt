@@ -1,0 +1,16 @@
+
+What is needed to handle negative int literals?
+- Do you really need a unary opertator(-)? Or can you just
+  define the token as having an optional (-) as a prefix?
+
+Hvordan skal man håndtere function return statements? Er vores placeret rigtigt? Giver det mening?
+
+Alle vores operatorer er right associative, hvordan gør vi dem left associative? 
+Umildbart kan vi bare gøre grammar left-recursive og stadig parse, så skal vi bare gøre det?
+
+Kan vi yeet FUNDCL? Eller er det problematisk?
+- Vi kan se, java, c#, c osv. gør det
+
+
+
+

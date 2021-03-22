@@ -4,29 +4,36 @@ prog: lines EOF;
 
 lines:
     (dcl SEMICOLON lines |
-    stmt SEMICOLON lines )?;
+     stmt SEMICOLON lines)?;
 
 dcl:
     type ID (ASSIGN expr_stmt)? |
-    FUNDCL type? ID LPAREN (type ID (COMMA type ID)*)? RPAREN LBRACE lines RBRACE |;
+    (type | VOID) FUNDCL ID LPAREN (type ID (COMMA type ID)*)? RPAREN LBRACE lines RBRACE;
 
 stmt:
+    ID ASSIGN expr_stmt |
     WHILE LPAREN expr_stmt RPAREN LBRACE lines RBRACE |
-    ID LPAREN ID RPAREN |  //method call
     ID BACKWARDS |
     RETURN expr_stmt |
     expr_stmt;
 
 expr_stmt:
-    ID ASSIGN expr_stmt |
+    logical_OR_expr;
+
+logical_OR_expr:
+    logical_AND_expr OR logical_OR_expr |
+    logical_AND_expr;
+
+logical_AND_expr:
+    equality_expr AND logical_AND_expr |
     equality_expr;
 
 equality_expr:
-    relational_expr (EQUALS | NOTEQUALS) equality_expr |
-    relational_expr |;
+    plinus_expr (EQUALS | NOTEQUALS) plinus_expr |
+    relational_expr;
 
 relational_expr:
-    plinus_expr (GTHAN | LTHAN | GETHAN | LETHAN) relational_expr |
+    plinus_expr (GTHAN | LTHAN | GETHAN | LETHAN) plinus_expr |
     plinus_expr;
 
 plinus_expr:
@@ -46,6 +53,7 @@ factor:
     ID DOT ID |
     INUM |
     FNUM |
+    BOOL |
     LPAREN expr_stmt RPAREN |
     method_invocation;
 
@@ -53,24 +61,24 @@ method_invocation:
     ID LPAREN argument_list RPAREN;
 
 argument_list:
-    (relational_expr (COMMA relational_expr)*)?;
+    (expr_stmt (COMMA expr_stmt)*)?;
 
 type:
-    FLOAT |
-    DOUBLE |
-    INT;
+    INT |
+    BOOL |
+    DOUBLE;
 
+AND: 'and';
+OR: 'or';  
+VOID: 'void';
 DOT: '.';
-FOR: 'for';
 WHILE: 'while';
-FLOAT: 'float';
 DOUBLE: 'double';
 INT: 'int';
-//TENSOR: 'tensor';
-RETURN: 'return ';
+BOOL: ('true'|'false');
+RETURN: 'return';
 BACKWARDS: '<-';
-FUNDCL: 'fun';
-//PRINT: 'p';
+FUNDCL: 'fun'; // Enige om at yeet hvis muligt 
 ASSIGN: '=';
 POWER: '**';
 MUL: '*';
@@ -92,6 +100,6 @@ GETHAN: '>=';
 LETHAN: '<=';
 SEMICOLON: ';';
 WS: [ \t\r\n]+ -> skip;
-INUM: [-]?[0-9]+;
-FNUM: [-]?[0-9]+ [.][0-9]+;
+INUM: [-]?[0-9]+; // Unary?
+FNUM: [-]?[0-9]+ [.][0-9]+; // Unary?
 ID: [A-z]([0-9A-z])*;
