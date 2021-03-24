@@ -8,7 +8,7 @@ lines:
 
 dcl:
     type ID (ASSIGN expr_stmt)? |
-    (type | VOID) FUNDCL ID LPAREN (type ID (COMMA type ID)*)? RPAREN LBRACE lines RBRACE;
+    (type | VOID) ID LPAREN (type ID (COMMA type ID)*)? RPAREN LBRACE lines RBRACE;
 
 stmt:
     ID ASSIGN expr_stmt |
@@ -21,11 +21,11 @@ expr_stmt:
     logical_OR_expr;
 
 logical_OR_expr:
-    logical_AND_expr OR logical_OR_expr |
+    logical_OR_expr OR logical_AND_expr |
     logical_AND_expr;
 
 logical_AND_expr:
-    equality_expr AND logical_AND_expr |
+    logical_AND_expr AND equality_expr |
     equality_expr;
 
 equality_expr:
@@ -37,11 +37,11 @@ relational_expr:
     plinus_expr;
 
 plinus_expr:
-    muldiv_expr (PLUS | MINUS) plinus_expr |
+    plinus_expr (PLUS | MINUS) muldiv_expr |
     muldiv_expr;
 
 muldiv_expr:
-    power_expr (MUL | DIV) muldiv_expr |
+    muldiv_expr (MUL | DIV) power_expr |
     power_expr;
 
 power_expr:
@@ -50,7 +50,7 @@ power_expr:
 
 factor:
     ID |
-    ID DOT ID |
+    ID DOT GRAD |
     INUM |
     FNUM |
     BOOL |
@@ -68,6 +68,7 @@ type:
     BOOL |
     DOUBLE;
 
+GRAD:'grad';
 AND: 'and';
 OR: 'or';  
 VOID: 'void';
@@ -78,7 +79,6 @@ INT: 'int';
 BOOL: ('true'|'false');
 RETURN: 'return';
 BACKWARDS: '<-';
-FUNDCL: 'fun'; // Enige om at yeet hvis muligt 
 ASSIGN: '=';
 POWER: '**';
 MUL: '*';

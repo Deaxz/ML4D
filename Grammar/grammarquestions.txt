@@ -1,16 +1,52 @@
 
-What is needed to handle negative int literals?
+What is needed to handle negative int literals?                                                       - Hvis i gerne vil håndtere -(10 - 20) "minus-minus", så er det en god idé med en unary, ellers er det fint
 - Do you really need a unary opertator(-)? Or can you just
   define the token as having an optional (-) as a prefix?
+Hvordan skal man håndtere function return statements? Er vores placeret rigtigt? Giver det mening?    - Ser fint ud, og ja det er i semantic analysis i vurdere om det giver mening, i.e. error eller korrekt brug
 
-Hvordan skal man håndtere function return statements? Er vores placeret rigtigt? Giver det mening?
-
-Alle vores operatorer er right associative, hvordan gør vi dem left associative? 
-Umildbart kan vi bare gøre grammar left-recursive og stadig parse, så skal vi bare gøre det?
-
-Kan vi yeet FUNDCL? Eller er det problematisk?
-- Vi kan se, java, c#, c osv. gør det
+Bare implementer firstGrammarVisitor interfacets og fyld på med guf.
 
 
+Spørgsmål til TA:
+
+---------- What to do? ----------
+    The type rule of BackwardsCommand:
+
+      E<- is type correct and of type VOID
+      if E is type correct and of type Integer or Double
 
 
+    The type rule of Functions:
+      
+      func f(x : ParamType) : ResultType ~ Expression
+      func f is type correct and of type ResultType
+      if x and E are type correct and of type ParamType and ResultType respectively
+
+    ResultType ~ Expression
+    ParamType -> ResultType
+
+
+Spørgsmål til gruppe:
+  -   Multiplicative and Additive i stedet for muldiv og plinus
+
+  -   Unary(-) operator skal være i 2.0
+
+Grad, how to? Bruger vi scopes? .grad?
+
+
+
+Scope System:
+The language will be statically scoped, and use a nested block structure.
+A variable cannot be used before it is declared. The binding occurence must preceed the first applied occurence.
+
+
+function-declaration
+
+local-variable-declaration
+local-constant-declaration
+
+//switch-block
+
+//for-initialiser 
+
+while-block
