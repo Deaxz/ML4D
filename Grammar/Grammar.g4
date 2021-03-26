@@ -1,4 +1,4 @@
-grammar Grammar;
+gnrammar Grammar;
 
 prog: lines EOF;
 
