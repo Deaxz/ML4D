@@ -42,24 +42,21 @@ Boolean operators
     E1 and E2 is type correct and of type Boolean
     - if E1 and E2 are type correct and of type Boolean
 
-  The type of == operation:
-    E1 == E2 is type correct and of type Boolean
-    - if E1 and E2 are type correct and of type Boolean
+  The type of not operation:
+    not E1 is type correct and of type Boolean
+    - if E1 are type correct and of type Boolean
 
-  The type of != operation:
-    E1 != E2 is type correct and of type Boolean
-    - if E1 and E2 are type correct and of type Boolean
 
 
 Equality operators:
   The type of == operation:
 
     E1 == E2 is type correct and of type Boolean
-    if E1 and E2 are type correct and of type Integer or Float
+    if E1 and E2 are type correct and of type Integer or Double
 
   The type of != operation:
     E1 != E2 is type correct and of type Boolean
-    if E1 and E2 are type correct and of type Integer or Float
+    if E1 and E2 are type correct and of type Integer or Double
 
 
 Relational operators:
@@ -90,16 +87,16 @@ Plinus operators:
     E1 + E2 is type correct and of type Integer
     if E1 and E2 are type correct and of type Integer
 
-    E1 + E2 is type correct and of type Float
-    if E1 and E2 are type correct and of type Integer or Float
+    E1 + E2 is type correct and of type Double
+    if E1 and E2 are type correct and of type Integer or Double
 
   The type of - operation:
 
     E1 - E2 is type correct and of type Integer
     if E1 and E2 are type correct and of type Integer
 
-    E1 - E2 is type correct and of type Float
-    if E1 and E2 are type correct and of type Integer or Float
+    E1 - E2 is type correct and of type Double
+    if E1 and E2 are type correct and of type Integer or Double
 
 
 Muldiv operators:
@@ -108,24 +105,24 @@ Muldiv operators:
     E1 * E2 is type correct and of type Integer
     if E1 and E2 are type correct and of type Integer
 
-    E1 * E2 is type correct and of type Float
-    if E1 and E2 are type correct and of type Integer or Float
+    E1 * E2 is type correct and of type Double
+    if E1 and E2 are type correct and of type Integer or Double
 
   The type of / operation:
 
     E1 / E2 is type correct and of type Integer
     if E1 and E2 are type correct and of type Integer
 
-    E1 / E2 is type correct and of type Float
-    if E1 and E2 are type correct and of type Integer or Float
+    E1 / E2 is type correct and of type Double
+    if E1 and E2 are type correct and of type Integer or Double
 
   The type of ** operation:
 
     E1 ** E2 is type correct and of type Integer
     if E1 and E2 are type correct and of type Integer
 
-    E1 ** E2 is type correct and of type Float
-    if E1 and E2 are type correct and of type Integer or Float
+    E1 ** E2 is type correct and of type Double
+    if E1 and E2 are type correct and of type Integer or Double
 
 
 Control structures:
@@ -133,6 +130,9 @@ The type rule of WhileCommand:
 
   while E do C1 is type correct
   if E of type Boolean and C1 are type correct 
+
+
+
 
 
 

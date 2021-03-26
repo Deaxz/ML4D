@@ -2,6 +2,9 @@ double a = -1.0;
 double b;
 b = 2.0;
 
+bool c = true;
+bool d = not c;
+
 double linearFunction(int x) {
   return a * x + b;
 };
