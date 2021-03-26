@@ -1,4 +1,4 @@
-grammar firstGrammar;
+grammar Grammar;
 
 prog: lines EOF;
 
