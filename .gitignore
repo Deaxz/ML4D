@@ -28,3 +28,13 @@ ML4D/Compiler/gen/dinoListener.cs
 ML4D/Compiler/gen/dinoParser.cs
 ML4D/Compiler/gen/dinoVisitor.cs
 *.iml
+ML4D/Compiler/gen/GrammarVisitor.cs
+ML4D/Compiler/gen/GrammarParser.cs
+ML4D/Compiler/gen/GrammarListener.cs
+ML4D/Compiler/gen/GrammarLexer.tokens
+ML4D/Compiler/gen/GrammarLexer.interp
+ML4D/Compiler/gen/GrammarLexer.cs
+ML4D/Compiler/gen/GrammarBaseVisitor.cs
+ML4D/Compiler/gen/GrammarBaseListener.cs
+ML4D/Compiler/gen/Grammar.tokens
+ML4D/Compiler/gen/Grammar.interp

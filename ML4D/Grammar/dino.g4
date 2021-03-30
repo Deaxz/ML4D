@@ -3,8 +3,8 @@ grammar dino;
 prog: lines EOF; // Kan erstatte prog med lines eller omvendt
  
 lines
-    :   dcl SEMICOLON right=lines
-    |   stmt SEMICOLON right=lines
+    :   (dcl SEMICOLON right=lines
+    |   stmt SEMICOLON right=lines)?
     ;
   
 dcl
@@ -17,30 +17,35 @@ stmt
     |   WHILE LPAREN predicate=bool_expr RPAREN LBRACE body=lines RBRACE
     |   id=ID op=BACKWARDS    
     |   op=RETURN right=bool_expr                       //# returnExpr
-    |   bool_expr // Overvej at slette, i know jeg var imod
+    |   bool_expr // Nødvendig for at kunne kalde void metoder, i.e. zero();
+    
+//  |   func=ID '(' (bool_expr (COMMA bool_expr)*)? ')' // Overvej i stedet for den over. Ikke sikkert det er smartere tho.  
     ;
 
 bool_expr 
-    :    expr op=('<'|'<='|'>'|'>=') expr            //# infixBoolExpr
-    |    left=bool_expr op='and' right=bool_expr     //# infixBoolExpr
+    :    left=bool_expr op='and' right=bool_expr     //# infixBoolExpr
     |    left=bool_expr op='or'  right=bool_expr     //# infixBoolExpr
     |    expr                                       
     ;
-
+    
 expr
     :   '(' expr ')'                                    # parensExpr
     |   op='not' ID                                     # unaryExpr   
-    |   left=expr op='**' right=expr                    # unaryExpr
+    |   <assoc=right> left=expr op='**' right=expr      # infixExpr
     |   left=expr op=('*'|'/') right=expr               # infixExpr
     |   left=expr op=('+'|'-') right=expr               # infixExpr
     |   left=expr op=('=='|'!=') right=expr             # infixExpr
     |   func=ID '(' (bool_expr (COMMA bool_expr)*)? ')' # funcExpr  // Måske overvej no multiple parameter i starten
+    |   left=expr op=('<'|'<='|'>'|'>=') left=expr      # infixExpr
+    
+    // Derivation types
     |   value=(INUM|FNUM|BOOLVAL)                       # numberExpr
     |   left=ID                                         # idExpr
     ;
     
-types:
-    |   INT 
+    
+types
+    :   INT 
     |   BOOL 
     |   DOUBLE
     |   VOID
@@ -79,7 +84,7 @@ LTHAN: '<';
 GETHAN: '>=';
 LETHAN: '<=';
 SEMICOLON: ';';
-WS: [ \t\r\n]+ -> skip; // Space er ikke nødvendigt
+WS: [ \t\r\n]+ -> skip;
 INUM: [-]?[0-9]+; // Unary?
 FNUM: [-]?[0-9]+ [.][0-9]+; // Unary?
 ID: [A-z]([0-9A-z])*;
