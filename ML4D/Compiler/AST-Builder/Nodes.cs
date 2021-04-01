@@ -1,46 +1,49 @@
-﻿using System;
+﻿#nullable enable
+using System;
+using System.Collections.Generic;
 
 namespace ML4D.Compiler
 {
-    public abstract class ExpressionNode
+    public abstract class Node
     {
+        public virtual Node GetChildren()
+        {
+            return this.GetChildren();
+        }
+
+        public virtual void AddChildren(Node child)
+        {
+            this.AddChildren(child);
+        }
+    }
+ 
+    public class LinesNode : Node
+    {
+        public List<Node> lines = new List<Node>();
+    }
+    
+    public class VariableDCLNode : Node
+    {
+        public string Type { get; set; }
+        public string ID { get; set; }
+        public ExpressionNode? Init { get; set; }
+
+        public VariableDCLNode(string type, string id)
+        {
+            Type = type;
+            ID = id;
+        }
+    }
+    
+    public class FunctionDCLNode : Node
+    {
+        public string Type { get; set; }
+        public string ID { get; set; }
+        public ExpressionNode predicate { get; set; }
+        public List<Node> Body { get; set; }
     }
 
-    public abstract class InfixExpressionNode : ExpressionNode
-    {
-        public ExpressionNode Left { get; set; }
-        public ExpressionNode Right { get; set; }
-    }
-
-    public class AdditionNode : InfixExpressionNode
-    {
-    }
-
-    public class SubtractionNode : InfixExpressionNode
-    {
-    }
-
-    public class MultiplicationNode : InfixExpressionNode
-    {
-    }
-
-    public class DivisionNode : InfixExpressionNode
-    {
-    }
-
-    public class NegateNode : ExpressionNode
-    {
-        public ExpressionNode InnerNode { get; set; }
-    }
-
-    public class FunctionNode : ExpressionNode
-    {
-        public Func<double, double> Function { get; set; }
-        public ExpressionNode Argument { get; set; }
-    }
-
-    public class NumberNode : ExpressionNode
-    {
-        public double Value { get; set; }
-    }
+    
 }
+
+

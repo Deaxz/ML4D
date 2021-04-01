@@ -35,8 +35,8 @@ while (i < 100) {
   double loss = (y_hat0 + y_hat1 + y_hat2 + y_hat3 + y_hat4)/5;
   loss<-;
 
-  a = a - (a.grad * step_size);
-  b = b - (b.grad * step_size);
+  a = a - (a * step_size);
+  b = b - (b * step_size);
   
   zero(a);
   zero(b);

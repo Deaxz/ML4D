@@ -1,90 +1,90 @@
 grammar dino;
-
-prog: lines EOF; // Kan erstatte prog med lines eller omvendt
- 
-lines
-    :   (dcl SEMICOLON right=lines
-    |   stmt SEMICOLON right=lines)?
-    ;
   
+lines
+    :   (dcl | stmt) ';' ((dcl | stmt ) ';')*
+    |   EOF
+    ;
+
 dcl
-    :   type=types left=ID (op=ASSIGN right=bool_expr)? //# dclExpr
-    |   type=types func=ID LPAREN (types ID (COMMA types ID)*)? RPAREN LBRACE lines RBRACE // Måske overvej no multiple parameter i starten
+    :   type=types id=ID (op='=' right=bool_expr)?                                # declVar                          
+    |   type=types func=ID '(' (types ID (',' types ID)*)? ')' '{' body=lines '}' # declFunc // TODO Undersøg blanke # methods og overvej no/one parameter i starten.
     ;
 
 stmt
-    :   id=ID op='=' right=bool_expr                       //# infixStmtExpr
-    |   WHILE LPAREN predicate=bool_expr RPAREN LBRACE body=lines RBRACE
-    |   id=ID op=BACKWARDS    
-    |   op=RETURN right=bool_expr                       //# returnExpr
-    |   bool_expr // Nødvendig for at kunne kalde void metoder, i.e. zero();
-    
-//  |   func=ID '(' (bool_expr (COMMA bool_expr)*)? ')' // Overvej i stedet for den over. Ikke sikkert det er smartere tho.  
+    :   id=ID op='=' right=bool_expr                            # assignStmt
+    |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'    # whileStmt
+    |   id=ID op='<-'                                           # backwardStmt
+    |   RETURN right=bool_expr                                  # returnStmt
+    |   bool_expr                                               # exprStmt                // Nødvendig for at kunne kalde void metoder, i.e. zero(); overvej at kopier kun method call herop.
     ;
 
 bool_expr 
-    :    left=bool_expr op='and' right=bool_expr     //# infixBoolExpr
-    |    left=bool_expr op='or'  right=bool_expr     //# infixBoolExpr
-    |    expr                                       
+    :    left=bool_expr op='and' right=bool_expr     # infixBoolExpr
+    |    left=bool_expr op='or'  right=bool_expr     # infixBoolExpr
+    |    expr                                        # dingdongExpr // TODO change at some point
     ;
     
-expr
-    :   '(' expr ')'                                    # parensExpr
-    |   op='not' ID                                     # unaryExpr   
+expr  // TODO introduce negation, can be done similarly to Math AST
+    :   '(' bool_expr ')'                               # parensExpr // Ændret til bool_expr fra expr, fordi fx "q = (c or d) and e;"
+    |   op='not' inner=bool_expr                        # unaryExpr  // Ændret fra "not ID", da vi skal skrive fx "!(c or d)", så vi må takle det til type checking.
     |   <assoc=right> left=expr op='**' right=expr      # infixExpr
     |   left=expr op=('*'|'/') right=expr               # infixExpr
     |   left=expr op=('+'|'-') right=expr               # infixExpr
     |   left=expr op=('=='|'!=') right=expr             # infixExpr
     |   func=ID '(' (bool_expr (COMMA bool_expr)*)? ')' # funcExpr  // Måske overvej no multiple parameter i starten
     |   left=expr op=('<'|'<='|'>'|'>=') left=expr      # infixExpr
-    
-    // Derivation types
-    |   value=(INUM|FNUM|BOOLVAL)                       # numberExpr
-    |   left=ID                                         # idExpr
+    |   value=(INUM|FNUM|BOOLVAL|ID)                    # typeExpr
     ;
-    
-    
+        
 types
-    :   INT 
-    |   BOOL 
-    |   DOUBLE
-    |   VOID
+    :   type=INT 
+    |   type=BOOL 
+    |   type=DOUBLE
+    |   type=VOID
     ;
 
-GRAD:'grad';
-NOT: 'not';
-AND: 'and';
-OR: 'or';  
+// Types - TODO Nok add capitalisation mulighed, alstå DOUBLE, INT osv.
 VOID: 'void';
-DOT: '.';
-WHILE: 'while';
-DOUBLE: 'double';
+DOUBLE: 'double'; 
 INT: 'int';
 BOOL: 'bool';
-BOOLVAL: ('true'|'false');
-RETURN: 'return';
-BACKWARDS: '<-';
-ASSIGN: '=';
-POWER: '**';
+
+// Operators
+NOT: 'not';
+POW: '**';
 MUL: '*';
 DIV: '/';
 PLUS: '+';
 MINUS: '-';
-COMMA: ',';
-LPAREN: '(';
-RPAREN: ')';
-LBRACE: '{';
-RBRACE: '}';
-LBRACK: '[';
-RBRACK: ']';
 EQUALS: '==';
 NOTEQUALS: '!=';
 GTHAN: '>';
 LTHAN: '<';
 GETHAN: '>=';
 LETHAN: '<=';
+AND: 'and';
+OR: 'or'; 
+BACKWARDS: '<-';
+ASSIGN: '=';
+
+// Delimiters
+LPAREN: '(';
+RPAREN: ')';
+LBRACE: '{';
+RBRACE: '}';
+LBRACK: '[';
+RBRACK: ']';
+COMMA: ',';
 SEMICOLON: ';';
+
+// Control Structure
+WHILE: 'while';
+RETURN: 'return';
 WS: [ \t\r\n]+ -> skip;
-INUM: [-]?[0-9]+; // Unary?
-FNUM: [-]?[0-9]+ [.][0-9]+; // Unary?
+
+// Values
+BOOLVAL: ('true'|'false');
+INUM: [-]?[0-9]+; 
+//FNUM: [-]?[0-9]+ [.][0-9]+;
+FNUM: [-]?[0-9]+ ('.' [0-9]+)?; // Nakket fra AST eksempel. 
 ID: [A-z]([0-9A-z])*;
