@@ -6,43 +6,35 @@ namespace ML4D.Compiler
 {
     public abstract class Node
     {
-        public virtual Node GetChildren()
-        {
-            return this.GetChildren();
-        }
-
-        public virtual void AddChildren(Node child)
-        {
-            this.AddChildren(child);
-        }
     }
- 
+    
+    // Program/Block node
     public class LinesNode : Node
     {
         public List<Node> lines = new List<Node>();
     }
     
-    public class VariableDCLNode : Node
+    // Base expression nodes 
+    public abstract class ExpressionNode : Node
     {
-        public string Type { get; set; }
-        public string ID { get; set; }
-        public ExpressionNode? Init { get; set; }
-
-        public VariableDCLNode(string type, string id)
-        {
-            Type = type;
-            ID = id;
-        }
     }
     
-    public class FunctionDCLNode : Node
+    // Infix operator node
+    public abstract class InfixExpressionNode : ExpressionNode
     {
-        public string Type { get; set; }
-        public string ID { get; set; }
-        public ExpressionNode predicate { get; set; }
-        public List<Node> Body { get; set; }
+        public ExpressionNode Left { get; set; }
+        public ExpressionNode Right { get; set; }
     }
-
+    
+    // Unary operator node
+    public class UnaryExpressionNode : ExpressionNode
+    {
+        public ExpressionNode Inner { get; set; }
+    }
+    
+    
+    
+    
     
 }
 

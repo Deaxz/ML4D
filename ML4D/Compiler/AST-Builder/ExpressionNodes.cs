@@ -1,22 +1,8 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace ML4D.Compiler
 {
-    // Expression  
-    public abstract class ExpressionNode : Node
-    {
-    }
-    public abstract class InfixExpressionNode : ExpressionNode
-    {
-        public ExpressionNode Left { get; set; }
-        public ExpressionNode Right { get; set; }
-    }
-    public class UnaryExpressionNode : ExpressionNode
-    {
-        public ExpressionNode Inner { get; set; }
-    }
-    
-    // Value
+    // Value nodes
     public class IDNode : ExpressionNode
     {
         public string Name { get; set; }
@@ -24,9 +10,6 @@ namespace ML4D.Compiler
         {
             Name = name;
         }
-    }
-    public class VoidNode : ExpressionNode
-    {
     }
     public class DoubleNode : ExpressionNode
     {
@@ -52,8 +35,23 @@ namespace ML4D.Compiler
             Value = value;
         }
     }
+    public class VoidNode : ExpressionNode
+    {
+    }
     
-    // Arithmetic
+    // Function node - Used for both funcExpr and funcStmt
+    public class FunctionExprNode : ExpressionNode 
+    {
+        public string ID { get; set; }
+        public List<ExpressionNode> Arguments = new List<ExpressionNode>();
+
+        public FunctionExprNode(string id)
+        {
+            ID = id;
+        }
+    }
+    
+    // Arithmetic nodes
     public class AdditionNode : InfixExpressionNode
     {
     }
@@ -70,7 +68,7 @@ namespace ML4D.Compiler
     {
     }
 
-    // Boolean
+    // Boolean nodes
     public class AndNode : InfixExpressionNode
     {
     }
@@ -81,7 +79,7 @@ namespace ML4D.Compiler
     {
     }
     
-    // Equality
+    // Equality nodes
     public class EqualNode : InfixExpressionNode
     {
     }
@@ -89,7 +87,7 @@ namespace ML4D.Compiler
     {
     }
     
-    // Relational
+    // Relational nodes 
     public class LessThanNode : InfixExpressionNode
     {
     }

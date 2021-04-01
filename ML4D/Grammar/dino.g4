@@ -6,34 +6,34 @@ lines
     ;
 
 dcl
-    :   type=types id=ID (op='=' right=bool_expr)?                                # declVar                          
-    |   type=types func=ID '(' (types ID (',' types ID)*)? ')' '{' body=lines '}' # declFunc // TODO Undersøg blanke # methods og overvej no/one parameter i starten.
+    :   type=types id=ID (op='=' right=bool_expr)?                                              # varDecl                          
+    |   type=types id=ID '(' (argtype+=types argid+=ID (',' types ID)*)? ')' '{' body=lines '}' # funcDecl
     ;
 
 stmt
     :   id=ID op='=' right=bool_expr                            # assignStmt
     |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'    # whileStmt
     |   id=ID op='<-'                                           # backwardStmt
-    |   RETURN right=bool_expr                                  # returnStmt
-    |   bool_expr                                               # exprStmt                // Nødvendig for at kunne kalde void metoder, i.e. zero(); overvej at kopier kun method call herop.
+    |   RETURN inner=bool_expr                                  # returnStmt
+    |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcStmt
     ;
 
 bool_expr 
-    :    left=bool_expr op='and' right=bool_expr     # infixBoolExpr
-    |    left=bool_expr op='or'  right=bool_expr     # infixBoolExpr
-    |    expr                                        # dingdongExpr // TODO change at some point
+    :   left2=expr op=('<'|'<='|'>'|'>=') right2=expr           # infixBoolExpr // TODO mega wack med left2, men ellers ikke muligt.    
+    |   left=bool_expr op='and' right=bool_expr                 # infixBoolExpr
+    |   left=bool_expr op='or'  right=bool_expr                 # infixBoolExpr
+    |   expr                                                    # dingdongExpr // TODO change name at some point
     ;
     
 expr  // TODO introduce negation, can be done similarly to Math AST
-    :   '(' bool_expr ')'                               # parensExpr // Ændret til bool_expr fra expr, fordi fx "q = (c or d) and e;"
-    |   op='not' inner=bool_expr                        # unaryExpr  // Ændret fra "not ID", da vi skal skrive fx "!(c or d)", så vi må takle det til type checking.
-    |   <assoc=right> left=expr op='**' right=expr      # infixExpr
-    |   left=expr op=('*'|'/') right=expr               # infixExpr
-    |   left=expr op=('+'|'-') right=expr               # infixExpr
-    |   left=expr op=('=='|'!=') right=expr             # infixExpr
-    |   func=ID '(' (bool_expr (COMMA bool_expr)*)? ')' # funcExpr  // Måske overvej no multiple parameter i starten
-    |   left=expr op=('<'|'<='|'>'|'>=') left=expr      # infixExpr
-    |   value=(INUM|FNUM|BOOLVAL|ID)                    # typeExpr
+    :   '(' bool_expr ')'                                       # parensExpr 
+    |   op='not' inner=bool_expr                                # unaryExpr  
+    |   <assoc=right> left=expr op='**' right=expr              # infixExpr
+    |   left=expr op=('*'|'/') right=expr                       # infixExpr
+    |   left=expr op=('+'|'-') right=expr                       # infixExpr
+    |   left=expr op=('=='|'!=') right=expr                     # infixExpr
+    |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcExpr  
+    |   value=(INUM|FNUM|BOOLVAL|ID)                            # typeExpr
     ;
         
 types
@@ -43,7 +43,7 @@ types
     |   type=VOID
     ;
 
-// Types - TODO Nok add capitalisation mulighed, alstå DOUBLE, INT osv.
+// Types
 VOID: 'void';
 DOUBLE: 'double'; 
 INT: 'int';
@@ -87,4 +87,4 @@ BOOLVAL: ('true'|'false');
 INUM: [-]?[0-9]+; 
 //FNUM: [-]?[0-9]+ [.][0-9]+;
 FNUM: [-]?[0-9]+ ('.' [0-9]+)?; // Nakket fra AST eksempel. 
-ID: [A-z]([0-9A-z])*;
+ID: [A-Za-z]([0-9_A-Za-z])*;

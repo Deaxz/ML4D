@@ -6,16 +6,21 @@ namespace ML4D.Compiler
     {
         public abstract T Visit(LinesNode node);
         
+        // Declaration
         public abstract T Visit(VariableDCLNode node);
-        
+        public abstract T Visit(FunctionDCLNode node);
+
         // Statement
-        
+        public abstract T Visit(AssignNode node);
+        public abstract T Visit(WhileNode node);
+        public abstract T Visit(BackwardNode node);
+        public abstract T Visit(ReturnNode node);
+        public abstract T Visit(FunctionExprNode node);
         
         // Expression
         
             // Value
             public abstract T Visit(IDNode node);
-            public abstract T Visit(VoidNode node);
             public abstract T Visit(DoubleNode node);
             public abstract T Visit(IntNode node);
             public abstract T Visit(BoolNode node);

@@ -12,19 +12,20 @@ namespace ML4D.Compiler.ASTVisitors
         }
         public int i = 0;
         
-        // Main structure nodes
+        // Main structure node
         public override string Visit(LinesNode node)
         {
             foreach (Node n in node.lines)
             {
-                //Console.WriteLine(inden + Visit(n));
-                Visit(n);
-                i = 0;
+                Console.Write(Inden() + Visit(n)); // TODO Tjek indentation for lines inde i fx while og func.
             }
 
-            string result = "prettyprint successful";
+            string result = "\n";
             return result;
         }
+        
+
+        // Declaration
         public override string Visit(VariableDCLNode node)
         {
             if (node.Init is not null)
@@ -40,16 +41,79 @@ namespace ML4D.Compiler.ASTVisitors
             string result = "\n";            
             return result;
         }
+        
+        public override string Visit(FunctionDCLNode node)
+        {
+            Console.WriteLine(Inden() + node.Type + " " + node.ID);
+            string dcl = Inden();
+            foreach (FunctionArgumentNode argument in node.Arguments)
+            {
+                dcl += argument.Type + " " + argument.ID + " ";
+            }
+            Console.WriteLine(dcl);
+            i += 2;
+            Console.WriteLine(Inden() + Visit(node.Body));
+            i -= 2;
+
+            string result = "\n";            
+            return result;
+        }
+
+        // Statement
+        public override string Visit(AssignNode node)
+        {
+            Console.WriteLine(Inden() + node.ID);
+            i += 2;
+            Console.WriteLine(Inden() + Visit(node.Right));
+            i -= 2;
+
+            string result = "\n";            
+            return result;
+        }
+
+        public override string Visit(WhileNode node)
+        {
+            Console.WriteLine(Inden() + Visit(node.Predicate));
+            i += 2;
+            Console.WriteLine(Inden() + Visit(node.Body));
+            i -= 2;
+
+            string result = "\n";            
+            return result;
+        }
+
+        public override string Visit(BackwardNode node)
+        {
+            Console.WriteLine(Inden() + node.ID);
+            string result = "\n";            
+            return result;
+        }
+
+        public override string Visit(ReturnNode node)
+        {
+            Console.WriteLine(Inden() + Visit(node.Inner));
+            string result = "\n";            
+            return result;
+        }
+
+        public override string Visit(FunctionExprNode node)
+        {
+            Console.WriteLine(Inden() + " " + node.ID);
+            string dcl = Inden();
+            foreach (ExpressionNode argument in node.Arguments)
+            {
+                dcl += Visit(argument);
+            }
+            Console.WriteLine(dcl);
+
+            string result = "\n";            
+            return result;
+        }
 
         // Value
         public override string Visit(IDNode node)
         {
             string result = "" + node.Name;            
-            return result;
-        }
-        public override string Visit(VoidNode node)
-        {
-            string result = ""; // TODO Evt. print void, så det er tydeligt.            
             return result;
         }
         public override string Visit(DoubleNode node)
@@ -143,7 +207,6 @@ namespace ML4D.Compiler.ASTVisitors
             string result = "";            
             return result;
         }
-        
         public override string Visit(OrNode node)
         {
             i += 2;
@@ -156,7 +219,6 @@ namespace ML4D.Compiler.ASTVisitors
             string result = "";            
             return result;
         }
-        
         public override string Visit(NotNode node)
         {
             i += 2;
