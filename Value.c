@@ -1,36 +1,42 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 void build_topo(Value* v);
 
-typedef struct Value Value;
-typedef struct Node Node;
-typedef struct Linked_list;
+/* Fra def __init__ */
+typedef struct Value {
+  float data;
+  float grad;
+  struct Value* (*_backward)(Value* self, Value* other);
+  struct Linked_List* _prev;
+  char op[];
+} Value;
 
 /* Node of double linked list */
-struct Node {
-  Value value;
-  Node* prev;
-  Node* next;
-};
+typedef struct Node {
+  struct Value* value;
+  struct Node* prev;
+  struct Node* next;
+} Node;
 
+/* Needed for backward (visited = set()) */
+typedef struct Linked_list {
+  struct Node* head;
+  void (*append)(struct Node** head, Value* new_value);
+} Linked_list;
 
-struct Linked_list {
-  Node* head;
-  void (*append)(Node** head, Value new_value);
-};
-
-void append(Node** head, Value new_value) {
+void append(struct Node* head, Value* new_value) {
   /* 1. Allocade node*/
-  struct Node* new_node = (Node*)malloc(1, sizeof(Node));
+  struct Node* new_node = (struct Node*)malloc(1, sizeof(struct Node));
   /* 2. Put data in node*/
   new_node->value = new_value;
   /* 3. As this is the end node it goes to NULL */
   new_node->next = NULL;
   /* 4. If Linked List is empty, then make this node new head */
-  if (**head == NULL) {
+  if (head == NULL) {
     new_node->prev = NULL;
-    *head = new_node;
+    head = new_node;
     return;
   }
   /* 5. Else traverse until last node */
@@ -48,7 +54,7 @@ void append(Node** head, Value new_value) {
 bool search(Node** head, Value* p_value) {
   struct Node* current = head; // Make a node 'current' to search through linked list
   while (current != NULL){
-    if (current->key == p_value)
+    if (current->value == p_value)
         return true;
     current = current->next;
   }
@@ -56,19 +62,32 @@ bool search(Node** head, Value* p_value) {
 }
 
 
-struct Value {
-  float data;
-  float grad;
-  Value (*_backward)(Value* self, Value* other);
-  Value _prev[];
-  char op[];
-} Value;
-
-
 int main() 
 {
 
 }
+
+// add methods etc
+Value* add (Value* self, Value* other) {
+  struct Value* out_value = (struct Value*)malloc(1, sizeof(struct Value));
+  out_value->data = self->data;
+  
+  out_value->data = self->data + other->data;
+
+  struct Linked_list* children = (struct Value*)malloc(1, sizeof(struct Linked_list));
+  children->head = self;
+
+  
+  out_value->_prev =
+
+  out_value->backward = 
+
+  return out;
+}
+
+
+
+
 
 
 void backward(Value* self) {
@@ -84,11 +103,6 @@ void build_topo(Value* v, Value* visited[]) {
     
   }
 }
-
-
-
-
-
 
 backward(*parent) {
 
@@ -130,25 +144,6 @@ build_topo(*Value current) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 d.backward()
 
 d._backward()
@@ -168,9 +163,6 @@ b._backward = lambda
 d._backward = plusbackward
 
 d.backward
-
-
-
 
 
 
