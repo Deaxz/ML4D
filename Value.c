@@ -8,10 +8,19 @@ void build_topo(Value* v);
 typedef struct Value {
   float data;
   float grad;
-  struct Value* (*_backward)(Value* self, Value* other);
+  struct Backwards backwards;
+  //struct Value* (*_backward)(Value* self, Value* other);
   struct Linked_List* _prev;
   char op[];
 } Value;
+
+/* Backwards as struct since we can't have closures in C */
+typedef struct Backwards{
+  Value* self;
+  Value* other;
+  Value* out;
+  void (*invoke)(Value, Value);
+} Backwards;
 
 /* Node of double linked list */
 typedef struct Node {
@@ -67,33 +76,36 @@ int main()
 
 }
 
-// add methods etc
+
+// __add__
 Value* add (Value* self, Value* other) {
-  struct Value* out_value = (struct Value*)malloc(1, sizeof(struct Value));
-  out_value->data = self->data;
+  struct Value* out = (struct Value*)malloc(1, sizeof(struct Value));
   
-  out_value->data = self->data + other->data;
+  out->data = self->data + other->data;
 
   struct Linked_list* children = (struct Value*)malloc(1, sizeof(struct Linked_list));
   children->head = self;
+  children->append(children->head, other);
+  out->_prev = children;
 
-  
-  out_value->_prev =
-
-  out_value->backward = 
+  // Can't do nested functions in C, so made struct add_backwards simulating closures
+  out->backwards.self = self;
+  out->backwards.other = other;
+  out->backwards.out = out;
+  out->backwards.invoke = add_backwards;
 
   return out;
 }
 
-
-
-
-
+void add_backwards(Value* self, Value* other, Value* out){
+    self->grad = self->grad + other->grad * out->grad;
+    other->grad = other->grad + self->grad * out->grad;
+}
 
 void backward(Value* self) {
-  Value topo[];
-  Value visited[];
-
+  struct Linked_list* topo = (struct Value*)malloc(1, sizeof(struct Linked_list));
+  struct Linked_list* visited = (struct Value*)malloc(1, sizeof(struct Linked_list));
+ 
   build_topo(self);
 
 }
@@ -101,6 +113,10 @@ void backward(Value* self) {
 void build_topo(Value* v, Value* visited[]) {
   if (v_in_visited(*v, *visited) == false) {
     
+  }
+
+  if(!search(topo->head, v)){
+
   }
 }
 
@@ -130,40 +146,6 @@ build_topo(*Value current) {
     topo.append(v);
   }    
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-d.backward()
-
-d._backward()
-
-
-
-a = 2.0
-b = 1.0
-
-d = a * b + pow(a, 3)
-
-a._backward = lambda
-b._backward = lambda
-
-(a*b)._backward = multbackward
-(pow(a,3))._backward = powbackward
-d._backward = plusbackward
-
-d.backward
-
 
 
 
