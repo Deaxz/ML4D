@@ -12,9 +12,11 @@ namespace ML4D.Compiler
 		{
 			LinesNode linesNode = new LinesNode();
 
+			Node? g;
+			
 			foreach (IParseTree child in context.children)
 			{
-				Node? g = Visit(child); 
+				g = Visit(child); 
 				
 				if (g is not null) // Necessary because ';' returns null. 
 					linesNode.lines.Add(g);
@@ -230,7 +232,7 @@ namespace ML4D.Compiler
 			return node;
 		}
 
-		public override Node VisitFuncExpr(dinoParser.FuncExprContext context) // TODO den her 
+		public override Node VisitFuncExpr(dinoParser.FuncExprContext context) // TODO over at lave liste af Node, så .GetChildren() bliver simpler. 
 		{
 			FunctionExprNode functionExprNode = new FunctionExprNode(context.id.Text);
 
@@ -269,7 +271,7 @@ namespace ML4D.Compiler
 			return node;
 		}
 
-		// Fixer error - "The call is ambiguous between the following methods or properties: 'ML4D.Compiler.ASTVisitor<string>.Visit(ML4D.Compiler.LessThanNode)' and 'ML4D.Compiler.ASTVisitor<string>.Visit(ML4D.Compiler.LessEqualThanNode)'"
+		// Fixes error - "The call is ambiguous between the following methods or properties: 'ML4D.Compiler.ASTVisitor<string>.Visit(ML4D.Compiler.LessThanNode)' and 'ML4D.Compiler.ASTVisitor<string>.Visit(ML4D.Compiler.LessEqualThanNode)'"
 		// Not sure why tho, but keep it.
 		public override Node VisitParensExpr(dinoParser.ParensExprContext context)
 		{

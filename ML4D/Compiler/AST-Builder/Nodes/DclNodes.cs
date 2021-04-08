@@ -13,6 +13,11 @@ namespace ML4D.Compiler
             Type = type;
             ID = id;
         }
+
+        public override List<Node> GetChildren()
+        {
+            return new List<Node>() {Init};
+        }
     }
 
     public class FunctionDCLNode : Node
@@ -27,6 +32,16 @@ namespace ML4D.Compiler
             Type = type;
             ID = id;
         }
+
+        public override List<Node> GetChildren()
+        {
+            List<Node> nodes = new List<Node>();
+            foreach (FunctionArgumentNode node in Arguments)
+            {
+                nodes.Add(node);
+            }
+            return nodes;
+        }
     }
     
     public class FunctionArgumentNode : Node
@@ -38,6 +53,11 @@ namespace ML4D.Compiler
         {
             Type = type;
             ID = id;
+        }
+
+        public override List<Node> GetChildren()
+        {
+            return new List<Node>();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace ML4D.Compiler
+﻿using System.Collections.Generic;
+
+namespace ML4D.Compiler
 {
     public class AssignNode : Node
     {
@@ -10,6 +12,11 @@
         {
             ID = id;
             Right = right;
+        }
+
+        public override List<Node> GetChildren()
+        {
+            return new List<Node>() {Right};
         }
     }
     
@@ -23,6 +30,12 @@
             Predicate = predicate;
             Body = body;
         }
+
+        public override List<Node> GetChildren()
+        {
+            Body.lines.Insert(0, Predicate);
+            return Body.lines;
+        }
     }
     
     public class BackwardNode : Node
@@ -32,6 +45,11 @@
         public BackwardNode(string id)
         {
             ID = id;
+        }
+
+        public override List<Node> GetChildren() // Gotta have it
+        {
+            return new List<Node>();
         }
     }
     
