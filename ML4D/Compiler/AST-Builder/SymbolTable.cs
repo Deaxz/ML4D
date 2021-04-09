@@ -49,13 +49,27 @@ namespace ML4D.Compiler
 
         public bool Retrieve(string name)
         {
-            bool success = symbols.TryGetValue(name, out Symbol value);
+            bool success = symbolTableStack.Peek().symbols.TryGetValue(name, out Symbol value);
             if (success)
                 return true;
 
             // Should be a recursive call through all the parents
-            if (Parent is not null)
-                return Parent.Retrieve(name);
+            if (symbolTableStack.Peek().Parent is not null)
+                return symbolTableStack.Peek().Parent.Retrieve(name, symbolTableStack.Peek().Parent);
+            
+            // Variable not found in current or parent scope
+            return false;
+        }
+        
+        public bool Retrieve(string name, SymbolTable symbolTable)
+        {
+            bool success = symbolTable.symbols.TryGetValue(name, out Symbol value);
+            if (success)
+                return true;
+
+            // Should be a recursive call through all the parents
+            if (symbolTable.Parent is not null)
+                return symbolTable.Parent.Retrieve(name, symbolTable.Parent);
             
             // Variable not found in current or parent scope
             return false;

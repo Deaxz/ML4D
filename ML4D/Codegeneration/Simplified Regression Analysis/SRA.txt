@@ -5,7 +5,7 @@ b = 2.0;
 bool c = true;
 bool d = not c;
 
-double linearFunction(int x) {
+double f(int x) {
   return a * x + b;
 };
 

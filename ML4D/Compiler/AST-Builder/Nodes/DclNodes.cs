@@ -16,7 +16,9 @@ namespace ML4D.Compiler
 
         public override List<Node> GetChildren()
         {
-            return new List<Node>() {Init};
+            if (Init is not null)
+                return new List<Node>() {Init};
+            return new List<Node>();
         }
     }
 
@@ -35,12 +37,13 @@ namespace ML4D.Compiler
 
         public override List<Node> GetChildren()
         {
-            List<Node> nodes = new List<Node>();
+            List<Node> children = new List<Node>();
             foreach (FunctionArgumentNode node in Arguments)
-            {
-                nodes.Add(node);
-            }
-            return nodes;
+                children.Add(node);
+            foreach (Node node in Body.lines)
+                children.Add(node);
+            
+            return children;
         }
     }
     

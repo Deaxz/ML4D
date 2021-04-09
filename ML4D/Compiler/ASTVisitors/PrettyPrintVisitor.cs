@@ -3,308 +3,180 @@ using System.Linq;
 
 namespace ML4D.Compiler.ASTVisitors
 {
-    public class PrettyPrintVisitor : ASTVisitor<string>
+    public class PrettyPrintVisitor : ASTVisitor
     {
-        // Indentation method, used to dynamically indent the nodes.
-        public string Inden()
+        private string Inden()
         {
             return string.Concat(Enumerable.Repeat(" ", i));
         }
-        public int i = 0;
+        private int i = 0;
         
-        // Main structure node
-        public override string Visit(LinesNode node)
+        public void VisitChildren(Node node, string inden)
         {
-            foreach (Node n in node.lines)
+            foreach (Node child in node.GetChildren())
             {
-                Console.Write(Inden() + Visit(n)); // TODO Tjek indentation for lines inde i fx while og func.
+                Console.Write(inden);
+                Visit(child);
             }
-
-            string result = "\n";
-            return result;
         }
-        
 
-        // Declaration
-        public override string Visit(VariableDCLNode node)
+        public override void Visit(LinesNode node)
         {
-            if (node.Init is not null)
+            i += 2;
+            VisitChildren(node, Inden());
+            i -= 2;
+        }
+
+        public override void Visit(VariableDCLNode node)
+        {
+            Console.WriteLine(node.Type + " " + node.ID);
+            i += 2;
+            VisitChildren(node, Inden());
+            i -= 2;
+        }
+
+        public override void Visit(FunctionDCLNode node)
+        {
+            Console.WriteLine(node.Type + " " + node.ID);
+            i += 2;
+            VisitChildren(node, Inden());
+            i -= 2;
+        }
+
+        public override void Visit(FunctionArgumentNode node)
+        {
+            i += 2;
+            Console.WriteLine(node.Type + " " + node.ID);
+            i -= 2;
+        }
+
+
+        public override void Visit(AssignNode node)
+        {
+            Console.WriteLine(node.ID);
+            i += 2;
+            VisitChildren(node, Inden());
+            i -= 2;
+        }
+
+        public override void Visit(WhileNode node)
+        {
+            i += 2;
+            VisitChildren(node, Inden());
+            i -= 2;
+        }
+
+        public override void Visit(BackwardNode node)
+        {
+            Console.WriteLine(node.ID + "<-");
+        }
+
+        public override void Visit(ReturnNode node) // TODO if you want to denote return statement
+        {
+            base.Visit(node);
+        }
+
+        public override void Visit(FunctionExprNode node)
+        {
+            Console.WriteLine(node.ID);
+            i += 2;
+            VisitChildren(node, Inden());
+            i -= 2;
+        }
+
+        public override void Visit(IDNode node)
+        {
+            Console.WriteLine(node.Name);
+        }
+
+        public override void Visit(DoubleNode node)
+        {
+            Console.WriteLine(node.Value);
+        }
+
+        public override void Visit(IntNode node)
+        {
+            Console.WriteLine(node.Value);
+        }
+
+        public override void Visit(BoolNode node)
+        {
+            Console.WriteLine(node.Value);
+        }
+
+        public override void Visit(InfixExpressionNode node)
+        {
+            switch (node)
             {
-                Console.WriteLine(Inden() + node.Type + " " + node.ID);
-                i += 2;
-                Console.WriteLine(Inden() + Visit(node.Init));
-                i -= 2;
+                // Arithmetic
+                case AdditionNode:
+                    Console.WriteLine("+");
+                    break;
+                case SubtractionNode:
+                    Console.WriteLine("-");
+                    break;
+                case MultiplicationNode:
+                    Console.WriteLine("*");
+                    break;
+                case DivisionNode:
+                    Console.WriteLine("/");
+                    break;
+                case PowerNode:
+                    Console.WriteLine("**");
+                    break;
+                
+                // Equality
+                case EqualNode:
+                    Console.WriteLine("==");
+                    break;
+                case NotEqualNode:
+                    Console.WriteLine("!=");
+                    break;
+                
+                // Boolean
+                case AndNode:
+                    Console.WriteLine("and");
+                    break;
+                case OrNode:
+                    Console.WriteLine("or");
+                    break;
+                
+                // Relational
+                case LessThanNode:
+                    Console.WriteLine("<");
+                    break;
+                case LessEqualThanNode:
+                    Console.WriteLine("<=");
+                    break;
+                case GreaterThanNode:
+                    Console.WriteLine(">");
+                    break;
+                case GreaterEqualThanNode:
+                    Console.WriteLine(">=");
+                    break;
+                default:
+                    throw new NotSupportedException();
             }
-            else
-                Console.WriteLine(node.Type + " " + node.ID);
-
-            string result = "\n";            
-            return result;
+            
+            i += 2;
+            VisitChildren(node, Inden());
+            i -= 2;
         }
-        
-        public override string Visit(FunctionDCLNode node)
+
+        public override void Visit(UnaryExpressionNode node)
         {
-            Console.WriteLine(Inden() + node.Type + " " + node.ID);
-            string dcl = Inden();
-            foreach (FunctionArgumentNode argument in node.Arguments)
+            switch (node)
             {
-                dcl += argument.Type + " " + argument.ID + " ";
+                case NotNode:
+                    Console.WriteLine("not");
+                    break;
+                default:
+                    throw new NotSupportedException();
             }
-            Console.WriteLine(dcl);
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Body));
-            i -= 2;
-
-            string result = "\n";            
-            return result;
-        }
-
-        // Statement
-        public override string Visit(AssignNode node)
-        {
-            Console.WriteLine(Inden() + node.ID);
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            i -= 2;
-
-            string result = "\n";            
-            return result;
-        }
-
-        public override string Visit(WhileNode node)
-        {
-            Console.WriteLine(Inden() + Visit(node.Predicate));
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Body));
-            i -= 2;
-
-            string result = "\n";            
-            return result;
-        }
-
-        public override string Visit(BackwardNode node)
-        {
-            Console.WriteLine(Inden() + node.ID);
-            string result = "\n";            
-            return result;
-        }
-
-        public override string Visit(ReturnNode node)
-        {
-            Console.WriteLine(Inden() + Visit(node.Inner));
-            string result = "\n";            
-            return result;
-        }
-
-        public override string Visit(FunctionExprNode node)
-        {
-            Console.WriteLine(Inden() + " " + node.ID);
-            string dcl = Inden();
-            foreach (ExpressionNode argument in node.Arguments)
-            {
-                dcl += Visit(argument);
-            }
-            Console.WriteLine(dcl);
-
-            string result = "\n";            
-            return result;
-        }
-
-        // Value
-        public override string Visit(IDNode node)
-        {
-            string result = "" + node.Name;            
-            return result;
-        }
-        public override string Visit(DoubleNode node)
-        {
-            string result = "" + node.Value;            
-            return result;
-        }
-        public override string Visit(IntNode node)
-        {
-            string result = "" + node.Value;            
-            return result;     
-        }
-        public override string Visit(BoolNode node)
-        {
-            string result = "" + node.Value;            
-            return result;    
-        }
-        
-        // Arithmetic
-        public override string Visit(AdditionNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + '+');
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
             
-            string result = "";            
-            return result;
-        }
-        public override string Visit(SubtractionNode node)
-        {
             i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
+            VisitChildren(node, Inden());
             i -= 2;
-            Console.WriteLine(Inden() + '-');
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;       
-        }
-        public override string Visit(MultiplicationNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + '*');
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;
-        }
-        public override string Visit(DivisionNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + '/');
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;
-        }
-        public override string Visit(PowerNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + "**");
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;
-        }
-        
-        // Boolean
-        public override string Visit(AndNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + "and");
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;
-        }
-        public override string Visit(OrNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + "or");
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;
-        }
-        public override string Visit(NotNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + "not");
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Inner));
-            i -= 2;
-            
-            string result = "";            
-            return result;
-        }
-        
-        // Equality
-        public override string Visit(EqualNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + "==");
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;
-        }
-        public override string Visit(NotEqualNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + "!=");
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;
-        }
-        
-        // Relational
-        public override string Visit(GreaterThanNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + '>');
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;
-        }
-        public override string Visit(GreaterEqualThanNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + ">=");
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;
-        }
-        public override string Visit(LessThanNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + '<');
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;
-        }
-        public override string Visit(LessEqualThanNode node)
-        {
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Left));
-            i -= 2;
-            Console.WriteLine(Inden() + "<=");
-            i += 2;
-            Console.WriteLine(Inden() + Visit(node.Right));
-            
-            string result = "";            
-            return result;
         }
     }
 }

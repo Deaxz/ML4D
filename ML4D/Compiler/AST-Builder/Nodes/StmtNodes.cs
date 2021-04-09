@@ -33,8 +33,11 @@ namespace ML4D.Compiler
 
         public override List<Node> GetChildren()
         {
-            Body.lines.Insert(0, Predicate);
-            return Body.lines;
+            List<Node> children = new List<Node>();
+            children.Add(Predicate);
+            foreach (Node node in Body.lines)
+                children.Add(node);
+            return children;
         }
     }
     
