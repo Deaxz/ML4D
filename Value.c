@@ -10,7 +10,7 @@ typedef struct Value {
   float grad;
   struct Backwards backwards;
   //struct Value* (*_backward)(Value* self, Value* other);
-  struct Linked_List* _prev;
+  struct LinkedList* _prev;
   char op[];
 } Value;
 
@@ -30,10 +30,10 @@ typedef struct Node {
 } Node;
 
 /* Needed for backward (visited = set()) */
-typedef struct Linked_list {
+typedef struct LinkedList {
   struct Node* head;
   void (*append)(struct Node** head, Value* new_value);
-} Linked_list;
+} LinkedList;
 
 void append(struct Node* head, Value* new_value) {
   /* 1. Allocade node*/
@@ -83,7 +83,7 @@ Value* add (Value* self, Value* other) {
   
   out->data = self->data + other->data;
 
-  struct Linked_list* children = (struct Value*)malloc(1, sizeof(struct Linked_list));
+  struct LinkedList* children = (struct Value*)malloc(1, sizeof(struct LinkedList));
   children->head = self;
   children->append(children->head, other);
   out->_prev = children;
@@ -103,8 +103,8 @@ void add_backwards(Value* self, Value* other, Value* out){
 }
 
 void backward(Value* self) {
-  struct Linked_list* topo = (struct Value*)malloc(1, sizeof(struct Linked_list));
-  struct Linked_list* visited = (struct Value*)malloc(1, sizeof(struct Linked_list));
+  struct LinkedList* topo = (struct Value*)malloc(1, sizeof(struct LinkedList));
+  struct LinkedList* visited = (struct Value*)malloc(1, sizeof(struct LinkedList));
  
   build_topo(self);
 
