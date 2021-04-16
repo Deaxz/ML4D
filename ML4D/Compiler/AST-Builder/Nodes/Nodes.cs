@@ -23,6 +23,7 @@ namespace ML4D.Compiler
     // Base expression nodes 
     public abstract class ExpressionNode : Node
     {
+        public string Type { get; set; }
     }
     
     // Infix operator node

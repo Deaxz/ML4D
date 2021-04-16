@@ -4,8 +4,6 @@ namespace ML4D.Compiler.Exceptions
 {
     public class VariableNotDeclaredException : Exception
     {
-        // Incapsulate the undeclared variable name
-        
         public IDNode Node { get; }
 
         public VariableNotDeclaredException() : base() {}
@@ -15,13 +13,11 @@ namespace ML4D.Compiler.Exceptions
         public VariableNotDeclaredException(IDNode node, string message) : base(message)
         {
             Node = node;
-        }        
+        }           
     }
 
     public class VariableAlreadyDeclaredException : Exception
     {
-        // Incapsulate the infringing variable name
-        
         public VariableDCLNode Node { get; }
 
         public VariableAlreadyDeclaredException() : base() {}
@@ -36,8 +32,6 @@ namespace ML4D.Compiler.Exceptions
     
     public class FunctionNotDeclaredException : Exception
     {
-        // Incapsulate the infringing variable name
-        
         public FunctionExprNode Node { get; }
 
         public FunctionNotDeclaredException() : base() {}
@@ -52,8 +46,6 @@ namespace ML4D.Compiler.Exceptions
     
     public class FunctionAlreadyDeclaredException : Exception
     {
-        // Incapsulate the infringing variable name
-        
         public FunctionDCLNode Node { get; }
 
         public FunctionAlreadyDeclaredException() : base() {}
@@ -65,6 +57,4 @@ namespace ML4D.Compiler.Exceptions
             Node = node;
         }
     }
-    
-    
 }

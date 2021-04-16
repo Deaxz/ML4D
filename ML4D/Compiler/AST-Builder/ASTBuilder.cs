@@ -1,7 +1,5 @@
 using System;
 using System.Globalization;
-using System.Linq;
-using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 
 namespace ML4D.Compiler
@@ -12,16 +10,15 @@ namespace ML4D.Compiler
 		{
 			LinesNode linesNode = new LinesNode();
 
-			Node? g;
+			Node node;
 			
 			foreach (IParseTree child in context.children)
 			{
-				g = Visit(child); 
+				node = Visit(child); 
 				
-				if (g is not null) // Necessary because ';' returns null. 
-					linesNode.lines.Add(g);
+				if (node is not null) // Necessary because ';' returns null. 
+					linesNode.lines.Add(node);
 			}
-			
 			return linesNode;
 		}
 		
@@ -279,5 +276,3 @@ namespace ML4D.Compiler
 		}
 	}
 }
-
-

@@ -5,6 +5,7 @@ namespace ML4D.Compiler
     // Value nodes
     public class IDNode : ExpressionNode
     {
+        
         public string Name { get; set; } // TODO overvej at skifte til ID, så det er konsistent med andre nodes.
         public IDNode(string name)
         {
@@ -22,6 +23,7 @@ namespace ML4D.Compiler
         public DoubleNode(double value)
         {
             Value = value;
+            Type = "double";
         }
         
         public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
@@ -35,6 +37,7 @@ namespace ML4D.Compiler
         public IntNode(int value)
         {
             Value = value;
+            Type = "int";
         }
         
         public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
@@ -48,6 +51,7 @@ namespace ML4D.Compiler
         public BoolNode(bool value)
         {
             Value = value;
+            Type = "bool";
         }
         
         public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.

@@ -5,6 +5,7 @@ namespace ML4D.Compiler
     public class AssignNode : Node
     {
         //public string Type { get; set; } //TODO ikke brugt pt, men jeg tænker nødvendigt for type checking.
+        public string Type { get; set; }
         public string ID { get; set; }
         public ExpressionNode Right { get; set; }
         
@@ -58,7 +59,7 @@ namespace ML4D.Compiler
     
     public class ReturnNode : UnaryExpressionNode
     {
-        public ReturnNode(ExpressionNode inner)
+        public ReturnNode(ExpressionNode inner) // TODO inner skal være nullable, så "return;" ikke giver fejl.
         {
             Inner = inner;
         }

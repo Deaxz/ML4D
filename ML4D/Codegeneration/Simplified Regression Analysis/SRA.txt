@@ -38,8 +38,5 @@ while (i < 100) {
   a = a - (a * step_size);
   b = b - (b * step_size);
   
-  zero(a);
-  zero(b);
-
   i = i + 1;
 };

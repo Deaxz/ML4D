@@ -29,10 +29,11 @@
         
         //-----Expression-----
         // Value
-        public virtual void Visit(IDNode node) {VisitChildren(node);}
-        public virtual void Visit(DoubleNode node) {VisitChildren(node);}
-        public virtual void Visit(IntNode node) {VisitChildren(node);}
-        public virtual void Visit(BoolNode node) {VisitChildren(node);}
+        public virtual void Visit(IDNode node) {VisitChildren(node);} // TODO Overvej at ændre body til tom, da den altid er tom.
+        //public virtual void Visit(IDNode node) {}
+        public virtual void Visit(DoubleNode node) {VisitChildren(node);} // TODO Overvej at ændre body til tom, da den altid er tom.
+        public virtual void Visit(IntNode node) {VisitChildren(node);} // TODO Overvej at ændre body til tom, da den altid er tom.
+        public virtual void Visit(BoolNode node) {VisitChildren(node);} // TODO Overvej at ændre body til tom, da den altid er tom.
         
         // Arithmetic
         public virtual void Visit(InfixExpressionNode node) {VisitChildren(node);}
