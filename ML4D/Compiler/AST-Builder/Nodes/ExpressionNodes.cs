@@ -5,17 +5,14 @@ namespace ML4D.Compiler
     // Value nodes
     public class IDNode : ExpressionNode
     {
+        public string ID { get; set; } // TODO overvej at skifte til ID, så det er konsistent med andre nodes.
+        public IDNode(string id)
+        {
+            ID = id;
+        }
         
-        public string Name { get; set; } // TODO overvej at skifte til ID, så det er konsistent med andre nodes.
-        public IDNode(string name)
-        {
-            Name = name;
-        }
-
         public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
-        {
-            return new List<Node>();
-        }
+        { return new List<Node>(); }
     }
     public class DoubleNode : ExpressionNode
     {
@@ -27,9 +24,7 @@ namespace ML4D.Compiler
         }
         
         public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
-        {
-            return new List<Node>();
-        }
+        { return new List<Node>(); }
     }
     public class IntNode : ExpressionNode
     {
@@ -41,9 +36,7 @@ namespace ML4D.Compiler
         }
         
         public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
-        {
-            return new List<Node>();
-        }
+        { return new List<Node>(); }
     }
     public class BoolNode : ExpressionNode
     {
@@ -55,16 +48,12 @@ namespace ML4D.Compiler
         }
         
         public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
-        {
-            return new List<Node>();
-        }
+        { return new List<Node>(); }
     }
     public class VoidNode : ExpressionNode
     {
         public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
-        {
-            return new List<Node>();
-        }
+        { return new List<Node>(); }
     }
     
     // Function node - Used for both funcExpr and funcStmt

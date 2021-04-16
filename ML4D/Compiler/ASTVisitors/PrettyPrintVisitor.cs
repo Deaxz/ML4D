@@ -86,7 +86,7 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(IDNode node)
         {
-            Console.WriteLine(node.Name);
+            Console.WriteLine(node.ID);
         }
 
         public override void Visit(DoubleNode node)

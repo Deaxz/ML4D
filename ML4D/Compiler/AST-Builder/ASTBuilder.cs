@@ -9,13 +9,11 @@ namespace ML4D.Compiler
 		public override LinesNode VisitLines(dinoParser.LinesContext context)
 		{
 			LinesNode linesNode = new LinesNode();
-
 			Node node;
 			
 			foreach (IParseTree child in context.children)
 			{
-				node = Visit(child); 
-				
+				node = Visit(child);
 				if (node is not null) // Necessary because ';' returns null. 
 					linesNode.lines.Add(node);
 			}
@@ -41,7 +39,6 @@ namespace ML4D.Compiler
 				default:
 					throw new NotSupportedException();
 			}
-			
 			if (context.right is not null) // Declaration with initialisation
 				varDeclNode.Init = (ExpressionNode)  Visit(context.right);
 			
@@ -67,7 +64,7 @@ namespace ML4D.Compiler
 					throw new NotSupportedException();
 			}
 			
-			if (context._argtype.Count != context._argid.Count)
+			if (context._argtype.Count != context._argid.Count) // TODO overvej slet, det er jo egentligt defineret i grammar
 				throw new ArgumentException("ArgID and ArgType do not contain the same amount of elements.");
 
 			for (int i = 0; i < context._argid.Count; i++)
@@ -76,7 +73,7 @@ namespace ML4D.Compiler
 				functionDclNode.Arguments.Add(argumentNode);
 			}
 			functionDclNode.Body = VisitLines(context.body);
-
+			
 			return functionDclNode;
 		}
 
@@ -93,13 +90,13 @@ namespace ML4D.Compiler
 			return whileNode;
 		}
 
-		public override Node VisitBackwardStmt(dinoParser.BackwardStmtContext context)
+		public override Node VisitBackwardStmt(dinoParser.BackwardStmtContext context) // TODO slet
 		{
 			BackwardNode backwardNode = new BackwardNode(context.id.Text);
 			return backwardNode;
 		}
 
-		public override Node VisitReturnStmt(dinoParser.ReturnStmtContext context)
+		public override Node VisitReturnStmt(dinoParser.ReturnStmtContext context) // TODO check efter null inner node
 		{
 			ReturnNode returnNode = new ReturnNode((ExpressionNode) Visit(context.inner));
 			return returnNode;
@@ -110,75 +107,71 @@ namespace ML4D.Compiler
 			FunctionExprNode functionExprNode = new FunctionExprNode(context.id.Text);
 
 			foreach (dinoParser.Bool_exprContext argument in context._argexpr)
-			{
 				functionExprNode.Arguments.Add((ExpressionNode) Visit(argument));
-			}
+			
 			return functionExprNode;
 		}
 		
 		// Expressions
-		public override ExpressionNode VisitInfixBoolExpr(dinoParser.InfixBoolExprContext context)
-		{
-			/*
-			 * Det bliver gjort på den her måde, fordi relational skal være en bool_expr derivation (for at undgå "3<4<5"),
-			 * men det betyder også, at den ikke kan bruge den sammen # metode, da de ikke må være ens på tværs af non-terminals.
-			 * Derudover er deres left og right expression af to typer (igen for at undgå "3<4<5"), hvilket betyder de ikke kan
-			 * bruge samme label, og det er derfor left2 og right2 eksistere.
-			 */
-			
-			InfixExpressionNode node;
-
-			if (context.left2 is null)
-			{
-				switch (context.op.Type)
-				{
-					// Boolean
-					case dinoLexer.AND:
-						node = new AndNode();
-						break;
-					case dinoLexer.OR:
-						node = new OrNode();
-						break;
-					default:
-						throw new NotSupportedException();
-				}
-				node.Left = (ExpressionNode) Visit(context.left);
-				node.Right = (ExpressionNode) Visit(context.right);
-			}
-			else
-			{
-				switch (context.op.Type)
-				{
-					// Relational
-					case dinoLexer.LTHAN:
-						node = new LessThanNode();
-						break;
-					case dinoLexer.GTHAN:
-						node = new GreaterThanNode();
-						break;
-					case dinoLexer.LETHAN:
-						node = new LessEqualThanNode();
-						break;
-					case dinoLexer.GETHAN:
-						node = new GreaterEqualThanNode();
-						break;
-					default:
-						throw new NotSupportedException();
-				}
-				
-				node.Left = (ExpressionNode) Visit(context.left2);
-				node.Right = (ExpressionNode) Visit(context.right2);
-			}
-			return node;
-		}
-
-		public override ExpressionNode VisitInfixExpr(dinoParser.InfixExprContext context)
+		public override Node VisitInfixRelationalExpr(dinoParser.InfixRelationalExprContext context)
 		{
 			InfixExpressionNode node;
 			
 			switch (context.op.Type)
 			{
-				// Arithmetic
+				case dinoLexer.LTHAN:
+					node = new LessThanNode();
+					break;
+				case dinoLexer.GTHAN:
+					node = new GreaterThanNode();
+					break;
+				case dinoLexer.LETHAN:
+					node = new LessEqualThanNode();
+					break;
+				case dinoLexer.GETHAN:
+					node = new GreaterEqualThanNode();
+					break;
+				case dinoLexer.EQUALS:
+					node = new EqualNode();
+					break;
+				case dinoLexer.NOTEQUALS:
+					node = new NotEqualNode();
+					break;
+				default:
+					throw new NotSupportedException();
+			}
+			node.Left = (ExpressionNode) Visit(context.left);
+			node.Right = (ExpressionNode) Visit(context.right);
+			return node;
+		}
+
+
+		public override Node VisitInfixBoolExpr(dinoParser.InfixBoolExprContext context)
+		{
+			InfixExpressionNode node;
+			
+			switch (context.op.Type)
+			{
+				case dinoLexer.AND:
+					node = new AndNode();
+					break;
+				case dinoLexer.OR:
+					node = new OrNode();
+					break;
+				default:
+					throw new NotSupportedException();
+			}
+			node.Left = (ExpressionNode) Visit(context.left);
+			node.Right = (ExpressionNode) Visit(context.right);
+			return node;
+		}
+
+		public override Node VisitInfixExpr(dinoParser.InfixExprContext context)
+		{
+			InfixExpressionNode node;
+			
+			switch (context.op.Type)
+			{
 				case dinoLexer.PLUS:
 					node = new AdditionNode();
 					break;
@@ -194,29 +187,19 @@ namespace ML4D.Compiler
 				case dinoLexer.POW:
 					node = new PowerNode();
 					break;
-				
-				// Equality
-				case dinoLexer.EQUALS:
-					node = new EqualNode();
-					break;
-				case dinoLexer.NOTEQUALS:
-					node = new NotEqualNode();
-					break;
 				default:
-					throw new NotSupportedException();
+					throw new NotSupportedException(); // TODO overvej i cleanup at slette alle notsupportedexceptions, da de er umulige at nå. Men måske er de fine ift. udvidelser
 			}
-			
 			node.Left = (ExpressionNode) Visit(context.left);
-			node.Right = (ExpressionNode) Visit(context.right);	
-
+			node.Right = (ExpressionNode) Visit(context.right);
 			return node;
 		}
 
-		public override ExpressionNode VisitUnaryExpr(dinoParser.UnaryExprContext context)
+		public override Node VisitUnaryExpr(dinoParser.UnaryExprContext context)
 		{
 			UnaryExpressionNode node;
 			
-			switch (context.op.Type) // Lavet til switch, for at accommodate flere unary operators, fx '-'.
+			switch (context.op.Type)
 			{
 				case dinoLexer.NOT:
 					node = new NotNode();
@@ -224,7 +207,6 @@ namespace ML4D.Compiler
 				default:
 					throw new NotSupportedException();
 			}
-			
 			node.Inner = (ExpressionNode) Visit(context.inner);
 			return node;
 		}
@@ -241,7 +223,7 @@ namespace ML4D.Compiler
 		}
 
 		// Types
-		public override ExpressionNode VisitTypeExpr(dinoParser.TypeExprContext context)
+		public override Node VisitTypeExpr(dinoParser.TypeExprContext context)
 		{
 			ExpressionNode node;
 			

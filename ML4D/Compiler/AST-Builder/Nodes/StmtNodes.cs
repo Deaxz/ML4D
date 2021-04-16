@@ -42,7 +42,7 @@ namespace ML4D.Compiler
         }
     }
     
-    public class BackwardNode : Node
+    public class BackwardNode : Node // TODO slet
     {
         public string ID { get; set; }
 
