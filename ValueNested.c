@@ -33,8 +33,8 @@ typedef struct LinkedList {
 struct LinkedList* newLinkedList();
 struct Backward* newBackward();
 struct Value* newValue(double data);
-Value* add (Value* self, Value* other);
-Value* mul (Value* self, Value* other);
+Value* add(Value* self, Value* other);
+Value* mul(Value* self, Value* other);
 Value* relu(Value* self);
 void add_backward(Value* self, Value* other, Value* out);
 void mul_backward(Value* self, Value* other, Value* out);
@@ -45,6 +45,7 @@ Value* sub(Value* self, Value* other);
 Value* truediv(Value* self, Value* other);
 
 void freeLinkedList(struct LinkedList** head_ref);
+void freeNodeRec(Node** node);
 void freeNode(struct Node** node);
 void freeValue(struct Value** Value);
 void freeBackward(struct Backward** backward);
@@ -253,14 +254,18 @@ int main(){
 
   for(int i = 0; i < 100; i++){
 
+      Value* aCopy = a;
+      Value* bCopy = b;
+
       // d1 = a * x1 + b - y1
-      Value* d1 = add(add(mul(a, x1), b), neg(y1));
-      Value* d2 = add(add(mul(a, x2), b), neg(y2));
-      Value* d3 = add(add(mul(a, x3), b), neg(y3));
-      Value* d4 = add(add(mul(a, x4), b), neg(y4));
-      Value* d5 = add(add(mul(a, x5), b), neg(y5));
+      Value* d1 = add(add(mul(aCopy, x1), bCopy), neg(y1));
+      Value* d2 = add(add(mul(aCopy, x2), bCopy), neg(y2));
+      Value* d3 = add(add(mul(aCopy, x3), bCopy), neg(y3));
+      Value* d4 = add(add(mul(aCopy, x4), bCopy), neg(y4));
+      Value* d5 = add(add(mul(aCopy, x5), bCopy), neg(y5));
       
       //loss = (d1**2 + d2**2 + d3**2 + d4**2 + d5**2)/5
+      Value* lossl = newValue(5.0);
       Value* loss = truediv(
         add(
           add(
@@ -275,19 +280,40 @@ int main(){
           ),
           power(d5, newValue(2))
         ),
-        newValue(5.0)
+        //newValue(5.0)
+        lossl
       );
 
+      i = 1 - -1;
+      printf("i = %d\n", i);
+      
+      printf("loss last newValue pointer = %p\n", lossl);
+
       backward(loss);
+      //copy a and b
+      //put data of copy of a and b into original a and b
+      //free loss
 
-      a = sub(a, mul(newValue(a->grad), step_size));
-      b = sub(b, mul(newValue(b->grad), step_size));
+      aCopy = sub(aCopy, mul(newValue(aCopy->grad), step_size));
+      bCopy = sub(bCopy, mul(newValue(bCopy->grad), step_size));
 
-      a->grad = 0;
-      b->grad = 0;
+      a = aCopy;
+      b = bCopy;
 
+      //a->_prev->head = NULL;
+      //b->_prev->head = NULL;
+
+      // a->grad = 0;
+      // b->grad = 0;
+      struct Node* current = loss->_prev->head;
+      struct Node* next;
+      while (current != NULL){
+        next = current->next;
+        printf("loss children = %p \n", current);
+        current = next;
+      }
+      //freeloss(loss);
   }
-
   printf("a data after: %0.20lf a grad after %0.20lf\n", a->data, a->grad);
   printf("b data after: %0.20lf b grad after %0.20lf\n", b->data, b->grad);
 
@@ -312,17 +338,39 @@ void freeLinkedList(struct LinkedList** linkedList){
   struct Node* current = (*linkedList)->head;
   struct Node* next;
 
-  while (current != NULL)
-  {
-    next = current->next;
-    //printf("current data = %lf\n", current->value->data);
-    free(current);
-    //current = NULL;
-    //printf("current data = %lf\n", current->value->data);
-    current = next;
-  }
-  free(linkedList);
+  freeNodeRec(&(*linkedList)->head);
+  // while (current != NULL)
+  // {
+  //   next = current->next;
+  //   //printf("current data = %lf\n", current->value->data);
+  //   free(current);
+  //   //current = NULL;
+  //   //printf("current data = %lf\n", current->value->data);
+  //   current = next;
+  // }
+  free(*linkedList);
   *linkedList = NULL;
+}
+
+// 
+
+// typedef struct Value {       <----- malloc
+//   double data;
+//   double grad;
+//   struct Backward* backward; <----- malloc
+//   struct LinkedList* _prev;  <----- malloc
+//   char op[];
+// } Value;
+
+
+void freeNodeRec(Node** node){
+  if((*node) == NULL){
+    return;
+  } 
+  Node* next = (*node)->next;
+  freeNodeRec(&next);
+  //freeNode(node);
+  free(node);
 }
 
 void freeNode(struct Node** node){
@@ -331,11 +379,14 @@ void freeNode(struct Node** node){
   *node = NULL;
 }
 
-void freeValue(struct Value** Value){
-  freeBackward(&((*Value)->backward));
-  free(Value);
+void freeValue(struct Value** value){
+  freeBackward(&((*value)->backward));
+  freeLinkedList(&((*value)->_prev));
+  free(*value);
+  *value = NULL;
 }
 
 void freeBackward(struct Backward** backward){
- free(backward);
+  free(*backward);
+  *backward = NULL;
 }
