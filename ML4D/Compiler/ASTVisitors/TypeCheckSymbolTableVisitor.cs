@@ -3,11 +3,11 @@ using ML4D.Compiler.Exceptions;
 
 namespace ML4D.Compiler.ASTVisitors
 {
-    public class TypeCheckAndSymbolTable : ASTVisitor
+    public class TypeCheckSymbolTableVisitor : ASTVisitor
     {
         private SymbolTable SymTable { get; }
 
-        public TypeCheckAndSymbolTable(SymbolTable symTable)
+        public TypeCheckSymbolTableVisitor(SymbolTable symTable)
         {
             SymTable = symTable;
         }
@@ -175,7 +175,5 @@ namespace ML4D.Compiler.ASTVisitors
                     throw new NotSupportedException();
             }
         }
-        
-        
     }
 }

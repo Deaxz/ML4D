@@ -23,7 +23,7 @@
         //-----Statement-----
         public virtual void Visit(AssignNode node) {VisitChildren(node);}
         public virtual void Visit(WhileNode node) {VisitChildren(node);}
-        public virtual void Visit(BackwardNode node) {VisitChildren(node);}
+        public virtual void Visit(BackwardNode node) {VisitChildren(node);} // TODO slet
         public virtual void Visit(ReturnNode node) {VisitChildren(node);}
         public virtual void Visit(FunctionExprNode node) {VisitChildren(node);}
         

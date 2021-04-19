@@ -37,7 +37,7 @@ namespace ML4D.Compiler
 					varDeclNode = new VariableDCLNode("bool", context.id.Text);
 					break;
 				default:
-					throw new NotSupportedException();
+					throw new NotSupportedException($"The variable {context.id.Text}, was declared with an illegal type.");
 			}
 			if (context.right is not null) // Declaration with initialisation
 				varDeclNode.Init = (ExpressionNode)  Visit(context.right);
@@ -59,6 +59,9 @@ namespace ML4D.Compiler
 					break;
 				case dinoLexer.BOOL:
 					functionDclNode = new FunctionDCLNode("bool", context.id.Text);
+					break;
+				case dinoLexer.VOID:
+					functionDclNode = new FunctionDCLNode("void", context.id.Text);
 					break;
 				default:
 					throw new NotSupportedException();
@@ -98,7 +101,11 @@ namespace ML4D.Compiler
 
 		public override Node VisitReturnStmt(dinoParser.ReturnStmtContext context) // TODO check efter null inner node
 		{
-			ReturnNode returnNode = new ReturnNode((ExpressionNode) Visit(context.inner));
+			ReturnNode returnNode;
+			if (context.inner is not null)
+				returnNode = new ReturnNode((ExpressionNode) Visit(context.inner));
+			else
+				returnNode = new ReturnNode();
 			return returnNode;
 		}
 

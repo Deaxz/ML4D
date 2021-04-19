@@ -45,21 +45,19 @@ namespace ML4D.Compiler
     public class BackwardNode : Node // TODO slet
     {
         public string ID { get; set; }
-
         public BackwardNode(string id)
-        {
+        { 
             ID = id;
         }
 
         public override List<Node> GetChildren() // Gotta have it
-        {
-            return new List<Node>();
-        }
+        { return new List<Node>(); }
     }
     
-    public class ReturnNode : UnaryExpressionNode
+    public class ReturnNode : UnaryExpressionNode // TODO, hvad er det bedste? Ikke arve fra unary, og så gøre inner nullable, eller bare arve og check på null?
     {
-        public ReturnNode(ExpressionNode inner) // TODO inner skal være nullable, så "return;" ikke giver fejl.
+        public ReturnNode() {}
+        public ReturnNode(ExpressionNode inner)
         {
             Inner = inner;
         }

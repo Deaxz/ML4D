@@ -44,8 +44,9 @@ namespace ML4D.Compiler
         public ExpressionNode Inner { get; set; }
         public override List<Node> GetChildren()
         {
-            List<Node> children = new List<Node>() {Inner};
-            return children;
+            if (Inner is not null)
+                return new List<Node>() {Inner};
+            return new List<Node>();
         }
     }
 }
