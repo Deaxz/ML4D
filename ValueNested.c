@@ -225,9 +225,9 @@ void backward(Value* self) {
         pointer = pointer->prev;
     }
   }
-  printf("topo pointer = %p\n", topo);
+  //printf("topo pointer = %p\n", topo);
   freeLinkedList(&topo);
-  printf("topo pointer = %p\n", topo);
+  //printf("topo pointer = %p\n", topo);
   freeLinkedList(&visited);
 }
 
@@ -254,15 +254,16 @@ int main(){
 
   for(int i = 0; i < 100; i++){
 
-      Value* aCopy = a;
-      Value* bCopy = b;
+      /* might do later for proper memory clear with backwards */
+      //Value* aCopy = a;
+      //Value* bCopy = b;
 
       // d1 = a * x1 + b - y1
-      Value* d1 = add(add(mul(aCopy, x1), bCopy), neg(y1));
-      Value* d2 = add(add(mul(aCopy, x2), bCopy), neg(y2));
-      Value* d3 = add(add(mul(aCopy, x3), bCopy), neg(y3));
-      Value* d4 = add(add(mul(aCopy, x4), bCopy), neg(y4));
-      Value* d5 = add(add(mul(aCopy, x5), bCopy), neg(y5));
+      Value* d1 = add(add(mul(a, x1), b), neg(y1));
+      Value* d2 = add(add(mul(a, x2), b), neg(y2));
+      Value* d3 = add(add(mul(a, x3), b), neg(y3));
+      Value* d4 = add(add(mul(a, x4), b), neg(y4));
+      Value* d5 = add(add(mul(a, x5), b), neg(y5));
       
       //loss = (d1**2 + d2**2 + d3**2 + d4**2 + d5**2)/5
       Value* lossl = newValue(5.0);
@@ -284,21 +285,21 @@ int main(){
         lossl
       );
 
-      i = 1 - -1;
-      printf("i = %d\n", i);
+      //i = 1 - -1;
+      //printf("i = %d\n", i);
       
-      printf("loss last newValue pointer = %p\n", lossl);
+      //printf("loss last newValue pointer = %p\n", lossl);
 
       backward(loss);
       //copy a and b
       //put data of copy of a and b into original a and b
       //free loss
 
-      aCopy = sub(aCopy, mul(newValue(aCopy->grad), step_size));
-      bCopy = sub(bCopy, mul(newValue(bCopy->grad), step_size));
+      a = sub(a, mul(newValue(a->grad), step_size));
+      b = sub(b, mul(newValue(b->grad), step_size));
 
-      a = aCopy;
-      b = bCopy;
+      //a = aCopy;
+      //b = bCopy;
 
       //a->_prev->head = NULL;
       //b->_prev->head = NULL;
@@ -309,7 +310,7 @@ int main(){
       struct Node* next;
       while (current != NULL){
         next = current->next;
-        printf("loss children = %p \n", current);
+        //printf("loss children = %p \n", current);
         current = next;
       }
       //freeloss(loss);
