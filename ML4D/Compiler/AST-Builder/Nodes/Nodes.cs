@@ -20,7 +20,7 @@ namespace ML4D.Compiler
         }
     }
     
-    // Base expression nodes 
+    // Base expression node
     public abstract class ExpressionNode : Node
     {
         public string Type { get; set; }
@@ -33,8 +33,7 @@ namespace ML4D.Compiler
         public ExpressionNode Right { get; set; }
         public override List<Node> GetChildren()
         {
-            List<Node> children = new List<Node>() {Left, Right};
-            return children;
+            return new List<Node>() {Left, Right};
         }
     }
     
@@ -44,9 +43,7 @@ namespace ML4D.Compiler
         public ExpressionNode Inner { get; set; }
         public override List<Node> GetChildren()
         {
-            if (Inner is not null)
-                return new List<Node>() {Inner};
-            return new List<Node>();
+            return new List<Node>() {Inner};
         }
     }
 }

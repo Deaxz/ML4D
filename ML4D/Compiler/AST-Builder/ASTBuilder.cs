@@ -21,27 +21,24 @@ namespace ML4D.Compiler
 		}
 		
 		// Declarations
-		public override Node VisitVarDecl(ML4DParser.VarDeclContext context) // TODO add void probably.
+		public override Node VisitVarDecl(ML4DParser.VarDeclContext context)
 		{
 			VariableDCLNode varDeclNode;
 
 			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token. 
 			{
 				case ML4DLexer.INT:
-					varDeclNode = new VariableDCLNode("int", context.id.Text);
+					varDeclNode = new VariableDCLNode("int", context.id.Text, (ExpressionNode) Visit(context.right));
 					break;
 				case ML4DLexer.DOUBLE:
-					varDeclNode = new VariableDCLNode("double", context.id.Text);
+					varDeclNode = new VariableDCLNode("double", context.id.Text, (ExpressionNode) Visit(context.right));
 					break;
 				case ML4DLexer.BOOL:
-					varDeclNode = new VariableDCLNode("bool", context.id.Text);
+					varDeclNode = new VariableDCLNode("bool", context.id.Text, (ExpressionNode) Visit(context.right));
 					break;
 				default:
 					throw new NotSupportedException($"The variable {context.id.Text}, was declared with an illegal type.");
 			}
-			if (context.right is not null) // Declaration with initialisation
-				varDeclNode.Init = (ExpressionNode)  Visit(context.right);
-			
 			return varDeclNode;
 		}
 
@@ -72,8 +69,8 @@ namespace ML4D.Compiler
 				FunctionArgumentNode argumentNode = new FunctionArgumentNode(context._argtype[i].type.Text, context._argid[i].Text);
 				functionDclNode.Arguments.Add(argumentNode);
 			}
-			functionDclNode.Body = VisitLines(context.body);
 			
+			functionDclNode.Body = VisitLines(context.body);
 			return functionDclNode;
 		}
 

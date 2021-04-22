@@ -54,12 +54,20 @@ namespace ML4D.Compiler
         { return new List<Node>(); }
     }
     
-    public class ReturnNode : UnaryExpressionNode // TODO, hvad er det bedste? Ikke arve fra unary, og så gøre inner nullable, eller bare arve og check på null?
+    public class ReturnNode : Node // TODO dilemma ift. om man skal arve fra unaryexpression node eller ikke.
     {
+        public ExpressionNode? Inner { get; set; }
         public ReturnNode() {}
         public ReturnNode(ExpressionNode inner)
         {
             Inner = inner;
+        }
+        
+        public override List<Node> GetChildren()
+        {
+            if (Inner is not null)
+                return new List<Node>() {Inner};
+            return new List<Node>();
         }
     }
 }

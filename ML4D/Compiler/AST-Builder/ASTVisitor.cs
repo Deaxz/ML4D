@@ -23,19 +23,15 @@
         //-----Statement-----
         public virtual void Visit(AssignNode node) {VisitChildren(node);}
         public virtual void Visit(WhileNode node) {VisitChildren(node);}
-        public virtual void Visit(BackwardNode node) {VisitChildren(node);} // TODO slet
+        public virtual void Visit(BackwardNode node) {} // TODO slet
         public virtual void Visit(ReturnNode node) {VisitChildren(node);}
         public virtual void Visit(FunctionExprNode node) {VisitChildren(node);}
         
         //-----Expression-----
         // Value
-        //public virtual void Visit(IDNode node) {VisitChildren(node);} // TODO Overvej at ændre body til tom, da den altid er tom.
         public virtual void Visit(IDNode node) {}
-        //public virtual void Visit(DoubleNode node) {VisitChildren(node);} // TODO Overvej at ændre body til tom, da den altid er tom.
         public virtual void Visit(DoubleNode node) {}
-        //public virtual void Visit(IntNode node) {VisitChildren(node);} // TODO Overvej at ændre body til tom, da den altid er tom.
         public virtual void Visit(IntNode node) {}
-        //public virtual void Visit(BoolNode node) {VisitChildren(node);} // TODO Overvej at ændre body til tom, da den altid er tom.
         public virtual void Visit(BoolNode node) {}
         
         // Arithmetic

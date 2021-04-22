@@ -13,7 +13,7 @@ lines
 //    ;
 
 dcl
-    :   type=types id=ID (op='=' right=bool_expr)?                                                 # varDecl
+    :   type=types id=ID op='=' right=bool_expr                                                 # varDecl
 //    ;                          
     |   type=types id=ID '(' (argtype+=types argid+=ID (',' types ID)*)? ')' '{' body=lines '}' # funcDecl
     ;    
