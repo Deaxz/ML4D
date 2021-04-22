@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ML4D.Compiler
+namespace ML4D.Compiler.Nodes
 {
     public class VariableDCLNode : Node
     {
@@ -56,8 +56,6 @@ namespace ML4D.Compiler
         }
 
         public override List<Node> GetChildren()
-        {
-            return new List<Node>();
-        }
+        { return new List<Node>(); }
     }
 }

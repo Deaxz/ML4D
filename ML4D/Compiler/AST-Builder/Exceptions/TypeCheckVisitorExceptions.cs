@@ -1,4 +1,5 @@
 ﻿using System;
+using ML4D.Compiler.Nodes;
 
 namespace ML4D.Compiler.Exceptions
 {
@@ -18,7 +19,7 @@ namespace ML4D.Compiler.Exceptions
     
     public class VariableAssignmentException : Exception
     {
-        public AssignNode Node { get; } // TODO change
+        public AssignNode Node { get; }
 
         public VariableAssignmentException() : base() {}
         public VariableAssignmentException(string message) : base(message) {}
@@ -29,24 +30,10 @@ namespace ML4D.Compiler.Exceptions
             Node = node;
         }           
     }
-    
-    public class FunctionCallArgumentException : Exception
-    {
-        public VariableDCLNode Node { get; } // TODO change
 
-        public FunctionCallArgumentException() : base() {}
-        public FunctionCallArgumentException(string message) : base(message) {}
-        public FunctionCallArgumentException(string message, Exception inner) : base(message, inner) {}
-
-        public FunctionCallArgumentException(VariableDCLNode node, string message) : base(message)
-        {
-            Node = node;
-        }           
-    }
-    
     public class InvalidOperandsException : Exception
     {
-        public ExpressionNode Node { get; } // TODO change
+        public ExpressionNode Node { get; } 
 
         public InvalidOperandsException() : base() {}
         public InvalidOperandsException(string message) : base(message) {}

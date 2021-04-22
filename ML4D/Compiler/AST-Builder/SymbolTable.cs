@@ -34,11 +34,6 @@ namespace ML4D.Compiler
         
         public void CloseScope()
         {
-            if (symbolTableStack.Peek().Parent is null) // TODO, remove check, det er umuligt at lukke det sidste scope. Da closescope() altid bliver kaldt efter openscope()
-            {
-                Console.WriteLine("You are at the bottom of the stack, popping to null value");
-                symbolTableStack.Pop();
-            }
             symbolTableStack.Pop();
         }
 
@@ -68,8 +63,6 @@ namespace ML4D.Compiler
     {
         public string Name { get; set; }
         public string Type { get; set; }
-        
-        // TODO add attributes info
         
         public Symbol(string name, string type)
         {

@@ -1,8 +1,6 @@
-﻿#nullable enable
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace ML4D.Compiler
+namespace ML4D.Compiler.Nodes
 {
     public abstract class Node
     {
@@ -27,7 +25,7 @@ namespace ML4D.Compiler
     }
     
     // Infix operator node
-    public class InfixExpressionNode : ExpressionNode // TODO rename to BinaryExpressionNode
+    public class InfixExpressionNode : ExpressionNode
     {
         public ExpressionNode Left { get; set; }
         public ExpressionNode Right { get; set; }

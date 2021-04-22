@@ -1,4 +1,6 @@
-﻿namespace ML4D.Compiler
+﻿using ML4D.Compiler.Nodes;
+
+namespace ML4D.Compiler
 {
     public abstract class ASTVisitor
     {

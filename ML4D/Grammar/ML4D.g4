@@ -2,7 +2,7 @@ grammar ML4D;
   
 lines
    :   ((dcl | stmt) ';')+   // TODO forestiller mig comments bliver et | her
-  //:   (udensemi | (dcl | stmt) ';')+´// Fungere, men på både vores nuværende, og udensemi, så yeeter den resten af træet ved ";;" og ";" respectively.
+  //:   (udensemi | (dcl | stmt) ';')+ // Fungere, men på både vores nuværende, og udensemi, så yeeter den resten af træet ved ";;" og ";" respectively.
    |   EOF
    ;
 
@@ -13,8 +13,7 @@ lines
 //    ;
 
 dcl
-    :   type=types id=ID op='=' right=bool_expr                                                 # varDecl
-//    ;                          
+    :   type=types id=ID op='=' right=bool_expr                                                 # varDecl                        
     |   type=types id=ID '(' (argtype+=types argid+=ID (',' types ID)*)? ')' '{' body=lines '}' # funcDecl
     ;    
 
@@ -22,7 +21,7 @@ stmt
     :   id=ID op='=' right=bool_expr                            # assignStmt
     |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'    # whileStmt
     |   id=ID op='<-'                                           # backwardStmt // TODO slet
-    |   RETURN inner=bool_expr?                                 # returnStmt // TODO return inner=bool_expr*, så det er optional da vi har void funktioner.
+    |   RETURN inner=bool_expr?                                 # returnStmt
     |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcStmt
     ;
 
@@ -31,7 +30,7 @@ bool_expr
     |   left=expr op=('=='|'!=') right=expr                     # infixRelationalExpr
     |   left=bool_expr op='and' right=bool_expr                 # infixBoolExpr
     |   left=bool_expr op='or'  right=bool_expr                 # infixBoolExpr
-    |   expr                                                    # exprExpr // TODO change name at some point
+    |   expr                                                    # exprExpr
     ;
     
 expr  // TODO introduce unary minus, can be done similarly to Math AST
@@ -94,6 +93,5 @@ WS: [ \t\r\n]+ -> skip;
 // Values
 BOOLVAL: ('true'|'false');
 INUM: [-]?[0-9]+; 
-//FNUM: [-]?[0-9]+ [.][0-9]+;
-FNUM: [-]?[0-9]+ ('.' [0-9]+)?; // Nakket fra AST eksempel. 
+FNUM: [-]?[0-9]+ [.][0-9]+; 
 ID: [A-Za-z]([0-9_A-Za-z])*;

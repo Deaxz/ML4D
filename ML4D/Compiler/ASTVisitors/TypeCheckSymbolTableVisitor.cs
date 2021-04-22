@@ -1,5 +1,6 @@
 ﻿using System;
 using ML4D.Compiler.Exceptions;
+using ML4D.Compiler.Nodes;
 
 namespace ML4D.Compiler.ASTVisitors
 {
@@ -18,11 +19,15 @@ namespace ML4D.Compiler.ASTVisitors
             if (SymTable.Retrieve(node.ID) is null)
                 SymTable.Insert(node.ID, node.Type);
             else
-                throw new VariableAlreadyDeclaredException(node, $"The variable \"{node.ID}\" could not be declared, as it has already been declared in the current or parent scope.");
+                throw new VariableAlreadyDeclaredException(node, 
+                    $"The variable \"{node.ID}\" could not be declared, as it has already been declared in the current or parent scope.");
             
             base.Visit(node);
-            if (node.Type != node.Init.Type)
-                throw new VariableInitialisationException(node, "Failed to initialise in declaration. The expression has an incorrect type.");
+            
+            if (node.Type == node.Init.Type || node.Type == "double" && node.Init.Type == "int")
+                return;
+            throw new VariableInitialisationException(node, 
+                "Failed to initialise in declaration. The expression has an incorrect type.");                    
         }
         
         public override void Visit(FunctionDCLNode node)
@@ -30,11 +35,12 @@ namespace ML4D.Compiler.ASTVisitors
             if (SymTable.Retrieve(node.ID) is null)
                 SymTable.Insert(node.ID, node.Type);
             else
-                throw new FunctionAlreadyDeclaredException(node, $"The function \"{node.ID}\" has already been declared in the current or parent scope.");
+                throw new FunctionAlreadyDeclaredException(node, 
+                    $"The function \"{node.ID}\" has already been declared in the current or parent scope.");
             
             SymTable.OpenScope();
             base.Visit(node);
-            // Typechecking
+            // Umildbart håndteret af gcc.
             SymTable.CloseScope();
         }
 
@@ -43,20 +49,24 @@ namespace ML4D.Compiler.ASTVisitors
             if (SymTable.Retrieve(node.ID) is null)
                 SymTable.Insert(node.ID, node.Type);
             else
-                throw new VariableAlreadyDeclaredException($"The variable \"{node.ID}\" has already been declared. And would hide the variable in the parent scope if declared inside the function.");
+                throw new VariableAlreadyDeclaredException(
+                    $"The variable \"{node.ID}\" has already been declared. And would hide the variable in the parent scope if declared inside the function.");
         }
         
         // Statement      
         public override void Visit(AssignNode node)
         {
             if (SymTable.Retrieve(node.ID) is null)
-                throw new VariableNotDeclaredException($"The variable \"{node.ID}\" cannot be assigned, as it has not been declared.");
+                throw new VariableNotDeclaredException(
+                    $"The variable \"{node.ID}\" cannot be assigned, as it has not been declared.");
             
             base.Visit(node);
-
             node.Type = SymTable.Retrieve(node.ID).Type;
-            if (node.Type != node.Right.Type)
-                throw new VariableAssignmentException(node, "Failed to assign variable. The expression has an incorrect type.");
+            
+            if (node.Type == node.Right.Type || node.Type == "double" && node.Right.Type == "int")
+                return;
+            throw new VariableAssignmentException(node, 
+                "Failed to assign variable. The expression has an incorrect type.");
         }
         
         public override void Visit(WhileNode node)
@@ -66,33 +76,25 @@ namespace ML4D.Compiler.ASTVisitors
             SymTable.CloseScope();
         }
 
-        // TODO Should check if it makes sense to return. I.e. it is inside a scope different from the global scope. 
-        public override void Visit(ReturnNode node)
-        {
-            base.Visit(node);
-        }
-
         public override void Visit(FunctionExprNode node)
         {
             if (SymTable.Retrieve(node.ID) is null)
-                throw new FunctionNotDeclaredException(node, $"The function \"{node.ID}\" cannot be called, as it is not declared");
+                throw new FunctionNotDeclaredException(node, 
+                    $"The function \"{node.ID}\" cannot be called, as it is not declared");
 
             base.Visit(node);
-            // Typechecking functionexpr should have correct return type for call site, but also correct parameter type and parameter number.
+            // Umildbart håndteret af gcc.
         }
         
         // Expression
         public override void Visit(IDNode node)
         {
-            Symbol variable = SymTable.Retrieve(node.ID);
-            if (variable is null)
-                throw new VariableNotDeclaredException(node, $"The variable \"{node.ID}\" cannot be used, as it has not been declared.");
-
-            node.Type = variable.Type;
+            Symbol variableDCL = SymTable.Retrieve(node.ID);
+            if (variableDCL is null)
+                throw new VariableNotDeclaredException(node, 
+                    $"The variable \"{node.ID}\" cannot be used, as it has not been declared.");
+            node.Type = variableDCL.Type;
         }
-        
-        
-        
         
         public override void Visit(InfixExpressionNode node)
         {
@@ -104,19 +106,15 @@ namespace ML4D.Compiler.ASTVisitors
                 case MultiplicationNode:
                 case DivisionNode:
                 case PowerNode:
-                    
                     VisitChildren(node);
                     
-                    // TODO fix, den håndtere ikke mixed som ikke giver mening. 
-                    if (node.Left.Type == "double" && node.Right.Type == "double")
-                        node.Type = "double";
+                    if (node.Left.Type == "bool" || node.Right.Type == "bool")
+                        throw new InvalidOperandsException(node, 
+                            "The operands of a arithmetic operator can only be int and double. It does not allow bool.");
                     else if (node.Left.Type == "int" && node.Right.Type == "int")
                         node.Type = "int";
                     else
-                    {
-                        
-                    }
-                        
+                        node.Type = "double";
                     break;
                     
                 // Relational
@@ -124,39 +122,27 @@ namespace ML4D.Compiler.ASTVisitors
                 case LessEqualThanNode:
                 case GreaterThanNode:
                 case GreaterEqualThanNode:
-                
-                // Equality
                 case EqualNode:
                 case NotEqualNode:
-
-                    // Typechecking for value operators
                     VisitChildren(node);
-
-                    if (node.Left.Type == "double" || node.Left.Type == "int" && node.Right.Type == "double" ||
-                        node.Right.Type == "int")
-                    {
-                        node.Type = "bool";
-                    }
+                    
+                    if (node.Left.Type == "bool" || node.Right.Type == "bool")
+                        throw new InvalidOperandsException(node,
+                            "The operands of a relational operator can only be int and double. It does not allow bool.");
                     else
-                    {
-                        //throw new InvalidValueOperatorException(node, "Expected operands to be int/double");
-                    }
+                        node.Type = "bool";
                     break;
                     
                 // Boolean
                 case AndNode:
                 case OrNode:
-
-                    // Typechecking for boolean operators
                     VisitChildren(node);
-                    if (node.Left.Type == "bool" && node.Right.Type == "bool")
-                    {
-                        node.Type = "bool";
-                    }
+                   
+                    if (node.Left.Type != "bool" || node.Right.Type != "bool")
+                        throw new InvalidOperandsException(node, 
+                            "The operands of a bool operator can only be bool. It does not allow int or double.");
                     else
-                    {
-                        //throw new InvalidValueOperatorException(node, "Expected operands to be bool");
-                    }
+                        node.Type = "bool";
                     break;
                 default:
                     throw new NotSupportedException();
@@ -168,8 +154,13 @@ namespace ML4D.Compiler.ASTVisitors
             switch (node)
             {
                 case NotNode:
-                    // Typechecking for not operator
+                    VisitChildren(node);
                     
+                    if (node.Inner.Type != "bool")
+                        throw new InvalidOperandsException(node,
+                            "The operand of a bool operator can only be bool. It does not allow int or double.");
+                    else
+                        node.Type = "bool";
                     break;
                 default:
                     throw new NotSupportedException();

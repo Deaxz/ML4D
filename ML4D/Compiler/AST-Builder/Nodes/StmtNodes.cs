@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace ML4D.Compiler
+namespace ML4D.Compiler.Nodes
 {
     public class AssignNode : Node
     {
-        //public string Type { get; set; } //TODO ikke brugt pt, men jeg tænker nødvendigt for type checking.
         public string Type { get; set; }
         public string ID { get; set; }
         public ExpressionNode Right { get; set; }
@@ -50,11 +49,11 @@ namespace ML4D.Compiler
             ID = id;
         }
 
-        public override List<Node> GetChildren() // Gotta have it
+        public override List<Node> GetChildren() 
         { return new List<Node>(); }
     }
     
-    public class ReturnNode : Node // TODO dilemma ift. om man skal arve fra unaryexpression node eller ikke.
+    public class ReturnNode : Node
     {
         public ExpressionNode? Inner { get; set; }
         public ReturnNode() {}

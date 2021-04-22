@@ -1,6 +1,8 @@
+#nullable enable
 using System;
 using System.Globalization;
 using Antlr4.Runtime.Tree;
+using ML4D.Compiler.Nodes;
 
 namespace ML4D.Compiler
 {
@@ -9,11 +11,10 @@ namespace ML4D.Compiler
 		public override LinesNode VisitLines(ML4DParser.LinesContext context)
 		{
 			LinesNode linesNode = new LinesNode();
-			Node node;
-			
+
 			foreach (IParseTree child in context.children)
 			{
-				node = Visit(child);
+				Node? node = Visit(child);
 				if (node is not null) // Necessary because ';' returns null. 
 					linesNode.lines.Add(node);
 			}
@@ -65,10 +66,8 @@ namespace ML4D.Compiler
 			}
 			
 			for (int i = 0; i < context._argid.Count; i++)
-			{
-				FunctionArgumentNode argumentNode = new FunctionArgumentNode(context._argtype[i].type.Text, context._argid[i].Text);
-				functionDclNode.Arguments.Add(argumentNode);
-			}
+				functionDclNode.Arguments.Add(new FunctionArgumentNode(
+					context._argtype[i].type.Text, context._argid[i].Text));
 			
 			functionDclNode.Body = VisitLines(context.body);
 			return functionDclNode;
@@ -83,7 +82,8 @@ namespace ML4D.Compiler
 
 		public override Node VisitWhileStmt(ML4DParser.WhileStmtContext context)
 		{
-			WhileNode whileNode = new WhileNode((ExpressionNode) Visit(context.predicate), (LinesNode) Visit(context.body));
+			WhileNode whileNode = new WhileNode(
+				(ExpressionNode) Visit(context.predicate), (LinesNode) Visit(context.body));
 			return whileNode;
 		}
 
@@ -211,10 +211,10 @@ namespace ML4D.Compiler
 			return node;
 		}
 
-		public override Node VisitFuncExpr(ML4DParser.FuncExprContext context) // TODO overvej at lave liste af Node, så .GetChildren() bliver simpler. 
+		public override Node VisitFuncExpr(ML4DParser.FuncExprContext context) 
 		{
 			FunctionExprNode functionExprNode = new FunctionExprNode(context.id.Text);
-
+			
 			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
 				functionExprNode.Arguments.Add((ExpressionNode) Visit(argument));
 			

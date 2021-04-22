@@ -1,4 +1,5 @@
 ﻿using System;
+using ML4D.Compiler.Nodes;
 
 namespace ML4D.Compiler.Exceptions
 {
