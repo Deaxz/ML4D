@@ -1,33 +1,42 @@
-grammar dino;
+grammar ML4D;
   
 lines
-    :   (dcl | stmt) ';' ((dcl | stmt ) ';')*
-    |   EOF
-    ;
+   :   ((dcl | stmt) ';')+   // TODO forestiller mig comments bliver et | her
+  //:   (udensemi | (dcl | stmt) ';')+´// Fungere, men på både vores nuværende, og udensemi, så yeeter den resten af træet ved ";;" og ";" respectively.
+   |   EOF
+   ;
+
+//udensemi 
+//    : WHILE '(' predicate=bool_expr ')' '{' body=lines '}'                                    # whileStmt
+//    | type=types id=ID '(' (argtype+=types argid+=ID (',' types ID)*)? ')' '{' body=lines '}'  # funcDecl
+//    | For loop        
+//    ;
 
 dcl
-    :   type=types id=ID (op='=' right=bool_expr)?                                              # varDecl                          
+    :   type=types id=ID (op='=' right=bool_expr)?                                                 # varDecl
+//    ;                          
     |   type=types id=ID '(' (argtype+=types argid+=ID (',' types ID)*)? ')' '{' body=lines '}' # funcDecl
-    ;
+    ;    
 
 stmt
     :   id=ID op='=' right=bool_expr                            # assignStmt
     |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'    # whileStmt
     |   id=ID op='<-'                                           # backwardStmt // TODO slet
-    |   RETURN inner=bool_expr                                  # returnStmt // TODO return inner=bool_expr*, så det er optional da vi har void funktioner.
+    |   RETURN inner=bool_expr?                                 # returnStmt // TODO return inner=bool_expr*, så det er optional da vi har void funktioner.
     |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcStmt
     ;
 
 bool_expr 
-    :   left=expr op=('<'|'<='|'>'|'>=') right=expr             # infixRelationalExpr // TODO mega wack med left2, men ellers ikke muligt.    
-    |   left=expr op=('=='|'!=') right=expr                     # infixRelationalExpr // TODO skal implementeres
+    :   left=expr op=('<'|'<='|'>'|'>=') right=expr             # infixRelationalExpr
+    |   left=expr op=('=='|'!=') right=expr                     # infixRelationalExpr
     |   left=bool_expr op='and' right=bool_expr                 # infixBoolExpr
     |   left=bool_expr op='or'  right=bool_expr                 # infixBoolExpr
-    |   expr                                                    # dingdongExpr // TODO change name at some point
+    |   expr                                                    # exprExpr // TODO change name at some point
     ;
     
 expr  // TODO introduce unary minus, can be done similarly to Math AST
     :   '(' bool_expr ')'                                       # parensExpr 
+//    |   op='-' left=expr                                        #unaryExpr // TODO unary minus
     |   op='not' inner=bool_expr                                # unaryExpr  // TODO Man kan skrive "b = not not not not a;", men den kan ikke flyttes pga precendence, men tror heller ikke det er et problem.
     |   <assoc=right> left=expr op='**' right=expr              # infixExpr
     |   left=expr op=('*'|'/') right=expr                       # infixExpr

@@ -44,7 +44,7 @@ namespace ML4D.Compiler.Exceptions
         }           
     }
     
-    public abstract class InvalidOperandsException : Exception
+    public class InvalidOperandsException : Exception
     {
         public ExpressionNode Node { get; } // TODO change
 
@@ -57,35 +57,4 @@ namespace ML4D.Compiler.Exceptions
             Node = node;
         }           
     }
-    
-    // Value operator with invalid operands
-    public class InvalidValueOperatorException : InvalidOperandsException
-    {
-        public VariableDCLNode Node { get; } // TODO change
-
-        public InvalidValueOperatorException() : base() {}
-        public InvalidValueOperatorException(string message) : base(message) {}
-        public InvalidValueOperatorException(string message, Exception inner) : base(message, inner) {}
-
-        public InvalidValueOperatorException(VariableDCLNode node, string message) : base(message)
-        {
-            Node = node;
-        }           
-    }
-    
-    // Bool operator with invalid operands
-    public class InvalidBoolOperatorException : InvalidOperandsException
-    {
-        public VariableDCLNode Node { get; } // TODO change
-
-        public InvalidBoolOperatorException() : base() {}
-        public InvalidBoolOperatorException(string message) : base(message) {}
-        public InvalidBoolOperatorException(string message, Exception inner) : base(message, inner) {}
-
-        public InvalidBoolOperatorException(VariableDCLNode node, string message) : base(message)
-        {
-            Node = node;
-        }           
-    }
-    
 }

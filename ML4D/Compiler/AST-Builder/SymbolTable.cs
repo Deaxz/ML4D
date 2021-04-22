@@ -10,7 +10,7 @@ namespace ML4D.Compiler
         private static Stack<SymbolTable> symbolTableStack = new Stack<SymbolTable>();
         
         protected SymbolTable? Parent { get; set; }
-        protected List<SymbolTable> children = new List<SymbolTable>(); // TODO overvej om vi skal beholde children og parent, bliver ikke brugt til noget.
+        protected List<SymbolTable> children = new List<SymbolTable>(); // TODO overvej om vi skal beholde children og parent, bliver ikke brugt til noget. Men tænker Code generation maybe
         protected Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
 
         // Init constructor
@@ -57,12 +57,19 @@ namespace ML4D.Compiler
             }
             return null;
         }
+
+        public void Clear()
+        {
+            symbolTableStack.Clear();
+        }
     }
 
     public class Symbol
     {
         public string Name { get; set; }
         public string Type { get; set; }
+        
+        // TODO add attributes info
         
         public Symbol(string name, string type)
         {

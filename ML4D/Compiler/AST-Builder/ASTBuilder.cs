@@ -4,9 +4,9 @@ using Antlr4.Runtime.Tree;
 
 namespace ML4D.Compiler
 {
-	public class ASTBuilder : dinoBaseVisitor<Node>
+	public class ASTBuilder : ML4DBaseVisitor<Node>
 	{
-		public override LinesNode VisitLines(dinoParser.LinesContext context)
+		public override LinesNode VisitLines(ML4DParser.LinesContext context)
 		{
 			LinesNode linesNode = new LinesNode();
 			Node node;
@@ -21,19 +21,19 @@ namespace ML4D.Compiler
 		}
 		
 		// Declarations
-		public override Node VisitVarDecl(dinoParser.VarDeclContext context) // TODO add void probably.
+		public override Node VisitVarDecl(ML4DParser.VarDeclContext context) // TODO add void probably.
 		{
 			VariableDCLNode varDeclNode;
 
 			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token. 
 			{
-				case dinoLexer.INT:
+				case ML4DLexer.INT:
 					varDeclNode = new VariableDCLNode("int", context.id.Text);
 					break;
-				case dinoLexer.DOUBLE:
+				case ML4DLexer.DOUBLE:
 					varDeclNode = new VariableDCLNode("double", context.id.Text);
 					break;
-				case dinoLexer.BOOL:
+				case ML4DLexer.BOOL:
 					varDeclNode = new VariableDCLNode("bool", context.id.Text);
 					break;
 				default:
@@ -45,31 +45,28 @@ namespace ML4D.Compiler
 			return varDeclNode;
 		}
 
-		public override Node VisitFuncDecl(dinoParser.FuncDeclContext context)
+		public override Node VisitFuncDecl(ML4DParser.FuncDeclContext context)
 		{
 			FunctionDCLNode functionDclNode;
 			
 			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token. 
 			{
-				case dinoLexer.INT:
+				case ML4DLexer.INT:
 					functionDclNode = new FunctionDCLNode("int", context.id.Text);
 					break;
-				case dinoLexer.DOUBLE:
+				case ML4DLexer.DOUBLE:
 					functionDclNode = new FunctionDCLNode("double", context.id.Text);
 					break;
-				case dinoLexer.BOOL:
+				case ML4DLexer.BOOL:
 					functionDclNode = new FunctionDCLNode("bool", context.id.Text);
 					break;
-				case dinoLexer.VOID:
+				case ML4DLexer.VOID:
 					functionDclNode = new FunctionDCLNode("void", context.id.Text);
 					break;
 				default:
 					throw new NotSupportedException();
 			}
 			
-			if (context._argtype.Count != context._argid.Count) // TODO overvej slet, det er jo egentligt defineret i grammar
-				throw new ArgumentException("ArgID and ArgType do not contain the same amount of elements.");
-
 			for (int i = 0; i < context._argid.Count; i++)
 			{
 				FunctionArgumentNode argumentNode = new FunctionArgumentNode(context._argtype[i].type.Text, context._argid[i].Text);
@@ -81,25 +78,25 @@ namespace ML4D.Compiler
 		}
 
 		// Statements
-		public override Node VisitAssignStmt(dinoParser.AssignStmtContext context)
+		public override Node VisitAssignStmt(ML4DParser.AssignStmtContext context)
 		{
 			AssignNode assignNode = new AssignNode(context.id.Text, (ExpressionNode) Visit(context.right));
 			return assignNode;
 		}
 
-		public override Node VisitWhileStmt(dinoParser.WhileStmtContext context)
+		public override Node VisitWhileStmt(ML4DParser.WhileStmtContext context)
 		{
 			WhileNode whileNode = new WhileNode((ExpressionNode) Visit(context.predicate), (LinesNode) Visit(context.body));
 			return whileNode;
 		}
 
-		public override Node VisitBackwardStmt(dinoParser.BackwardStmtContext context) // TODO slet
+		public override Node VisitBackwardStmt(ML4DParser.BackwardStmtContext context) // TODO slet
 		{
 			BackwardNode backwardNode = new BackwardNode(context.id.Text);
 			return backwardNode;
 		}
 
-		public override Node VisitReturnStmt(dinoParser.ReturnStmtContext context) // TODO check efter null inner node
+		public override Node VisitReturnStmt(ML4DParser.ReturnStmtContext context)
 		{
 			ReturnNode returnNode;
 			if (context.inner is not null)
@@ -109,39 +106,39 @@ namespace ML4D.Compiler
 			return returnNode;
 		}
 
-		public override Node VisitFuncStmt(dinoParser.FuncStmtContext context)
+		public override Node VisitFuncStmt(ML4DParser.FuncStmtContext context)
 		{
 			FunctionExprNode functionExprNode = new FunctionExprNode(context.id.Text);
 
-			foreach (dinoParser.Bool_exprContext argument in context._argexpr)
+			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
 				functionExprNode.Arguments.Add((ExpressionNode) Visit(argument));
 			
 			return functionExprNode;
 		}
 		
 		// Expressions
-		public override Node VisitInfixRelationalExpr(dinoParser.InfixRelationalExprContext context)
+		public override Node VisitInfixRelationalExpr(ML4DParser.InfixRelationalExprContext context)
 		{
 			InfixExpressionNode node;
 			
 			switch (context.op.Type)
 			{
-				case dinoLexer.LTHAN:
+				case ML4DLexer.LTHAN:
 					node = new LessThanNode();
 					break;
-				case dinoLexer.GTHAN:
+				case ML4DLexer.GTHAN:
 					node = new GreaterThanNode();
 					break;
-				case dinoLexer.LETHAN:
+				case ML4DLexer.LETHAN:
 					node = new LessEqualThanNode();
 					break;
-				case dinoLexer.GETHAN:
+				case ML4DLexer.GETHAN:
 					node = new GreaterEqualThanNode();
 					break;
-				case dinoLexer.EQUALS:
+				case ML4DLexer.EQUALS:
 					node = new EqualNode();
 					break;
-				case dinoLexer.NOTEQUALS:
+				case ML4DLexer.NOTEQUALS:
 					node = new NotEqualNode();
 					break;
 				default:
@@ -151,18 +148,17 @@ namespace ML4D.Compiler
 			node.Right = (ExpressionNode) Visit(context.right);
 			return node;
 		}
-
-
-		public override Node VisitInfixBoolExpr(dinoParser.InfixBoolExprContext context)
+		
+		public override Node VisitInfixBoolExpr(ML4DParser.InfixBoolExprContext context)
 		{
 			InfixExpressionNode node;
 			
 			switch (context.op.Type)
 			{
-				case dinoLexer.AND:
+				case ML4DLexer.AND:
 					node = new AndNode();
 					break;
-				case dinoLexer.OR:
+				case ML4DLexer.OR:
 					node = new OrNode();
 					break;
 				default:
@@ -173,25 +169,25 @@ namespace ML4D.Compiler
 			return node;
 		}
 
-		public override Node VisitInfixExpr(dinoParser.InfixExprContext context)
+		public override Node VisitInfixExpr(ML4DParser.InfixExprContext context)
 		{
 			InfixExpressionNode node;
 			
 			switch (context.op.Type)
 			{
-				case dinoLexer.PLUS:
+				case ML4DLexer.PLUS:
 					node = new AdditionNode();
 					break;
-				case dinoLexer.MINUS:
+				case ML4DLexer.MINUS:
 					node = new SubtractionNode();
 					break;
-				case dinoLexer.MUL:
+				case ML4DLexer.MUL:
 					node = new MultiplicationNode();
 					break;
-				case dinoLexer.DIV:
+				case ML4DLexer.DIV:
 					node = new DivisionNode();
 					break;
-				case dinoLexer.POW:
+				case ML4DLexer.POW:
 					node = new PowerNode();
 					break;
 				default:
@@ -202,13 +198,13 @@ namespace ML4D.Compiler
 			return node;
 		}
 
-		public override Node VisitUnaryExpr(dinoParser.UnaryExprContext context)
+		public override Node VisitUnaryExpr(ML4DParser.UnaryExprContext context)
 		{
 			UnaryExpressionNode node;
 			
 			switch (context.op.Type)
 			{
-				case dinoLexer.NOT:
+				case ML4DLexer.NOT:
 					node = new NotNode();
 					break;
 				default:
@@ -218,38 +214,34 @@ namespace ML4D.Compiler
 			return node;
 		}
 
-		public override Node VisitFuncExpr(dinoParser.FuncExprContext context) // TODO over at lave liste af Node, så .GetChildren() bliver simpler. 
+		public override Node VisitFuncExpr(ML4DParser.FuncExprContext context) // TODO overvej at lave liste af Node, så .GetChildren() bliver simpler. 
 		{
 			FunctionExprNode functionExprNode = new FunctionExprNode(context.id.Text);
 
-			foreach (dinoParser.Bool_exprContext argument in context._argexpr)
-			{
+			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
 				functionExprNode.Arguments.Add((ExpressionNode) Visit(argument));
-			}
+			
 			return functionExprNode;
 		}
 
 		// Types
-		public override Node VisitTypeExpr(dinoParser.TypeExprContext context)
+		public override Node VisitTypeExpr(ML4DParser.TypeExprContext context)
 		{
 			ExpressionNode node;
 			
 			switch (context.value.Type)
 			{
-				case dinoLexer.INUM:
+				case ML4DLexer.INUM:
 					node = new IntNode(int.Parse(context.value.Text));
 					break;
-				case dinoLexer.FNUM:
+				case ML4DLexer.FNUM:
 					node = new DoubleNode(double.Parse(context.value.Text, CultureInfo.InvariantCulture));
 					break;
-				case dinoLexer.BOOLVAL:
+				case ML4DLexer.BOOLVAL:
 					node = new BoolNode(bool.Parse(context.value.Text));
 					break;
-				case dinoLexer.ID:
+				case ML4DLexer.ID:
 					node = new IDNode(context.value.Text);
-					break;
-				case dinoLexer.VOID: // TODO Vær opmærksom, men jeg forventer det er noget vi skal fange i type checking.
-					node = new VoidNode();
 					break;
 				default:
 					throw new NotSupportedException();
@@ -258,8 +250,8 @@ namespace ML4D.Compiler
 		}
 
 		// Fixes error - "The call is ambiguous between the following methods or properties: 'ML4D.Compiler.ASTVisitor<string>.Visit(ML4D.Compiler.LessThanNode)' and 'ML4D.Compiler.ASTVisitor<string>.Visit(ML4D.Compiler.LessEqualThanNode)'"
-		// Not sure why tho, but keep it.
-		public override Node VisitParensExpr(dinoParser.ParensExprContext context)
+		// Not sure why tho, but keep it. TODO overvej at check hvorfor det er tilfældet.
+		public override Node VisitParensExpr(ML4DParser.ParensExprContext context)
 		{
 			return Visit(context.bool_expr());
 		}
