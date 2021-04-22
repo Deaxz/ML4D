@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace ML4D.Compiler
+namespace ML4D.Compiler.Nodes
 {
     public class AssignNode : Node
     {
-        //public string Type { get; set; } //TODO ikke brugt pt, men jeg tænker nødvendigt for type checking.
+        public string Type { get; set; }
         public string ID { get; set; }
         public ExpressionNode Right { get; set; }
         
@@ -41,26 +41,32 @@ namespace ML4D.Compiler
         }
     }
     
-    public class BackwardNode : Node
+    public class BackwardNode : Node // TODO slet
     {
         public string ID { get; set; }
-
         public BackwardNode(string id)
-        {
+        { 
             ID = id;
         }
 
-        public override List<Node> GetChildren() // Gotta have it
-        {
-            return new List<Node>();
-        }
+        public override List<Node> GetChildren() 
+        { return new List<Node>(); }
     }
     
-    public class ReturnNode : UnaryExpressionNode
+    public class ReturnNode : Node
     {
+        public ExpressionNode? Inner { get; set; }
+        public ReturnNode() {}
         public ReturnNode(ExpressionNode inner)
         {
             Inner = inner;
+        }
+        
+        public override List<Node> GetChildren()
+        {
+            if (Inner is not null)
+                return new List<Node>() {Inner};
+            return new List<Node>();
         }
     }
 }

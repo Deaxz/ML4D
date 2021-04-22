@@ -1,4 +1,6 @@
-﻿namespace ML4D.Compiler
+﻿using ML4D.Compiler.Nodes;
+
+namespace ML4D.Compiler
 {
     public abstract class ASTVisitor
     {
@@ -23,41 +25,19 @@
         //-----Statement-----
         public virtual void Visit(AssignNode node) {VisitChildren(node);}
         public virtual void Visit(WhileNode node) {VisitChildren(node);}
-        public virtual void Visit(BackwardNode node) {VisitChildren(node);}
+        public virtual void Visit(BackwardNode node) {} // TODO slet
         public virtual void Visit(ReturnNode node) {VisitChildren(node);}
         public virtual void Visit(FunctionExprNode node) {VisitChildren(node);}
         
         //-----Expression-----
         // Value
-        public virtual void Visit(IDNode node) {VisitChildren(node);}
-        public virtual void Visit(DoubleNode node) {VisitChildren(node);}
-        public virtual void Visit(IntNode node) {VisitChildren(node);}
-        public virtual void Visit(BoolNode node) {VisitChildren(node);}
+        public virtual void Visit(IDNode node) {}
+        public virtual void Visit(DoubleNode node) {}
+        public virtual void Visit(IntNode node) {}
+        public virtual void Visit(BoolNode node) {}
         
         // Arithmetic
         public virtual void Visit(InfixExpressionNode node) {VisitChildren(node);}
         public virtual void Visit(UnaryExpressionNode node) {VisitChildren(node);}
-        
-        // // Arithmetic
-        // public virtual void Visit(AdditionNode node) {VisitChildren(node);}
-        // public virtual void Visit(SubtractionNode node) {VisitChildren(node);}
-        // public virtual void Visit(MultiplicationNode node) {VisitChildren(node);}
-        // public virtual void Visit(DivisionNode node) {VisitChildren(node);}
-        // public virtual void Visit(PowerNode node) {VisitChildren(node);}
-        //
-        // // Boolean
-        // public virtual void Visit(AndNode node) {VisitChildren(node);}
-        // public virtual void Visit(OrNode node) {VisitChildren(node);}
-        // public virtual void Visit(NotNode node) {VisitChildren(node);}
-        //
-        // // Equality
-        // public virtual void Visit(EqualNode node) {VisitChildren(node);}
-        // public virtual void Visit(NotEqualNode node) {VisitChildren(node);}
-        //
-        // // Relational
-        // public virtual void Visit(GreaterThanNode node) {VisitChildren(node);}
-        // public virtual void Visit(GreaterEqualThanNode node) {VisitChildren(node);}
-        // public virtual void Visit(LessThanNode node) {VisitChildren(node);}
-        // public virtual void Visit(LessEqualThanNode node) {VisitChildren(node);}
     }
 }

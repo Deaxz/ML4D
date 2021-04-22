@@ -1,8 +1,6 @@
-﻿#nullable enable
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace ML4D.Compiler
+namespace ML4D.Compiler.Nodes
 {
     public abstract class Node
     {
@@ -20,20 +18,20 @@ namespace ML4D.Compiler
         }
     }
     
-    // Base expression nodes 
+    // Base expression node
     public abstract class ExpressionNode : Node
     {
+        public string Type { get; set; }
     }
     
     // Infix operator node
-    public class InfixExpressionNode : ExpressionNode // TODO rename to BinaryExpressionNode
+    public class InfixExpressionNode : ExpressionNode
     {
         public ExpressionNode Left { get; set; }
         public ExpressionNode Right { get; set; }
         public override List<Node> GetChildren()
         {
-            List<Node> children = new List<Node>() {Left, Right};
-            return children;
+            return new List<Node>() {Left, Right};
         }
     }
     
@@ -43,8 +41,7 @@ namespace ML4D.Compiler
         public ExpressionNode Inner { get; set; }
         public override List<Node> GetChildren()
         {
-            List<Node> children = new List<Node>() {Inner};
-            return children;
+            return new List<Node>() {Inner};
         }
     }
 }

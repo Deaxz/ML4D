@@ -1,24 +1,23 @@
 ﻿using System.Collections.Generic;
 
-namespace ML4D.Compiler
+namespace ML4D.Compiler.Nodes
 {
     public class VariableDCLNode : Node
     {
         public string Type { get; set; }
         public string ID { get; set; }
-        public ExpressionNode? Init { get; set; }
+        public ExpressionNode Init { get; set; }
 
-        public VariableDCLNode(string type, string id)
+        public VariableDCLNode(string type, string id, ExpressionNode init)
         {
             Type = type;
             ID = id;
+            Init = init;
         }
 
         public override List<Node> GetChildren()
         {
-            if (Init is not null)
-                return new List<Node>() {Init};
-            return new List<Node>();
+            return new List<Node>() {Init};
         }
     }
 
@@ -42,7 +41,6 @@ namespace ML4D.Compiler
                 children.Add(node);
             foreach (Node node in Body.lines)
                 children.Add(node);
-            
             return children;
         }
     }
@@ -51,7 +49,6 @@ namespace ML4D.Compiler
     {
         public string Type { get; set; }
         public string ID { get; set; }
-
         public FunctionArgumentNode(string type, string id)
         {
             Type = type;
@@ -59,8 +56,6 @@ namespace ML4D.Compiler
         }
 
         public override List<Node> GetChildren()
-        {
-            return new List<Node>();
-        }
+        { return new List<Node>(); }
     }
 }

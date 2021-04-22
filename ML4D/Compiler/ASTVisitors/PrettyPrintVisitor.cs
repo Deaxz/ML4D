@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ML4D.Compiler.Nodes;
 
 namespace ML4D.Compiler.ASTVisitors
 {
@@ -66,14 +67,9 @@ namespace ML4D.Compiler.ASTVisitors
             i -= 2;
         }
 
-        public override void Visit(BackwardNode node)
+        public override void Visit(BackwardNode node) // TODO slet
         {
             Console.WriteLine(node.ID + "<-");
-        }
-
-        public override void Visit(ReturnNode node) // TODO if you want to denote return statement
-        {
-            base.Visit(node);
         }
 
         public override void Visit(FunctionExprNode node)
@@ -86,7 +82,7 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(IDNode node)
         {
-            Console.WriteLine(node.Name);
+            Console.WriteLine(node.ID);
         }
 
         public override void Visit(DoubleNode node)
