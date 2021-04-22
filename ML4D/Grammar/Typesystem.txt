@@ -1,0 +1,152 @@
+
+Type system
+Operators:
+  or
+  and
+  == !=
+  < <= > >=
+  * /
+  + -
+  **
+  .grad
+  method_invocation
+  ()
+
+Types:
+  int
+  double
+  bool
+
+
+Bool operators (operands are of type bool):
+  or
+  and
+  == !=
+
+Value operators (operands are of either type int or type double)
+  == !=
+  < <= > >=
+  * /
+  + -
+  **
+
+Operands can only be mixed between int and double, and the resulting type will always be of type double.
+
+
+Boolean operators
+  The type of or operation:
+    E1 or E2 is type correct and of type Boolean
+    - if E1 and E2 are type correct and of type Boolean
+    
+  The type of and operation:
+    E1 and E2 is type correct and of type Boolean
+    - if E1 and E2 are type correct and of type Boolean
+
+  The type of not operation:
+    not E1 is type correct and of type Boolean
+    - if E1 are type correct and of type Boolean
+
+
+
+Equality operators:
+  The type of == operation:
+
+    E1 == E2 is type correct and of type Boolean
+    if E1 and E2 are type correct and of type Integer or Double
+
+  The type of != operation:
+    E1 != E2 is type correct and of type Boolean
+    if E1 and E2 are type correct and of type Integer or Double
+
+
+Relational operators:
+  The type of < operation:
+
+    E1 < E2 is type correct and of type Boolean
+    - if E1 and E2 are type correct and of type Integer or type Double
+
+  The type of > operation:
+
+    E1 > E2 is type correct and of type Boolean
+    if E1 and E2 are type correct and of type Integer or type Double
+
+  The type of <= operation:
+
+    E1 <= E2 is type correct and of type Boolean
+    if E1 and E2 are type correct and of type Integer or type Double
+
+  The type of >= operation:
+
+    E1 >= E2 is type correct and of type Boolean
+    if E1 and E2 are type correct and of type Integer or type Double
+
+
+Plinus operators:
+  The type of + operation:
+
+    E1 + E2 is type correct and of type Integer
+    if E1 and E2 are type correct and of type Integer
+
+    E1 + E2 is type correct and of type Double
+    if E1 and E2 are type correct and of type Integer or Double
+
+  The type of - operation:
+
+    E1 - E2 is type correct and of type Integer
+    if E1 and E2 are type correct and of type Integer
+
+    E1 - E2 is type correct and of type Double
+    if E1 and E2 are type correct and of type Integer or Double
+
+
+Muldiv operators:
+  The type of * operation:
+
+    E1 * E2 is type correct and of type Integer
+    if E1 and E2 are type correct and of type Integer
+
+    E1 * E2 is type correct and of type Double
+    if E1 and E2 are type correct and of type Integer or Double
+
+  The type of / operation:
+
+    E1 / E2 is type correct and of type Integer
+    if E1 and E2 are type correct and of type Integer
+
+    E1 / E2 is type correct and of type Double
+    if E1 and E2 are type correct and of type Integer or Double
+
+  The type of ** operation:
+
+    E1 ** E2 is type correct and of type Integer
+    if E1 and E2 are type correct and of type Integer
+
+    E1 ** E2 is type correct and of type Double
+    if E1 and E2 are type correct and of type Integer or Double
+
+
+Control structures:
+The type rule of WhileCommand:
+
+  while E do C1 is type correct
+  if E of type Boolean and C1 are type correct 
+
+
+
+
+
+
+The type rule of BackwardsCommand:
+
+  E<- is type correct and of type VOID
+  if E is type correct and of type Integer or Double
+
+
+The type rule of Functions:
+  
+  func f(x : ParamType) : ResultType ~ Expression
+  func f is type correct and of type ResultType
+  if x and E are type correct and of type ParamType and ResultType respectively
+
+ResultType ~ Expression
+ParamType -> ResultType
