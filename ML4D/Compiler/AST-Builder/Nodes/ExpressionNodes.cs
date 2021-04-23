@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ML4D.Compiler.Nodes
 {
@@ -53,18 +54,12 @@ namespace ML4D.Compiler.Nodes
         public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
         { return new List<Node>(); }
     }
-    
-    public class VoidNode : ExpressionNode
-    {
-        public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
-        { return new List<Node>(); }
-    }
-    
+
     // Function node - Used for both funcExpr and funcStmt
     public class FunctionExprNode : ExpressionNode 
     {
         public string ID { get; set; }
-        public List<ExpressionNode> Arguments = new List<ExpressionNode>();
+        public List<Node> Arguments = new List<Node>();
 
         public FunctionExprNode(string id)
         {
@@ -73,12 +68,7 @@ namespace ML4D.Compiler.Nodes
 
         public override List<Node> GetChildren() // Expects list of Node, but can't cast list. TODO consider changing list to nodes, and casting to Node in AST builder
         {
-            List<Node> nodes = new List<Node>();
-            foreach (ExpressionNode node in Arguments)
-            {
-                nodes.Add(node);
-            }
-            return nodes;
+            return Arguments;
         }
     }
     

@@ -38,7 +38,8 @@ namespace ML4D.Compiler
 					varDeclNode = new VariableDCLNode("bool", context.id.Text, (ExpressionNode) Visit(context.right));
 					break;
 				default:
-					throw new NotSupportedException($"The variable {context.id.Text}, was declared with an illegal type.");
+					throw new NotSupportedException(
+						$"The variable {context.id.Text}, was declared with an illegal type.");
 			}
 			return varDeclNode;
 		}
@@ -62,7 +63,8 @@ namespace ML4D.Compiler
 					functionDclNode = new FunctionDCLNode("void", context.id.Text);
 					break;
 				default:
-					throw new NotSupportedException();
+					throw new NotSupportedException(
+						"The function {context.id.Text}, was declared with an illegal type.");
 			}
 			
 			for (int i = 0; i < context._argid.Count; i++)
@@ -105,10 +107,10 @@ namespace ML4D.Compiler
 
 		public override Node VisitFuncStmt(ML4DParser.FuncStmtContext context)
 		{
-			FunctionExprNode functionExprNode = new FunctionExprNode(context.id.Text);
+			FunctionExprNode functionExprNode = new(context.id.Text);
 
 			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
-				functionExprNode.Arguments.Add((ExpressionNode) Visit(argument));
+				functionExprNode.Arguments.Add(Visit(argument));
 			
 			return functionExprNode;
 		}
@@ -166,7 +168,7 @@ namespace ML4D.Compiler
 			return node;
 		}
 
-		public override Node VisitInfixExpr(ML4DParser.InfixExprContext context)
+		public override Node VisitInfixValueExpr(ML4DParser.InfixValueExprContext context)
 		{
 			InfixExpressionNode node;
 			

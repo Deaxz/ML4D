@@ -78,14 +78,26 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(FunctionExprNode node)
         {
-            if (SymTable.Retrieve(node.ID) is null)
+            Symbol functionDCL = SymTable.Retrieve(node.ID);
+            
+            if (functionDCL is null)
                 throw new FunctionNotDeclaredException(node, 
                     $"The function \"{node.ID}\" cannot be called, as it is not declared");
 
             base.Visit(node);
+            
             // Umildbart håndteret af gcc.
+            node.Type = functionDCL.Type;
         }
-        
+
+        public override void Visit(ReturnNode node)
+        {
+            base.Visit(node);
+
+            if (node.Inner is not null)
+                node.Type = node.Inner.Type;
+        }
+
         // Expression
         public override void Visit(IDNode node)
         {
