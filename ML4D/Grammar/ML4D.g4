@@ -14,7 +14,7 @@ lines
 
 dcl
     :   type=types id=ID op='=' right=bool_expr                                                 # varDecl                        
-    |   type=types id=ID '(' (argtype+=types argid+=ID (',' types ID)*)? ')' '{' body=lines '}' # funcDecl
+    |   type=types id=ID '(' (argtype+=types argid+=ID (',' argtype+=types argid+=ID)*)? ')' '{' body=lines '}' # funcDecl
     ;    
 
 stmt
@@ -22,7 +22,7 @@ stmt
     |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'    # whileStmt
     |   id=ID op='<-'                                           # backwardStmt // TODO slet
     |   RETURN inner=bool_expr?                                 # returnStmt
-    |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcStmt
+    |   id=ID '(' (argexpr+=bool_expr (',' argexpr+=bool_expr)*)? ')'    # funcStmt
     ;
 
 bool_expr 
@@ -40,7 +40,7 @@ expr  // TODO introduce unary minus, can be done similarly to Math AST
     |   <assoc=right> left=expr op='**' right=expr              # infixExpr
     |   left=expr op=('*'|'/') right=expr                       # infixExpr
     |   left=expr op=('+'|'-') right=expr                       # infixExpr
-    |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcExpr  
+    |   id=ID '(' (argexpr+=bool_expr (',' argexpr+=bool_expr)*)? ')'   # funcExpr  
     |   value=(INUM|FNUM|BOOLVAL|ID)                            # typeExpr
     ;
         

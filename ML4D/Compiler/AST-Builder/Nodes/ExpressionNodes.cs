@@ -53,13 +53,7 @@ namespace ML4D.Compiler.Nodes
         public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
         { return new List<Node>(); }
     }
-    
-    public class VoidNode : ExpressionNode
-    {
-        public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
-        { return new List<Node>(); }
-    }
-    
+
     // Function node - Used for both funcExpr and funcStmt
     public class FunctionExprNode : ExpressionNode 
     {

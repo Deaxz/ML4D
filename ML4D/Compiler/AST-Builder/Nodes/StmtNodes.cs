@@ -55,6 +55,7 @@ namespace ML4D.Compiler.Nodes
     
     public class ReturnNode : Node
     {
+        public string Type { get; set; }
         public ExpressionNode? Inner { get; set; }
         public ReturnNode() {}
         public ReturnNode(ExpressionNode inner)

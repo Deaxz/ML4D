@@ -85,7 +85,15 @@ namespace ML4D.Compiler.ASTVisitors
             base.Visit(node);
             // Umildbart håndteret af gcc.
         }
-        
+
+        public override void Visit(ReturnNode node)
+        {
+            base.Visit(node);
+
+            if (node.Inner is not null)
+                node.Type = node.Inner.Type;
+        }
+
         // Expression
         public override void Visit(IDNode node)
         {
