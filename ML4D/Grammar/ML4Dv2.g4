@@ -1,16 +1,9 @@
 grammar ML4Dv2;
 
 lines
-   :   ((dcl | stmt) ';')+   // TODO forestiller mig comments bliver et | her
-  //:   (udensemi | (dcl | stmt) ';')+ // Fungere, men på både vores nuværende, og udensemi, så yeeter den resten af træet ved ";;" og ";" respectively.
+   :   ((dcl ';' | stmt))+   // TODO forestiller mig comments bliver et | her
    |   EOF
    ;
-
-//udensemi
-//    : WHILE '(' predicate=bool_expr ')' '{' body=lines '}'                                    # whileStmt
-//    | type=types id=ID '(' (argtype+=types argid+=ID (',' types ID)*)? ')' '{' body=lines '}'  # funcDecl
-//    | For loop
-//    ;
 
 dcl
     :   type=types id=ID op='=' right=bool_expr                                                 # varDecl
@@ -20,16 +13,17 @@ dcl
 
 stmt
     :   IF '(' bool_expr ')' '{' body=lines '}' (ELSE IF '(' bool_expr ')' '{' body=lines '}' )* (ELSE '{' body=lines '}')? # ifStmt
-    |   FOR '(' initialization=dcl ';' condition=bool_expr ';' finalExpression=assign_expr ')' '{' body=lines '}' # forStmt
+    |   FOR '(' initialization=dcl ';' condition=bool_expr ';' finalExpression=expression_stmt ')' '{' body=lines '}' # forStmt
     |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'    # whileStmt
-    |   id=ID op='<-'                                           # backwardStmt // TODO slet
     |   RETURN inner=bool_expr?                                 # returnStmt
     |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcStmt
-    |   assign_expr                                             # assignStmt
+    |   expression_stmt                                         # exprStmt
+    |   ID '.' 'backward' '(' '(' ')' '=' '>' '{' body=lines'}' ')' ';' #backwardStmt
     ;
-
-assign_expr
-    : id=ID op='=' right=bool_expr                            # assignExpr
+    
+expression_stmt
+    : bool_expr ';'                                             # exprSemi
+    | id=ID op='=' right=bool_expr  ';'                         # assignExpr
     ;
 
 bool_expr
@@ -41,7 +35,7 @@ bool_expr
     ;
 
 tensorInit
-    :   '{' ('{' expr (',' expr)*'}') (',' '{' expr (',' expr)*'}')* '}'
+    :   '{' ('[' expr (',' expr)*']') (',' '[' expr (',' expr)*']')* '}'
     ;
 
 expr  // TODO introduce unary minus, can be done similarly to Math AST
@@ -52,6 +46,7 @@ expr  // TODO introduce unary minus, can be done similarly to Math AST
     |   left=expr op=('*'|'/') right=expr                       # infixExpr
     |   left=expr op=('+'|'-') right=expr                       # infixExpr
     |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcExpr
+    |   id=ID '.' 'grad'                                        # gradExpr
     |   value=(INUM|FNUM|BOOLVAL|ID)                            # typeExpr
     ;
 
