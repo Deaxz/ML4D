@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ML4D.Compiler.Nodes
 {
@@ -35,13 +36,8 @@ namespace ML4D.Compiler.Nodes
         }
 
         public override List<Node> GetChildren()
-        {
-            List<Node> children = new List<Node>();
-            foreach (FunctionArgumentNode node in Arguments)
-                children.Add(node);
-            foreach (Node node in Body.lines)
-                children.Add(node);
-            return children;
+        { 
+            return Arguments.Concat(Body.lines).ToList();
         }
     }
     
