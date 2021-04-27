@@ -1,14 +1,14 @@
 grammar ML4Dv2;
 
 lines
-   :   ((dcl ';' | stmt))+   // TODO forestiller mig comments bliver et | her
+   :   ((dcl | stmt))+
    |   EOF
    ;
 
 dcl
-    :   type=types id=ID op='=' right=bool_expr                                                 # varDecl
-    |   type=types id=ID ('[' expr ']' '[' expr ']' ) op='=' right=tensorInit                   # tensorDecl
-    |   type=types id=ID '(' (argtype+=types argid+=ID (',' types ID)*)? ')' '{' body=lines '}' # funcDecl
+    :   type=types id=ID op='=' right=bool_expr ';'                                                 # varDecl
+    |   type=types id=ID ('[' expr ']' '[' expr ']' ) op='=' right=tensorInit ';'                   # tensorDecl
+    |   type=types id=ID '(' (argtype+=types argid+=ID (',' types ID)*)? ')' '{' body=lines '}'     # funcDecl
     ;
 
 stmt
@@ -38,9 +38,9 @@ tensorInit
     :   '{' ('[' expr (',' expr)*']') (',' '[' expr (',' expr)*']')* '}'
     ;
 
-expr  // TODO introduce unary minus, can be done similarly to Math AST
+expr
     :   '(' bool_expr ')'                                       # parensExpr
-//    |   op='-' left=expr                                        #unaryExpr // TODO unary minus
+    |   op='-' left=expr                                        # unaryExpr  // TODO unary minus (virker umiddelbart, men skal måske udskydes?) (Check træet for -1**-2**-3**-4, event unary minus under power)
     |   op='not' inner=bool_expr                                # unaryExpr  // TODO Man kan skrive "b = not not not not a;", men den kan ikke flyttes pga precendence, men tror heller ikke det er et problem.
     |   <assoc=right> left=expr op='**' right=expr              # infixExpr
     |   left=expr op=('*'|'/') right=expr                       # infixExpr
@@ -103,6 +103,10 @@ WS: [ \t\r\n]+ -> skip;
 
 // Values
 BOOLVAL: ('true'|'false');
-INUM: [-]?[0-9]+;
-FNUM: [-]?[0-9]+ [.][0-9]+;
+INUM: [0-9]+;
+FNUM: [0-9]+ [.][0-9]+;
 ID: [A-Za-z]([0-9_A-Za-z])*;
+
+// Comments
+BLOCKCOMMENT: '/*' .*? '*/' -> skip;
+LINECOMMENT: '//' ~[\r\n]* -> skip;
