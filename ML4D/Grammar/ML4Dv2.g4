@@ -13,12 +13,12 @@ dcl
 
 stmt
     :   IF '(' bool_expr ')' '{' body=lines '}' (ELSE IF '(' bool_expr ')' '{' body=lines '}' )* (ELSE '{' body=lines '}')? # ifStmt
-    |   FOR '(' initialization=dcl ';' condition=bool_expr ';' finalExpression=expression_stmt ')' '{' body=lines '}' # forStmt
-    |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'    # whileStmt
-    |   RETURN inner=bool_expr?                                 # returnStmt
-    |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcStmt
-    |   expression_stmt                                         # exprStmt
-    |   ID '.' 'backward' '(' '(' ')' '=' '>' '{' body=lines'}' ')' ';' #backwardStmt
+    |   FOR '(' initialization=dcl ';' condition=bool_expr ';' finalExpression=expression_stmt ')' '{' body=lines '}'       # forStmt
+    |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'                                                                # whileStmt
+    |   RETURN inner=bool_expr?                                                                                             # returnStmt
+    |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'                                                                # funcStmt
+    |   expression_stmt                                                                                                     # exprStmt
+    |   'backward' '(' ID ',' '{' body=lines'}' ')' ';'                                                                     # backwardStmt
     ;
     
 expression_stmt
