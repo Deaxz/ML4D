@@ -91,7 +91,7 @@ RETURN: 'return';
 WS: [ \t\r\n]+ -> skip;
 
 // Values
-BOOLVAL: ('true'|'false');
-INUM: [1-9][0-9]*; 
-FNUM: [1-9][0-9]*[.][0-9]+; 
+BOOLVAL: 'true'|'false';
+INUM: [0]          | [1-9][0-9]*; 
+FNUM: [0][.][0-9]+ | [1-9][0-9]*[.][0-9]+; 
 ID: [A-Za-z][0-9_A-Za-z]*;

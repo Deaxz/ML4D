@@ -46,9 +46,9 @@ namespace ML4D.Compiler
         {
             foreach (SymbolTable symTab in symbolTableStack)
             {
-                bool success = symTab.symbols.TryGetValue(ID, out Symbol value);
+                bool success = symTab.symbols.TryGetValue(ID, out Symbol symbol);
                 if (success)
-                    return value;
+                    return symbol;
             }
             return null;
         }
