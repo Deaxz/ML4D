@@ -22,8 +22,8 @@ stmt
     ;
     
 expression_stmt
-    : bool_expr ';'                                             # exprSemi
-    | id=ID op='=' right=bool_expr  ';'                         # assignExpr
+    : id=ID op='=' right=bool_expr  ';'                         # assignExpr
+    | bool_expr ';'                                             # exprSemi  
     ;
 
 bool_expr
