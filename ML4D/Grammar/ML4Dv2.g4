@@ -18,12 +18,12 @@ stmt
     |   RETURN inner=bool_expr?                                                                                             # returnStmt
     |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'                                                                # funcStmt
     |   'backward' '(' ID ',' '{' body=lines'}' ')' ';'                                                                     # backwardStmt
-    |   expression_stmt                                                                                                     # exprStmt
+    |   expression_stmt ';'                                                                                                 # exprStmt
     ;
     
 expression_stmt
-    : id=ID op='=' right=bool_expr  ';'                         # assignExpr
-    | bool_expr ';'                                             # exprSemi  
+    : id=ID op='=' right=bool_expr                              # assignExpr
+    | bool_expr                                                 # exprSemi  
     ;
 
 bool_expr
