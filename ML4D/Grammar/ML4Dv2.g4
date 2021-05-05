@@ -17,8 +17,8 @@ stmt
     |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'                                                                # whileStmt
     |   RETURN inner=bool_expr?                                                                                             # returnStmt
     |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'                                                                # funcStmt
-    |   expression_stmt                                                                                                     # exprStmt
     |   'backward' '(' ID ',' '{' body=lines'}' ')' ';'                                                                     # backwardStmt
+    |   expression_stmt                                                                                                     # exprStmt
     ;
     
 expression_stmt
