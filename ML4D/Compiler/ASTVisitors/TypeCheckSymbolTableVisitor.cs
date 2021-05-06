@@ -110,6 +110,8 @@ namespace ML4D.Compiler.ASTVisitors
         
         public override void Visit(InfixExpressionNode node)
         {
+            base.Visit(node);
+
             switch (node)
             {
                 // Arithmetic
@@ -118,7 +120,6 @@ namespace ML4D.Compiler.ASTVisitors
                 case MultiplicationNode:
                 case DivisionNode:
                 case PowerNode:
-                    VisitChildren(node);
                     
                     if (node.Left.Type == "bool" || node.Right.Type == "bool")
                         throw new InvalidOperandsException(node, 
@@ -136,7 +137,6 @@ namespace ML4D.Compiler.ASTVisitors
                 case GreaterEqualThanNode:
                 case EqualNode:
                 case NotEqualNode:
-                    VisitChildren(node);
                     
                     if (node.Left.Type == "bool" || node.Right.Type == "bool")
                         throw new InvalidOperandsException(node,
@@ -148,7 +148,6 @@ namespace ML4D.Compiler.ASTVisitors
                 // Boolean
                 case AndNode:
                 case OrNode:
-                    VisitChildren(node);
                    
                     if (node.Left.Type != "bool" || node.Right.Type != "bool")
                         throw new InvalidOperandsException(node, 
@@ -156,6 +155,7 @@ namespace ML4D.Compiler.ASTVisitors
                     else
                         node.Type = "bool";
                     break;
+                
                 default:
                     throw new NotSupportedException();
             }

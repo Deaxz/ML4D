@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ML4D.Compiler.Nodes
 {
@@ -12,7 +11,7 @@ namespace ML4D.Compiler.Nodes
             ID = id;
         }
         
-        public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
+        public override List<Node> GetChildren()
         { return new List<Node>(); }
     }
     
@@ -25,7 +24,7 @@ namespace ML4D.Compiler.Nodes
             Type = "double";
         }
         
-        public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
+        public override List<Node> GetChildren()
         { return new List<Node>(); }
     }
     
@@ -38,7 +37,7 @@ namespace ML4D.Compiler.Nodes
             Type = "int";
         }
         
-        public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
+        public override List<Node> GetChildren()
         { return new List<Node>(); }
     }
     
@@ -51,7 +50,7 @@ namespace ML4D.Compiler.Nodes
             Type = "bool";
         }
         
-        public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
+        public override List<Node> GetChildren() 
         { return new List<Node>(); }
     }
 
@@ -66,7 +65,7 @@ namespace ML4D.Compiler.Nodes
             ID = id;
         }
 
-        public override List<Node> GetChildren() // Expects list of Node, but can't cast list. TODO consider changing list to nodes, and casting to Node in AST builder
+        public override List<Node> GetChildren() 
         {
             return Arguments;
         }
