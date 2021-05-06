@@ -64,7 +64,7 @@ namespace ML4D.Compiler
 					break;
 				default:
 					throw new NotSupportedException(
-						"The function {context.id.Text}, was declared with an illegal type.");
+						$"The function {context.id.Text}, was declared with an illegal type.");
 			}
 			
 			for (int i = 0; i < context._argid.Count; i++)
@@ -168,6 +168,13 @@ namespace ML4D.Compiler
 			return node;
 		}
 
+		public override Node VisitParensExpr(ML4DParser.ParensExprContext context)
+		{
+			ExpressionNode node = (ExpressionNode) Visit(context.inner);
+			node.Parenthesized = true;
+			return node;
+		}
+		
 		public override Node VisitInfixValueExpr(ML4DParser.InfixValueExprContext context)
 		{
 			InfixExpressionNode node;
@@ -246,13 +253,6 @@ namespace ML4D.Compiler
 					throw new NotSupportedException();
 			}
 			return node;
-		}
-
-		// Fixes error - "The call is ambiguous between the following methods or properties: 'ML4D.Compiler.ASTVisitor<string>.Visit(ML4D.Compiler.LessThanNode)' and 'ML4D.Compiler.ASTVisitor<string>.Visit(ML4D.Compiler.LessEqualThanNode)'"
-		// Not sure why tho, but keep it. TODO overvej at check hvorfor det er tilfældet.
-		public override Node VisitParensExpr(ML4DParser.ParensExprContext context)
-		{
-			return Visit(context.bool_expr());
 		}
 	}
 }

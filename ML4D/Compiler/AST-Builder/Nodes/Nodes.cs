@@ -4,7 +4,6 @@ namespace ML4D.Compiler.Nodes
 {
     public abstract class Node
     {
-        // get children return list of children
         public abstract List<Node> GetChildren();
     }
     
@@ -21,6 +20,7 @@ namespace ML4D.Compiler.Nodes
     // Base expression node
     public abstract class ExpressionNode : Node
     {
+        public bool Parenthesized { get; set; }
         public string Type { get; set; }
     }
     
