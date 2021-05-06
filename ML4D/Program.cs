@@ -81,8 +81,13 @@ namespace ML4D
                      var typesymbolVisitor = new TypeCheckSymbolTableVisitor(symbolTable);
                      typesymbolVisitor.Visit(ast);
                      symbolTable.Clear();
-                     
                      Console.WriteLine("^ Symbol Table and Type check done");
+
+                     // C:\Users\Dion\source\repos\p4\ML4D\bin\Debug\net5.0\file.c
+                     //Console.WriteLine(AppDomain.CurrentDomain.BaseDirectory + "file" + ".c");
+
+                     // CodeGeneration codeGen = new CodeGeneration("file.c");
+                     // codeGen.WriteToFile("file.c");
                  }
                  catch (NullReferenceException ex)
                  {
