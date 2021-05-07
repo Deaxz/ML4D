@@ -27,9 +27,11 @@ namespace ML4D.Compiler
         public virtual void Visit(WhileNode node) {VisitChildren(node);}
         public virtual void Visit(BackwardNode node) {} // TODO slet
         public virtual void Visit(ReturnNode node) {VisitChildren(node);}
-        public virtual void Visit(FunctionExprNode node) {VisitChildren(node);}
+        public virtual void Visit(FunctionStmtNode node) {VisitChildren(node);}
         
         //-----Expression-----
+        public virtual void Visit(FunctionExprNode node) {VisitChildren(node);}
+        
         // Value
         public virtual void Visit(IDNode node) {}
         public virtual void Visit(DoubleNode node) {}

@@ -33,13 +33,13 @@ namespace ML4D.Compiler.Exceptions
     
     public class FunctionNotDeclaredException : Exception
     {
-        public FunctionExprNode Node { get; }
+        public FunctionNode Node { get; }
 
         public FunctionNotDeclaredException() : base() {}
         public FunctionNotDeclaredException(string message) : base(message) {}
         public FunctionNotDeclaredException(string message, Exception inner) : base(message, inner) {}
 
-        public FunctionNotDeclaredException(FunctionExprNode node, string message) : base(message)
+        public FunctionNotDeclaredException(FunctionNode node, string message) : base(message)
         {
             Node = node;
         }

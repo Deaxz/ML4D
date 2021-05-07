@@ -22,13 +22,18 @@ namespace ML4D.Compiler.Nodes
     {
         public bool Parenthesized { get; set; }
         public string Type { get; set; }
+        public string Symbol { get; set; }
     }
     
     // Infix operator node
-    public class InfixExpressionNode : ExpressionNode
+    public abstract class InfixExpressionNode : ExpressionNode
     {
         public ExpressionNode Left { get; set; }
         public ExpressionNode Right { get; set; }
+        public InfixExpressionNode(string symbol)
+        {
+            Symbol = symbol;
+        }
         public override List<Node> GetChildren()
         {
             return new List<Node>() {Left, Right};
@@ -36,14 +41,32 @@ namespace ML4D.Compiler.Nodes
     }
     
     // Unary operator node
-    public class UnaryExpressionNode : ExpressionNode
+    public abstract class UnaryExpressionNode : ExpressionNode
     {
         public ExpressionNode Inner { get; set; }
+        public UnaryExpressionNode(string symbol)
+        {
+            Symbol = symbol;
+        }
         public override List<Node> GetChildren()
         {
             return new List<Node>() {Inner};
         }
     }
+    
+    // Base function node
+    public abstract class FunctionNode : ExpressionNode
+    {
+        public string ID { get; set; }
+        public List<Node> Arguments = new List<Node>();
+        public FunctionNode(string id)
+        {
+            ID = id;
+        }
+        
+        public override List<Node> GetChildren() 
+        {
+            return Arguments;
+        }
+    }
 }
-
-
