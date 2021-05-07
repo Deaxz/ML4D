@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using ML4D.Compiler.Nodes;
 
 namespace ML4D.Compiler.ASTVisitors
@@ -11,52 +7,76 @@ namespace ML4D.Compiler.ASTVisitors
     public class CodeGeneration : ASTVisitor
     {
         //private string FileName { get; set; }
-        private string ProgramText { get; set; }
+        private string MainFuncText = "int main() {\n";
+        private string FuncDCLs { get; set; }
+        private string FuncPrototypes { get; set; }
+        private bool InsideFunc { get; set; }
         
-        public CodeGeneration(string fileName)
+        public CodeGeneration()
         {
-            //FileName = fileName;
         }
 
+        private void SetupCFile()
+        {
+            MainFuncText += "#include <stdio.h>\n#include <math.h>\n\n";
+        }
+        
         public void WriteToFile(string fileName)
         {
-            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + fileName + ".c", ProgramText);
+            SetupCFile();
+            string programText = FuncPrototypes + MainFuncText;  
+            
+            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + fileName + ".c", programText);
         }
         
         // TODO test method, remember to remove.
         public void WriteToConsole(string fileName)
         {
-            Console.WriteLine(ProgramText);
+            Console.WriteLine(MainFuncText);
         }
         
         private void Emit(string text)
         {
-            ProgramText += text;
+            if (InsideFunc)
+                FuncDCLs += text;
+            MainFuncText += text;
         }
         
         // --- Declarations ---
         public override void Visit(VariableDCLNode node)
         {
-            ProgramText += node.Type + " " + node.ID;
+            Emit(node.Type + " " + node.ID);
             base.Visit(node);
             Emit(";\n");
         }
 
         public override void Visit(FunctionDCLNode node)
         {
+            InsideFunc = true;
+            FuncPrototypes += node.Type + node.ID + "(";
             Emit(node.Type + node.ID + "(");
+            
             foreach (FunctionArgumentNode argumentNode in node.Arguments)
             {
                 if (argumentNode != node.Arguments[^1])
+                {
+                    FuncPrototypes += argumentNode.Type + " " + argumentNode.ID + ", ";
                     Emit(argumentNode.Type + " " + argumentNode.ID + ", ");
-                else 
+                }
+                else
+                {
+                    FuncPrototypes += argumentNode.Type + " " + argumentNode.ID;
                     Emit(argumentNode.Type + " " + argumentNode.ID);
+                }
             }
+
+            FuncPrototypes += ");\n";
             Emit(") {\n");
+            
             Visit(node.Body);
             Emit("\n}\n");
+            InsideFunc = false;
         }
-
         
         // --- Statements ---
         public override void Visit(AssignNode node)
@@ -85,6 +105,19 @@ namespace ML4D.Compiler.ASTVisitors
             Emit(";\n");
         }
 
+        public override void Visit(FunctionStmtNode node)
+        {
+            Emit(node.ID + "(");
+            foreach (Node argumentNode in node.Arguments)
+            {
+                Visit(argumentNode);
+                
+                if (argumentNode != node.Arguments[^1])
+                    Emit(", ");
+            }
+            Emit(");\n");
+        }
+        
         public override void Visit(FunctionExprNode node)
         {
             Emit(node.ID + "(");
@@ -127,21 +160,50 @@ namespace ML4D.Compiler.ASTVisitors
         {
             if (node.Parenthesized)
                 Emit("(");
-            Visit(node.Left);
-            // TODO operator symbol, Emit(" " + node.Operator + " ");
-            Visit(node.Right);
+            PrintExpression(node);
             if (node.Parenthesized)
                 Emit(")");
         }
 
+        
+        
         public override void Visit(UnaryExpressionNode node)
         {
             if (node.Parenthesized)
                 Emit("(");
-            // TODO operator symbol, Emit(" " + node.Operator + " ");
-            Visit(node.Inner);
+            PrintExpression(node);
             if (node.Parenthesized)
                 Emit(")");
+        }
+        
+        private void PrintExpression(InfixExpressionNode node)
+        {
+            if (node is PowerNode)
+            {
+                Emit("pow(");
+                Visit(node.Left);
+                Emit(", ");
+                Visit(node.Right);
+                Emit(")");
+            }
+            else
+            {
+                Visit(node.Left);
+                if (node is AndNode || node is OrNode)
+                {
+                    string symbol = node is AndNode ? "&&" : "||";
+                    Emit(" " + symbol + " ");
+                } else
+                    Emit(" " + node.Symbol + " ");
+                Visit(node.Right);
+            }
+        }
+        
+        private void PrintExpression(UnaryExpressionNode node)
+        {
+            if (node is NotNode)
+                Emit("!");
+            Visit(node.Inner);
         }
     }
 }
