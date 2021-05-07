@@ -71,6 +71,14 @@ namespace ML4D.Compiler.ASTVisitors
         {
             Console.WriteLine(node.ID + "<-");
         }
+        
+        public override void Visit(FunctionStmtNode node)
+        {
+            Console.WriteLine(node.ID);
+            i += 2;
+            VisitChildren(node, Inden());
+            i -= 2;
+        }
 
         public override void Visit(FunctionExprNode node)
         {

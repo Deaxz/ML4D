@@ -44,4 +44,17 @@ namespace ML4D.Compiler.Exceptions
             Node = node;
         }           
     }
+
+    public class InvalidCallToVariable : Exception
+    {
+        public Node Node { get; }
+        public InvalidCallToVariable() : base() {}
+        public InvalidCallToVariable(string message) : base(message) {}
+        public InvalidCallToVariable(string message, Exception inner) : base(message, inner) {}
+        
+        public InvalidCallToVariable(Node node, string message) : base(message)
+        {
+            Node = node;
+        }   
+    }
 }
