@@ -1,51 +1,47 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using ML4D.Compiler.Nodes;
 
 namespace ML4D.Compiler.ASTVisitors
 {
     public class CodeGeneration : ASTVisitor
     {
-        //private string FileName { get; set; }
-        private string MainFuncText = "int main() {\n";
-        private string FuncDCLs { get; set; }
-        private string FuncPrototypes { get; set; }
+        private StringBuilder _FuncPrototypes = new StringBuilder();
+        private StringBuilder _MainText = new StringBuilder();
+        private StringBuilder _FuncDCLs = new StringBuilder();
+        
         private bool InsideFunc { get; set; }
-        
-        public CodeGeneration()
-        {
-        }
 
-        private void SetupCFile()
-        {
-            MainFuncText += "#include <stdio.h>\n#include <math.h>\n\n";
-        }
-        
         public void WriteToFile(string fileName)
         {
-            SetupCFile();
-            string programText = FuncPrototypes + MainFuncText;  
+            string CIncludes = "#include <stdio.h>\n#include <math.h>\n\n";
+            string CMainFunction = "int main() {\n";
             
+            string programText = CIncludes + _FuncPrototypes + CMainFunction + _MainText + "}\n\n" + _FuncDCLs;
+
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + fileName + ".c", programText);
         }
         
         // TODO test method, remember to remove.
         public void WriteToConsole(string fileName)
         {
-            Console.WriteLine(MainFuncText);
+            string programText = "" + _FuncPrototypes + _MainText + _FuncDCLs;
+            Console.WriteLine(programText);
         }
         
         private void Emit(string text)
         {
             if (InsideFunc)
-                FuncDCLs += text;
-            MainFuncText += text;
+                _FuncDCLs.Append(text);
+            else
+                _MainText.Append(text);
         }
         
         // --- Declarations ---
         public override void Visit(VariableDCLNode node)
         {
-            Emit(node.Type + " " + node.ID);
+            Emit(node.Type + " " + node.ID + " = ");
             base.Visit(node);
             Emit(";\n");
         }
@@ -53,24 +49,25 @@ namespace ML4D.Compiler.ASTVisitors
         public override void Visit(FunctionDCLNode node)
         {
             InsideFunc = true;
-            FuncPrototypes += node.Type + node.ID + "(";
-            Emit(node.Type + node.ID + "(");
+            
+            _FuncPrototypes.Append(node.Type + " " + node.ID + "(");
+            Emit(node.Type + " " + node.ID + "(");
             
             foreach (FunctionArgumentNode argumentNode in node.Arguments)
             {
                 if (argumentNode != node.Arguments[^1])
                 {
-                    FuncPrototypes += argumentNode.Type + " " + argumentNode.ID + ", ";
+                    _FuncPrototypes.Append(argumentNode.Type + " " + argumentNode.ID + ", ");
                     Emit(argumentNode.Type + " " + argumentNode.ID + ", ");
                 }
                 else
                 {
-                    FuncPrototypes += argumentNode.Type + " " + argumentNode.ID;
+                    _FuncPrototypes.Append(argumentNode.Type + " " + argumentNode.ID);
                     Emit(argumentNode.Type + " " + argumentNode.ID);
                 }
             }
 
-            FuncPrototypes += ");\n";
+            _FuncPrototypes.Append(");\n");
             Emit(") {\n");
             
             Visit(node.Body);
