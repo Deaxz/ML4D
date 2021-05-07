@@ -17,7 +17,7 @@ stmt
     |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'                                                                # whileStmt
     |   RETURN inner=bool_expr?                                                                                             # returnStmt
     |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'                                                                # funcStmt
-    |   'backward' '(' ID ',' '{' body=lines'}' ')' ';'                                                                     # backwardStmt
+    |   GRADIENTS '(' ID ',' '(' ID '<<' ID (',' ID '<<' ID) ')' ',' '{' lines '}' ')' ';'                                  # gradientsStmt
     |   expression_stmt ';'                                                                                                 # exprStmt
     ;
     
@@ -46,7 +46,6 @@ expr
     |   left=expr op=('*'|'/') right=expr                       # infixExpr
     |   left=expr op=('+'|'-') right=expr                       # infixExpr
     |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcExpr
-    |   id=ID '.' 'grad'                                        # gradExpr
     |   value=(INUM|FNUM|BOOLVAL|ID)                            # typeExpr
     ;
 
@@ -80,7 +79,6 @@ GETHAN: '>=';
 LETHAN: '<=';
 AND: 'and';
 OR: 'or';
-BACKWARDS: '<-';
 ASSIGN: '=';
 
 // Delimiters
@@ -99,6 +97,7 @@ ELSE: 'else';
 WHILE: 'while';
 FOR: 'for';
 RETURN: 'return';
+GRADIENTS: 'gradients';
 WS: [ \t\r\n]+ -> skip;
 
 // Values
