@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using ML4D.Compiler.Exceptions;
+﻿using System.Collections.Generic;
+using ML4D.Compiler.Nodes;
 
 namespace ML4D.Compiler
 {
     public class SymbolTable
     {
         private static Stack<SymbolTable> symbolTableStack = new Stack<SymbolTable>();
-        
-        protected SymbolTable? Parent { get; set; }
-        protected List<SymbolTable> children = new List<SymbolTable>(); // TODO overvej om vi skal beholde children og parent, bliver ikke brugt til noget. Men tænker Code generation maybe
-        protected Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
+
+        private SymbolTable? Parent { get; set; }
+        private List<SymbolTable> children = new List<SymbolTable>(); // TODO overvej om vi skal beholde children og parent, bliver ikke brugt til noget. Men tænker Code generation maybe
+        private Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
 
         // Init constructor
         public SymbolTable()
@@ -37,9 +35,9 @@ namespace ML4D.Compiler
             symbolTableStack.Pop();
         }
 
-        public void Insert(string ID, string type)
+        public void Insert(string ID, string type, bool isFunction)
         {
-            symbolTableStack.Peek().symbols.Add(ID, new Symbol(ID, type));            
+            symbolTableStack.Peek().symbols.Add(ID, new Symbol(ID, type, isFunction));            
         }
 
         public Symbol Retrieve(string ID)
@@ -63,11 +61,13 @@ namespace ML4D.Compiler
     {
         public string Name { get; set; }
         public string Type { get; set; }
-        
-        public Symbol(string name, string type)
+        public bool isFunction { get; set; }
+
+        public Symbol(string name, string type, bool isfunction)
         {
             Name = name;
             Type = type;
+            isFunction = isfunction;
         }
     }
 }
