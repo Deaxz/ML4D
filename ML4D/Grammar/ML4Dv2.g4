@@ -15,7 +15,7 @@ stmt
     :   IF '(' bool_expr ')' '{' body=lines '}' (ELSE IF '(' bool_expr ')' '{' body=lines '}' )* (ELSE '{' body=lines '}')? # ifStmt
     |   FOR '(' initialization=dcl ';' condition=bool_expr ';' finalExpression=expression_stmt ')' '{' body=lines '}'       # forStmt
     |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'                                                                # whileStmt
-    |   RETURN inner=bool_expr?                                                                                             # returnStmt
+    |   RETURN inner=bool_expr? ';'                                                                                         # returnStmt
     |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'                                                                # funcStmt
     |   GRADIENTS '(' ID ',' '(' ID '<<' ID (',' ID '<<' ID) ')' ',' '{' lines '}' ')' ';'                                  # gradientsStmt
     |   expression_stmt ';'                                                                                                 # exprStmt
