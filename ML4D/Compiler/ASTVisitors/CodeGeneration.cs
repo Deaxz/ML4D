@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using ML4D.Compiler.Nodes;
@@ -15,8 +16,8 @@ namespace ML4D.Compiler.ASTVisitors
 
         public void WriteToFile(string fileName)
         {
-            string CIncludes = "#include <stdio.h>\n#include <math.h>\n\n";
-            string CMainFunction = "int main() {\n";
+            string CIncludes = "#include <stdio.h>\n#include <stdbool.h>\n#include <math.h>\n\n";
+            string CMainFunction = "\nint main() {\n";
             
             string programText = CIncludes + _FuncPrototypes + CMainFunction + _MainText + "}\n\n" + _FuncDCLs;
 
@@ -49,7 +50,6 @@ namespace ML4D.Compiler.ASTVisitors
         public override void Visit(FunctionDCLNode node)
         {
             InsideFunc = true;
-            
             _FuncPrototypes.Append(node.Type + " " + node.ID + "(");
             Emit(node.Type + " " + node.ID + "(");
             
@@ -85,7 +85,7 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(WhileNode node)
         {
-            Emit("while (");
+            Emit("\nwhile (");
             Visit(node.Predicate);
             Emit(") {\n");
             Visit(node.Body);
@@ -99,7 +99,7 @@ namespace ML4D.Compiler.ASTVisitors
             
             Emit("return ");
             Visit(node.Inner);
-            Emit(";\n");
+            Emit(";");
         }
 
         public override void Visit(FunctionStmtNode node)
@@ -126,7 +126,6 @@ namespace ML4D.Compiler.ASTVisitors
                     Emit(", ");
             }
             Emit(")");
-            // TODO ret stort problem, ved ikke om ";" eller no. Pga. funcStmt og funcExpr er same
         }
 
         
@@ -138,17 +137,17 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(DoubleNode node)
         {
-            Emit(node.Value + "");
+            Emit(node.Value.ToString(CultureInfo.InvariantCulture));
         }
 
         public override void Visit(IntNode node)
         {
-            Emit(node.Value + "");
+            Emit(node.Value.ToString());
         }
 
         public override void Visit(BoolNode node)
         {
-            Emit(node.Value ? "1" : "0");
+            Emit(node.Value.ToString().ToLower());
         }
 
 
