@@ -90,6 +90,10 @@ namespace ML4D.Compiler.ASTVisitors
             if (functionDCL is null)
                 throw new FunctionNotDeclaredException(node, 
                     $"The function \"{node.ID}\" cannot be called, as it is not declared");
+            if (!functionDCL.IsFunction) // Not a function
+                throw new InvalidCallToVariable(node, 
+                    $"The identifier \"{node.ID}\" refers to a variable, not a function");
+            
             base.Visit(node);
         }
 
@@ -100,7 +104,7 @@ namespace ML4D.Compiler.ASTVisitors
             if (functionDCL is null)
                 throw new FunctionNotDeclaredException(node, 
                     $"The function \"{node.ID}\" cannot be called, as it is not declared");
-            if (!functionDCL.isFunction) // Not a function
+            if (!functionDCL.IsFunction) // Not a function
                 throw new InvalidCallToVariable(node, 
                     $"The identifier \"{node.ID}\" refers to a variable, not a function");
             

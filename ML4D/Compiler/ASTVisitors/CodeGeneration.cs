@@ -11,40 +11,55 @@ namespace ML4D.Compiler.ASTVisitors
         private StringBuilder _FuncPrototypes = new StringBuilder();
         private StringBuilder _MainText = new StringBuilder();
         private StringBuilder _FuncDCLs = new StringBuilder();
+        private StringBuilder _GlobalVariables = new StringBuilder();
+        private SymbolTable SymbolTable { get; set; }
         
         private bool InsideFunc { get; set; }
+        private bool GlobalScope { get; set; }
 
+        public CodeGeneration(SymbolTable symbolTable)
+        {
+            SymbolTable = symbolTable;
+        }
+        
         public void WriteToFile(string fileName)
         {
             string CIncludes = "#include <stdio.h>\n#include <stdbool.h>\n#include <math.h>\n\n";
             string CMainFunction = "\nint main() {\n";
             
-            string programText = CIncludes + _FuncPrototypes + CMainFunction + _MainText + "}\n\n" + _FuncDCLs;
+            string programText = CIncludes + _FuncPrototypes + _GlobalVariables + 
+                                 CMainFunction + _MainText + "return 1;\n}\n\n" + _FuncDCLs;
 
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + fileName + ".c", programText);
         }
         
-        // TODO test method, remember to remove.
-        public void WriteToConsole(string fileName)
-        {
-            string programText = "" + _FuncPrototypes + _MainText + _FuncDCLs;
-            Console.WriteLine(programText);
-        }
-        
         private void Emit(string text)
         {
-            if (InsideFunc)
+            if (GlobalScope)
+                _GlobalVariables.Append(text);
+            else if (InsideFunc)
                 _FuncDCLs.Append(text);
-            else
+            else 
                 _MainText.Append(text);
         }
         
         // --- Declarations ---
         public override void Visit(VariableDCLNode node)
         {
-            Emit(node.Type + " " + node.ID + " = ");
-            base.Visit(node);
-            Emit(";\n");
+            if (SymbolTable.Retrieve(node.ID) is null)
+            {
+                Emit(node.Type + " " + node.ID + " = ");
+                base.Visit(node);
+                Emit(";\n");
+            }
+            else
+            {
+                GlobalScope = true;
+                Emit("static " + node.Type + " " + node.ID + " = ");
+                base.Visit(node);
+                Emit(";\n");
+                GlobalScope = false;
+            }
         }
 
         public override void Visit(FunctionDCLNode node)
@@ -66,12 +81,11 @@ namespace ML4D.Compiler.ASTVisitors
                     Emit(argumentNode.Type + " " + argumentNode.ID);
                 }
             }
-
             _FuncPrototypes.Append(");\n");
             Emit(") {\n");
             
             Visit(node.Body);
-            Emit("\n}\n");
+            Emit("}\n");
             InsideFunc = false;
         }
         
@@ -85,24 +99,24 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(WhileNode node)
         {
-            Emit("\nwhile (");
+            Emit("while (");
             Visit(node.Predicate);
             Emit(") {\n");
             Visit(node.Body);
-            Emit("\n}\n");
+            Emit("}\n");
         }
 
         public override void Visit(ReturnNode node)
         {
             if (node.Inner is null)
-                Emit("return;");
+                Emit("return;\n");
             
             Emit("return ");
             Visit(node.Inner);
-            Emit(";");
+            Emit(";\n");
         }
 
-        public override void Visit(FunctionStmtNode node)
+        public override void Visit(FunctionStmtNode node) // TODO overvej at samle i FunctionNode, og så ?: til slutning.
         {
             Emit(node.ID + "(");
             foreach (Node argumentNode in node.Arguments)
@@ -128,7 +142,6 @@ namespace ML4D.Compiler.ASTVisitors
             Emit(")");
         }
 
-        
         // --- Values ---
         public override void Visit(IDNode node)
         {
@@ -161,8 +174,6 @@ namespace ML4D.Compiler.ASTVisitors
                 Emit(")");
         }
 
-        
-        
         public override void Visit(UnaryExpressionNode node)
         {
             if (node.Parenthesized)

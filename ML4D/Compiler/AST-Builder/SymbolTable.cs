@@ -61,13 +61,13 @@ namespace ML4D.Compiler
     {
         public string Name { get; set; }
         public string Type { get; set; }
-        public bool isFunction { get; set; }
+        public bool IsFunction { get; set; }
 
         public Symbol(string name, string type, bool isfunction)
         {
             Name = name;
             Type = type;
-            isFunction = isfunction;
+            IsFunction = isfunction;
         }
     }
 }
