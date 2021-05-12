@@ -116,7 +116,7 @@ namespace ML4D.Compiler.ASTVisitors
             Emit(";\n");
         }
 
-        public override void Visit(FunctionStmtNode node) // TODO overvej at samle i FunctionNode, og så ?: til slutning.
+        public override void Visit(FunctionNode node)
         {
             Emit(node.ID + "(");
             foreach (Node argumentNode in node.Arguments)
@@ -126,20 +126,7 @@ namespace ML4D.Compiler.ASTVisitors
                 if (argumentNode != node.Arguments[^1])
                     Emit(", ");
             }
-            Emit(");\n");
-        }
-        
-        public override void Visit(FunctionExprNode node)
-        {
-            Emit(node.ID + "(");
-            foreach (Node argumentNode in node.Arguments)
-            {
-                Visit(argumentNode);
-                
-                if (argumentNode != node.Arguments[^1])
-                    Emit(", ");
-            }
-            Emit(")");
+            Emit(node is FunctionStmtNode ? ");\n" : ")");
         }
 
         // --- Values ---

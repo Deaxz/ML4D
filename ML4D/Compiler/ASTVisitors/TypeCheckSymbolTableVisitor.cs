@@ -83,21 +83,7 @@ namespace ML4D.Compiler.ASTVisitors
                 node.Type = node.Inner.Type;
         }
 
-        public override void Visit(FunctionStmtNode node)
-        {
-            Symbol functionDCL = SymbolTable.Retrieve(node.ID);
-            
-            if (functionDCL is null)
-                throw new FunctionNotDeclaredException(node, 
-                    $"The function \"{node.ID}\" cannot be called, as it is not declared");
-            if (!functionDCL.IsFunction) // Not a function
-                throw new InvalidCallToVariable(node, 
-                    $"The identifier \"{node.ID}\" refers to a variable, not a function");
-            
-            base.Visit(node);
-        }
-
-        public override void Visit(FunctionExprNode node)
+        public override void Visit(FunctionNode node)
         {
             Symbol functionDCL = SymbolTable.Retrieve(node.ID);
             
@@ -111,7 +97,7 @@ namespace ML4D.Compiler.ASTVisitors
             base.Visit(node);
             node.Type = functionDCL.Type;
         }
-        
+
         // Expression
         public override void Visit(IDNode node)
         {
