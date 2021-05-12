@@ -12,8 +12,7 @@ namespace ML4D.Compiler.Nodes
             ID = id;
         }
         
-        public override List<Node> GetChildren()
-        { return new List<Node>(); }
+        public override List<Node> GetChildren() { return new List<Node>(); }
     }
     
     public class DoubleNode : ExpressionNode
@@ -25,8 +24,7 @@ namespace ML4D.Compiler.Nodes
             Type = "double";
         }
         
-        public override List<Node> GetChildren()
-        { return new List<Node>(); }
+        public override List<Node> GetChildren() { return new List<Node>(); }
     }
     
     public class IntNode : ExpressionNode
@@ -38,8 +36,7 @@ namespace ML4D.Compiler.Nodes
             Type = "int";
         }
         
-        public override List<Node> GetChildren()
-        { return new List<Node>(); }
+        public override List<Node> GetChildren() { return new List<Node>(); }
     }
     
     public class BoolNode : ExpressionNode
@@ -51,8 +48,7 @@ namespace ML4D.Compiler.Nodes
             Type = "bool";
         }
         
-        public override List<Node> GetChildren() 
-        { return new List<Node>(); }
+        public override List<Node> GetChildren() { return new List<Node>(); }
     }
 
     // Function node - Used for both funcExpr and funcStmt
@@ -112,7 +108,8 @@ namespace ML4D.Compiler.Nodes
     {
         public LessThanNode(string symbol) : base(symbol) {}
     }
-    public class LessEqualThanNode : InfixExpressionNode {
+    public class LessEqualThanNode : InfixExpressionNode 
+    {
         public LessEqualThanNode(string symbol) : base(symbol) {}
     }
     public class GreaterThanNode : InfixExpressionNode

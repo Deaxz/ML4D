@@ -38,7 +38,7 @@ namespace ML4D.Compiler.ASTVisitors
                 throw new FunctionAlreadyDeclaredException(node, 
                     $"The function \"{node.ID}\" has already been declared in the current or parent scope.");
             
-            SymbolTable.OpenScope();
+            SymbolTable.OpenScope("function");
             base.Visit(node);
             SymbolTable.CloseScope();
         }
@@ -70,7 +70,7 @@ namespace ML4D.Compiler.ASTVisitors
         
         public override void Visit(WhileNode node)
         {
-            SymbolTable.OpenScope();
+            SymbolTable.OpenScope("while");
             base.Visit(node);
             SymbolTable.CloseScope();
         }
@@ -78,7 +78,9 @@ namespace ML4D.Compiler.ASTVisitors
         public override void Visit(ReturnNode node)
         {
             base.Visit(node);
-
+            if (!SymbolTable.ScopeList().Contains("function"))
+                throw new ReturnOutsideFunctionException(node, 
+                    "Return was called outside function scope, which is not allowed");
             if (node.Inner is not null)
                 node.Type = node.Inner.Type;
         }
@@ -90,7 +92,7 @@ namespace ML4D.Compiler.ASTVisitors
             if (functionDCL is null)
                 throw new FunctionNotDeclaredException(node, 
                     $"The function \"{node.ID}\" cannot be called, as it is not declared");
-            if (!functionDCL.IsFunction) // Not a function
+            if (!functionDCL.IsFunction)
                 throw new InvalidCallToVariable(node, 
                     $"The identifier \"{node.ID}\" refers to a variable, not a function");
             
@@ -155,7 +157,6 @@ namespace ML4D.Compiler.ASTVisitors
                     else
                         node.Type = "bool";
                     break;
-                
                 default:
                     throw new NotSupportedException();
             }

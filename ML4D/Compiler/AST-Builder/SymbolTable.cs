@@ -1,33 +1,28 @@
 ﻿using System.Collections.Generic;
-using ML4D.Compiler.Nodes;
 
 namespace ML4D.Compiler
 {
     public class SymbolTable
     {
         private static Stack<SymbolTable> symbolTableStack = new Stack<SymbolTable>();
-
-        private SymbolTable? Parent { get; set; }
-        private List<SymbolTable> children = new List<SymbolTable>(); // TODO overvej om vi skal beholde children og parent, bliver ikke brugt til noget. Men tænker Code generation maybe
         private Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
+        private string _scopeName { get; set; }
 
         // Init constructor
         public SymbolTable()
         {
-            Parent = null;
+            _scopeName = "global";
             symbolTableStack.Push(this);
         }
         
-        public SymbolTable(SymbolTable parent)
+        public SymbolTable(string scopeName)
         {
-            Parent = parent;
+            _scopeName = scopeName;
         }
 
-        public void OpenScope()
+        public void OpenScope(string scopeName)
         {
-            SymbolTable child = new SymbolTable(symbolTableStack.Peek());
-            symbolTableStack.Peek().children.Add(child);
-            symbolTableStack.Push(child);
+            symbolTableStack.Push(new SymbolTable(scopeName));
         }
         
         public void CloseScope()
@@ -51,6 +46,14 @@ namespace ML4D.Compiler
             return null;
         }
 
+        public List<string> ScopeList()
+        {
+            List<string> scopes = new List<string>();
+            foreach (SymbolTable symTab in symbolTableStack)
+                scopes.Add(symTab._scopeName);
+            return scopes;
+        }
+        
         public void Clear()
         {
             symbolTableStack.Clear();

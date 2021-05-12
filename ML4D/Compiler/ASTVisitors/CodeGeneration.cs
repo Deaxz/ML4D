@@ -13,7 +13,6 @@ namespace ML4D.Compiler.ASTVisitors
         private StringBuilder _FuncDCLs = new StringBuilder();
         private StringBuilder _GlobalVariables = new StringBuilder();
         private SymbolTable SymbolTable { get; set; }
-        
         private bool InsideFunc { get; set; }
         private bool GlobalScope { get; set; }
 
