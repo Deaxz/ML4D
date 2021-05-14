@@ -14,10 +14,12 @@ namespace ML4D
             // Automatic test - TODO flere strings så vi presser sproget og finder flere bugs.
             // List<string> examples = new List<string>()
             // {
+
             //     //"double a = 2.0; double b = (a + 10) * 2**3;",
             //     //"int b = 0; bool a = 10 < 11 and 12 == 13 or 14 != 15 and 16 > b;", "bool b = 10 == 10;",
             //     "double a = 1.0; double b = 2.0; double f(int x) { return a * x + b; }; int x0 = 0; int x1 = 1; int x2 = 2; int x3 = 3; int x4 = 4; int y0 = 0; int y1 = 1; int y2 = 2; int y3 = 3; int y4 = 4; double step_size = 0.1; int i = 0; while (i < 100) { double y_hat0 = (f(x0) - y0)**2; double y_hat1 = (f(x1) - y1)**2; double y_hat2 = (f(x2) - y2)**2; double y_hat3 = (f(x3) - y3)**2; double y_hat4 = (f(x4) - y4)**2; double loss = (y_hat0 + y_hat1 + y_hat2 + y_hat3 + y_hat4)/5; a = a - (a * step_size); b = b - (b * step_size); i = i + 1; };",
             //     //"int i = 0; double d = i + 2.2;", "double d = 2+2;", "void f(int x) { return; };"
+
             // };
             //
             // foreach (string s in examples)
