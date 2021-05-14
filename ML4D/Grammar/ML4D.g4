@@ -13,16 +13,16 @@ lines
 //    ;
 
 dcl
-    :   type=types id=ID op='=' right=bool_expr                                                 # varDecl                        
-    |   type=types id=ID '(' (argtype+=types argid+=ID (',' types ID)*)? ')' '{' body=lines '}' # funcDecl
+    :   type=types id=ID op='=' right=bool_expr                                                                  # varDecl                        
+    |   type=types id=ID '(' (argtype+=types argid+=ID (',' argtype+=types argid+=ID)*)? ')' '{' body=lines '}'  # funcDecl
     ;    
 
 stmt
-    :   id=ID op='=' right=bool_expr                            # assignStmt
-    |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'    # whileStmt
-    |   id=ID op='<-'                                           # backwardStmt // TODO slet
-    |   RETURN inner=bool_expr?                                 # returnStmt
-    |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcStmt
+    :   id=ID op='=' right=bool_expr                                     # assignStmt
+    |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'             # whileStmt
+    |   id=ID op='<-'                                                    # backwardStmt // TODO slet
+    |   RETURN inner=bool_expr?                                          # returnStmt
+    |   id=ID '(' (argexpr+=bool_expr (',' argexpr+=bool_expr)*)? ')'    # funcStmt
     ;
 
 bool_expr 
@@ -34,14 +34,14 @@ bool_expr
     ;
     
 expr  // TODO introduce unary minus, can be done similarly to Math AST
-    :   '(' bool_expr ')'                                       # parensExpr 
-//    |   op='-' left=expr                                        #unaryExpr // TODO unary minus
-    |   op='not' inner=bool_expr                                # unaryExpr  // TODO Man kan skrive "b = not not not not a;", men den kan ikke flyttes pga precendence, men tror heller ikke det er et problem.
-    |   <assoc=right> left=expr op='**' right=expr              # infixExpr
-    |   left=expr op=('*'|'/') right=expr                       # infixExpr
-    |   left=expr op=('+'|'-') right=expr                       # infixExpr
-    |   id=ID '(' (argexpr+=bool_expr (',' bool_expr)*)? ')'    # funcExpr  
-    |   value=(INUM|FNUM|BOOLVAL|ID)                            # typeExpr
+    :   '(' inner=bool_expr ')'                                         # parensExpr 
+//    |   op='-' left=expr                                                # unaryExpr // TODO unary minus
+    |   op='not' inner=bool_expr                                        # unaryExpr  // TODO Man kan skrive "b = not not not not a;", men den kan ikke flyttes pga precendence, men tror heller ikke det er et problem.
+    |   <assoc=right> left=expr op='**' right=expr                      # infixValueExpr
+    |   left=expr op=('*'|'/') right=expr                               # infixValueExpr
+    |   left=expr op=('+'|'-') right=expr                               # infixValueExpr
+    |   id=ID '(' (argexpr+=bool_expr (',' argexpr+=bool_expr)*)? ')'   # funcExpr  
+    |   value=(INUM|FNUM|BOOLVAL|ID)                                    # typeExpr
     ;
         
 types
@@ -91,7 +91,7 @@ RETURN: 'return';
 WS: [ \t\r\n]+ -> skip;
 
 // Values
-BOOLVAL: ('true'|'false');
-INUM: [-]?[0-9]+; 
-FNUM: [-]?[0-9]+ [.][0-9]+; 
-ID: [A-Za-z]([0-9_A-Za-z])*;
+BOOLVAL: 'true'|'false';
+INUM: [0]          | [1-9][0-9]*; 
+FNUM: [0][.][0-9]+ | [1-9][0-9]*[.][0-9]+; 
+ID: [A-Za-z][0-9_A-Za-z]*;

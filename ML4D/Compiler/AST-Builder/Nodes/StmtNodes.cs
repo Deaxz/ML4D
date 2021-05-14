@@ -40,6 +40,11 @@ namespace ML4D.Compiler.Nodes
             return children;
         }
     }
+
+    public class FunctionStmtNode : FunctionNode
+    {
+        public FunctionStmtNode(string id) : base(id) {}
+    }
     
     public class BackwardNode : Node // TODO slet
     {
@@ -55,6 +60,7 @@ namespace ML4D.Compiler.Nodes
     
     public class ReturnNode : Node
     {
+        public string Type { get; set; }
         public ExpressionNode? Inner { get; set; }
         public ReturnNode() {}
         public ReturnNode(ExpressionNode inner)

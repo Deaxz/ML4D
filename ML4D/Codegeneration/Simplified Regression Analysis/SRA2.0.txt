@@ -1,0 +1,61 @@
+﻿tensor a[1][1] = { [-1.0] };
+tensor b[1][1] = { [2.0] };
+
+bool c = true;
+bool d = not c;
+
+tensor f(int x) {
+  return a * x + b;
+}
+
+int x0 = 0;
+int x1 = 1;
+int x2 = 2;
+int x3 = 3;
+int x4 = 4;
+
+int y0 = 0;
+int y1 = 1;
+int y2 = 2;
+int y3 = 3;
+int y4 = 4;
+
+double step_size = 0.1;
+
+int i = 0;
+while (i < 100) {
+
+  tensor y_hat0 = (f(x0) - y0)**2;
+  tensor y_hat1 = (f(x1) - y1)**2;
+  tensor y_hat2 = (f(x2) - y2)**2;
+  tensor y_hat3 = (f(x3) - y3)**2;
+  tensor y_hat4 = (f(x4) - y4)**2;
+
+  tensor loss = (y_hat0 + y_hat1 + y_hat2 + y_hat3 + y_hat4)/5;
+  
+  loss.backward(()=>{
+    a = a - (a.grad * step_size);
+    b = b - (b.grad * step_size);
+
+    //frees the entire computation graph of loss
+  });
+
+  i = i + 1;
+};
+
+
+  //gradient[1][1] = { [] };
+
+  //gradient.loss[1][1] = { [] }; 
+  //gradient.a[1][1] = { [] }; 
+  //gradient.b[1][1] = { [] }; 
+
+
+//  a -= a.grad * step_size
+//  b -= b.grad * step_size
+  
+//  grad(loss);
+//  grad.a
+//  grad.b
+  
+//  grad.reset

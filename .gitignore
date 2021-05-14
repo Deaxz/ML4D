@@ -48,3 +48,4 @@ ML4D/Compiler/gen/ML4DLexer.tokens
 ML4D/Compiler/gen/ML4DListener.cs
 ML4D/Compiler/gen/ML4DParser.cs
 ML4D/Compiler/gen/ML4DVisitor.cs
+ML4D/.idea/.idea.ML4D/.idea/misc.xml

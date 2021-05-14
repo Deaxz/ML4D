@@ -10,7 +10,6 @@ namespace ML4D.Compiler.Exceptions
         public VariableInitialisationException() : base() {}
         public VariableInitialisationException(string message) : base(message) {}
         public VariableInitialisationException(string message, Exception inner) : base(message, inner) {}
-
         public VariableInitialisationException(VariableDCLNode node, string message) : base(message)
         {
             Node = node;
@@ -24,7 +23,6 @@ namespace ML4D.Compiler.Exceptions
         public VariableAssignmentException() : base() {}
         public VariableAssignmentException(string message) : base(message) {}
         public VariableAssignmentException(string message, Exception inner) : base(message, inner) {}
-
         public VariableAssignmentException(AssignNode node, string message) : base(message)
         {
             Node = node;
@@ -38,10 +36,22 @@ namespace ML4D.Compiler.Exceptions
         public InvalidOperandsException() : base() {}
         public InvalidOperandsException(string message) : base(message) {}
         public InvalidOperandsException(string message, Exception inner) : base(message, inner) {}
-
         public InvalidOperandsException(ExpressionNode node, string message) : base(message)
         {
             Node = node;
         }           
+    }
+
+    public class InvalidCallToVariable : Exception
+    {
+        public Node Node { get; }
+        
+        public InvalidCallToVariable() : base() {}
+        public InvalidCallToVariable(string message) : base(message) {}
+        public InvalidCallToVariable(string message, Exception inner) : base(message, inner) {}
+        public InvalidCallToVariable(Node node, string message) : base(message)
+        {
+            Node = node;
+        }   
     }
 }

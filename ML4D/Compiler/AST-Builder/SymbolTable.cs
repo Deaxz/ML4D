@@ -1,35 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using ML4D.Compiler.Exceptions;
+﻿using System.Collections.Generic;
 
 namespace ML4D.Compiler
 {
     public class SymbolTable
     {
         private static Stack<SymbolTable> symbolTableStack = new Stack<SymbolTable>();
-        
-        protected SymbolTable? Parent { get; set; }
-        protected List<SymbolTable> children = new List<SymbolTable>(); // TODO overvej om vi skal beholde children og parent, bliver ikke brugt til noget. Men tænker Code generation maybe
-        protected Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
+        private Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
+        private string _scopeName { get; set; }
 
         // Init constructor
         public SymbolTable()
         {
-            Parent = null;
+            _scopeName = "global";
             symbolTableStack.Push(this);
         }
         
-        public SymbolTable(SymbolTable parent)
+        public SymbolTable(string scopeName)
         {
-            Parent = parent;
+            _scopeName = scopeName;
         }
 
-        public void OpenScope()
+        public void OpenScope(string scopeName)
         {
-            SymbolTable child = new SymbolTable(symbolTableStack.Peek());
-            symbolTableStack.Peek().children.Add(child);
-            symbolTableStack.Push(child);
+            symbolTableStack.Push(new SymbolTable(scopeName));
         }
         
         public void CloseScope()
@@ -37,22 +30,30 @@ namespace ML4D.Compiler
             symbolTableStack.Pop();
         }
 
-        public void Insert(string ID, string type)
+        public void Insert(string ID, string type, bool isFunction)
         {
-            symbolTableStack.Peek().symbols.Add(ID, new Symbol(ID, type));            
+            symbolTableStack.Peek().symbols.Add(ID, new Symbol(ID, type, isFunction));            
         }
 
         public Symbol Retrieve(string ID)
         {
             foreach (SymbolTable symTab in symbolTableStack)
             {
-                bool success = symTab.symbols.TryGetValue(ID, out Symbol value);
+                bool success = symTab.symbols.TryGetValue(ID, out Symbol symbol);
                 if (success)
-                    return value;
+                    return symbol;
             }
             return null;
         }
 
+        public List<string> ScopeList()
+        {
+            List<string> scopes = new List<string>();
+            foreach (SymbolTable symTab in symbolTableStack)
+                scopes.Add(symTab._scopeName);
+            return scopes;
+        }
+        
         public void Clear()
         {
             symbolTableStack.Clear();
@@ -63,11 +64,13 @@ namespace ML4D.Compiler
     {
         public string Name { get; set; }
         public string Type { get; set; }
-        
-        public Symbol(string name, string type)
+        public bool IsFunction { get; set; }
+
+        public Symbol(string name, string type, bool isfunction)
         {
             Name = name;
             Type = type;
+            IsFunction = isfunction;
         }
     }
 }

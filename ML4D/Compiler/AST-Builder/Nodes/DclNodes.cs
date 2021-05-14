@@ -1,17 +1,26 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ML4D.Compiler.Nodes
 {
-    public class VariableDCLNode : Node
+    public abstract class DCLNode : Node
     {
         public string Type { get; set; }
         public string ID { get; set; }
-        public ExpressionNode Init { get; set; }
 
-        public VariableDCLNode(string type, string id, ExpressionNode init)
+        protected DCLNode(string type, string id)
         {
             Type = type;
             ID = id;
+        }
+    }
+    
+    public class VariableDCLNode : DCLNode
+    {
+        public ExpressionNode Init { get; set; }
+
+        public VariableDCLNode(string type, string id, ExpressionNode init) : base(type, id)
+        {
             Init = init;
         }
 
@@ -21,41 +30,23 @@ namespace ML4D.Compiler.Nodes
         }
     }
 
-    public class FunctionDCLNode : Node
+    public class FunctionDCLNode : DCLNode
     {
-        public string Type { get; set; }
-        public string ID { get; set; }
         public List<FunctionArgumentNode> Arguments = new List<FunctionArgumentNode>();        
         public LinesNode Body { get; set; }
 
-        public FunctionDCLNode(string type, string id)
-        {
-            Type = type;
-            ID = id;
-        }
+        public FunctionDCLNode(string type, string id) : base(type, id) {}
 
         public override List<Node> GetChildren()
-        {
-            List<Node> children = new List<Node>();
-            foreach (FunctionArgumentNode node in Arguments)
-                children.Add(node);
-            foreach (Node node in Body.lines)
-                children.Add(node);
-            return children;
+        { 
+            return Arguments.Concat(Body.lines).ToList();
         }
     }
     
-    public class FunctionArgumentNode : Node
+    public class FunctionArgumentNode : DCLNode
     {
-        public string Type { get; set; }
-        public string ID { get; set; }
-        public FunctionArgumentNode(string type, string id)
-        {
-            Type = type;
-            ID = id;
-        }
+        public FunctionArgumentNode(string type, string id) : base(type, id) {}
 
-        public override List<Node> GetChildren()
-        { return new List<Node>(); }
+        public override List<Node> GetChildren() { return new List<Node>(); }
     }
 }
