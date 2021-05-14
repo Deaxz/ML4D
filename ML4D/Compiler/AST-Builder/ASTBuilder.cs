@@ -89,12 +89,6 @@ namespace ML4D.Compiler
 			return whileNode;
 		}
 
-		public override Node VisitBackwardStmt(ML4DParser.BackwardStmtContext context) // TODO slet
-		{
-			BackwardNode backwardNode = new BackwardNode(context.id.Text);
-			return backwardNode;
-		}
-
 		public override Node VisitReturnStmt(ML4DParser.ReturnStmtContext context)
 		{
 			ReturnNode returnNode;

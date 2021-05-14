@@ -46,18 +46,6 @@ namespace ML4D.Compiler.Nodes
         public FunctionStmtNode(string id) : base(id) {}
     }
     
-    public class BackwardNode : Node // TODO slet
-    {
-        public string ID { get; set; }
-        public BackwardNode(string id)
-        { 
-            ID = id;
-        }
-
-        public override List<Node> GetChildren() 
-        { return new List<Node>(); }
-    }
-    
     public class ReturnNode : Node
     {
         public string Type { get; set; }

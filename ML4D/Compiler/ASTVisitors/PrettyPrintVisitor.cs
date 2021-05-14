@@ -67,11 +67,6 @@ namespace ML4D.Compiler.ASTVisitors
             i -= 2;
         }
 
-        public override void Visit(BackwardNode node) // TODO slet
-        {
-            Console.WriteLine(node.ID + "<-");
-        }
-        
         public override void Visit(FunctionNode node)
         {
             Console.WriteLine(node.ID);
