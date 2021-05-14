@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace ML4D.Compiler.Nodes
 {
@@ -12,8 +12,7 @@ namespace ML4D.Compiler.Nodes
             ID = id;
         }
         
-        public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
-        { return new List<Node>(); }
+        public override List<Node> GetChildren() { return new List<Node>(); }
     }
     
     public class DoubleNode : ExpressionNode
@@ -25,8 +24,7 @@ namespace ML4D.Compiler.Nodes
             Type = "double";
         }
         
-        public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
-        { return new List<Node>(); }
+        public override List<Node> GetChildren() { return new List<Node>(); }
     }
     
     public class IntNode : ExpressionNode
@@ -38,8 +36,7 @@ namespace ML4D.Compiler.Nodes
             Type = "int";
         }
         
-        public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
-        { return new List<Node>(); }
+        public override List<Node> GetChildren() { return new List<Node>(); }
     }
     
     public class BoolNode : ExpressionNode
@@ -51,46 +48,76 @@ namespace ML4D.Compiler.Nodes
             Type = "bool";
         }
         
-        public override List<Node> GetChildren() // Necessary because of class organisation, don't know how to not have it.
-        { return new List<Node>(); }
+        public override List<Node> GetChildren() { return new List<Node>(); }
     }
 
     // Function node - Used for both funcExpr and funcStmt
-    public class FunctionExprNode : ExpressionNode 
+    public class FunctionExprNode : FunctionNode
     {
-        public string ID { get; set; }
-        public List<Node> Arguments = new List<Node>();
-
-        public FunctionExprNode(string id)
-        {
-            ID = id;
-        }
-
-        public override List<Node> GetChildren() // Expects list of Node, but can't cast list. TODO consider changing list to nodes, and casting to Node in AST builder
-        {
-            return Arguments;
-        }
+        public FunctionExprNode(string id) : base(id) {}
     }
     
     // Arithmetic nodes
-    public class AdditionNode : InfixExpressionNode {}
-    public class SubtractionNode : InfixExpressionNode {}
-    public class MultiplicationNode : InfixExpressionNode {}
-    public class DivisionNode : InfixExpressionNode {}
-    public class PowerNode : InfixExpressionNode {}
+    public class AdditionNode : InfixExpressionNode
+    {
+        public AdditionNode(string symbol) : base(symbol) {}
+    }
+    public class SubtractionNode : InfixExpressionNode
+    {
+        public SubtractionNode(string symbol) : base(symbol) {}
+    }
+    public class MultiplicationNode : InfixExpressionNode
+    {
+        public MultiplicationNode(string symbol) : base(symbol) {}
+    }
+    public class DivisionNode : InfixExpressionNode
+    {
+        public DivisionNode(string symbol) : base(symbol) {}
+    }
+    public class PowerNode : InfixExpressionNode
+    {
+        public PowerNode(string symbol) : base(symbol) {}
+    }
 
     // Boolean nodes
-    public class AndNode : InfixExpressionNode {}
-    public class OrNode : InfixExpressionNode {}
-    public class NotNode : UnaryExpressionNode {}
+    public class AndNode : InfixExpressionNode
+    {
+        public AndNode(string symbol) : base(symbol) {}
+    }
+    public class OrNode : InfixExpressionNode
+    {
+        public OrNode(string symbol) : base(symbol) {}
+    }
+    public class NotNode : UnaryExpressionNode
+    {
+        public NotNode(string symbol) : base(symbol) {}
+    }
     
     // Equality nodes
-    public class EqualNode : InfixExpressionNode {}
-    public class NotEqualNode : InfixExpressionNode {}
+    public class EqualNode : InfixExpressionNode
+    {
+        public EqualNode(string symbol) : base(symbol) {}
+    }
+    public class NotEqualNode : InfixExpressionNode
+    {
+        public NotEqualNode(string symbol) : base(symbol) {}
+    }
     
     // Relational nodes 
-    public class LessThanNode : InfixExpressionNode {}
-    public class LessEqualThanNode : InfixExpressionNode {}
-    public class GreaterThanNode : InfixExpressionNode {}
-    public class GreaterEqualThanNode : InfixExpressionNode {}
+    public class LessThanNode : InfixExpressionNode
+    {
+        public LessThanNode(string symbol) : base(symbol) {}
+    }
+    public class LessEqualThanNode : InfixExpressionNode 
+    {
+        public LessEqualThanNode(string symbol) : base(symbol) {}
+    }
+    public class GreaterThanNode : InfixExpressionNode
+    {
+        public GreaterThanNode(string symbol) : base(symbol) {}
+    }
+    public class GreaterEqualThanNode : InfixExpressionNode
+    {
+        public GreaterEqualThanNode(string symbol) : base(symbol) {}
+    }
 }

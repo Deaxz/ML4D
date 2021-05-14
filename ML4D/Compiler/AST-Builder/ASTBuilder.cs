@@ -15,7 +15,7 @@ namespace ML4D.Compiler
 			foreach (IParseTree child in context.children)
 			{
 				Node? node = Visit(child);
-				if (node is not null) // Necessary because ';' returns null. 
+				if (node is not null) 
 					linesNode.lines.Add(node);
 			}
 			return linesNode;
@@ -64,7 +64,7 @@ namespace ML4D.Compiler
 					break;
 				default:
 					throw new NotSupportedException(
-						"The function {context.id.Text}, was declared with an illegal type.");
+						$"The function {context.id.Text}, was declared with an illegal type.");
 			}
 			
 			for (int i = 0; i < context._argid.Count; i++)
@@ -107,12 +107,11 @@ namespace ML4D.Compiler
 
 		public override Node VisitFuncStmt(ML4DParser.FuncStmtContext context)
 		{
-			FunctionExprNode functionExprNode = new(context.id.Text);
-
-			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
-				functionExprNode.Arguments.Add(Visit(argument));
+			FunctionStmtNode functionStmtNode = new(context.id.Text);
 			
-			return functionExprNode;
+			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
+				functionStmtNode.Arguments.Add(Visit(argument));
+			return functionStmtNode;
 		}
 		
 		// Expressions
@@ -123,22 +122,22 @@ namespace ML4D.Compiler
 			switch (context.op.Type)
 			{
 				case ML4DLexer.LTHAN:
-					node = new LessThanNode();
+					node = new LessThanNode("<");
 					break;
 				case ML4DLexer.GTHAN:
-					node = new GreaterThanNode();
+					node = new GreaterThanNode(">");
 					break;
 				case ML4DLexer.LETHAN:
-					node = new LessEqualThanNode();
+					node = new LessEqualThanNode("<=");
 					break;
 				case ML4DLexer.GETHAN:
-					node = new GreaterEqualThanNode();
+					node = new GreaterEqualThanNode(">=");
 					break;
 				case ML4DLexer.EQUALS:
-					node = new EqualNode();
+					node = new EqualNode("==");
 					break;
 				case ML4DLexer.NOTEQUALS:
-					node = new NotEqualNode();
+					node = new NotEqualNode("!=");
 					break;
 				default:
 					throw new NotSupportedException();
@@ -155,10 +154,10 @@ namespace ML4D.Compiler
 			switch (context.op.Type)
 			{
 				case ML4DLexer.AND:
-					node = new AndNode();
+					node = new AndNode("and");
 					break;
 				case ML4DLexer.OR:
-					node = new OrNode();
+					node = new OrNode("or");
 					break;
 				default:
 					throw new NotSupportedException();
@@ -168,6 +167,13 @@ namespace ML4D.Compiler
 			return node;
 		}
 
+		public override Node VisitParensExpr(ML4DParser.ParensExprContext context)
+		{
+			ExpressionNode node = (ExpressionNode) Visit(context.inner);
+			node.Parenthesized = true;
+			return node;
+		}
+		
 		public override Node VisitInfixValueExpr(ML4DParser.InfixValueExprContext context)
 		{
 			InfixExpressionNode node;
@@ -175,19 +181,19 @@ namespace ML4D.Compiler
 			switch (context.op.Type)
 			{
 				case ML4DLexer.PLUS:
-					node = new AdditionNode();
+					node = new AdditionNode("+");
 					break;
 				case ML4DLexer.MINUS:
-					node = new SubtractionNode();
+					node = new SubtractionNode("-");
 					break;
 				case ML4DLexer.MUL:
-					node = new MultiplicationNode();
+					node = new MultiplicationNode("*");
 					break;
 				case ML4DLexer.DIV:
-					node = new DivisionNode();
+					node = new DivisionNode("/");
 					break;
 				case ML4DLexer.POW:
-					node = new PowerNode();
+					node = new PowerNode("**");
 					break;
 				default:
 					throw new NotSupportedException(); // TODO overvej i cleanup at slette alle notsupportedexceptions, da de er umulige at nå. Men måske er de fine ift. udvidelser
@@ -204,7 +210,7 @@ namespace ML4D.Compiler
 			switch (context.op.Type)
 			{
 				case ML4DLexer.NOT:
-					node = new NotNode();
+					node = new NotNode("not");
 					break;
 				default:
 					throw new NotSupportedException();
@@ -219,7 +225,6 @@ namespace ML4D.Compiler
 			
 			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
 				functionExprNode.Arguments.Add((ExpressionNode) Visit(argument));
-			
 			return functionExprNode;
 		}
 
@@ -246,13 +251,6 @@ namespace ML4D.Compiler
 					throw new NotSupportedException();
 			}
 			return node;
-		}
-
-		// Fixes error - "The call is ambiguous between the following methods or properties: 'ML4D.Compiler.ASTVisitor<string>.Visit(ML4D.Compiler.LessThanNode)' and 'ML4D.Compiler.ASTVisitor<string>.Visit(ML4D.Compiler.LessEqualThanNode)'"
-		// Not sure why tho, but keep it. TODO overvej at check hvorfor det er tilfældet.
-		public override Node VisitParensExpr(ML4DParser.ParensExprContext context)
-		{
-			return Visit(context.bool_expr());
 		}
 	}
 }

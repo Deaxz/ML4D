@@ -34,7 +34,7 @@ bool_expr
     ;
     
 expr  // TODO introduce unary minus, can be done similarly to Math AST
-    :   '(' bool_expr ')'                                               # parensExpr 
+    :   '(' inner=bool_expr ')'                                         # parensExpr 
 //    |   op='-' left=expr                                                # unaryExpr // TODO unary minus
     |   op='not' inner=bool_expr                                        # unaryExpr  // TODO Man kan skrive "b = not not not not a;", men den kan ikke flyttes pga precendence, men tror heller ikke det er et problem.
     |   <assoc=right> left=expr op='**' right=expr                      # infixValueExpr
