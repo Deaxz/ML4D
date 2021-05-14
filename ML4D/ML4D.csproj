@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Codegeneration\Micrograd-in-C" />
     <Folder Include="Compiler\gen" />
   </ItemGroup>
 
