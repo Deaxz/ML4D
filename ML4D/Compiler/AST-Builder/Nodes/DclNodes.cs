@@ -27,7 +27,7 @@ namespace ML4D.Compiler.Nodes
 
         public override List<Node> GetChildren()
         {
-            return new List<Node>() {Init};
+            return new List<Node>() { Init };
         }
     }
     

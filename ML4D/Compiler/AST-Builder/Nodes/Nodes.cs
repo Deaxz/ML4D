@@ -36,7 +36,7 @@ namespace ML4D.Compiler.Nodes
         }
         public override List<Node> GetChildren()
         {
-            return new List<Node>() {Left, Right};
+            return new List<Node>() { Left, Right };
         }
     }
     
@@ -50,7 +50,7 @@ namespace ML4D.Compiler.Nodes
         }
         public override List<Node> GetChildren()
         {
-            return new List<Node>() {Inner};
+            return new List<Node>() { Inner };
         }
     }
     

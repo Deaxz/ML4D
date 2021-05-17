@@ -17,7 +17,7 @@ namespace ML4D.Compiler.Nodes
 
         public override List<Node> GetChildren()
         {
-            return new List<Node>() {Right};
+            return new List<Node>() { Right };
         }
     }
     
@@ -57,13 +57,13 @@ namespace ML4D.Compiler.Nodes
         public override List<Node> GetChildren()
         {
             if (Inner is not null)
-                return new List<Node>() {Inner};
+                return new List<Node>() { Inner };
             return new List<Node>();
         }
     }
     
     // Nyt shit fra 2.0
-    public class IfElseNode : Node // TODO, make dis
+    public class IfElseNode : Node 
     {
         public List<IfNode> IfNodes = new List<IfNode>();
         public LinesNode? ElseBody = new LinesNode();
@@ -91,7 +91,7 @@ namespace ML4D.Compiler.Nodes
         }
     }
 
-    public class ForNode : Node // TODO, make dis
+    public class ForNode : Node 
     {
         public AssignNode Init { get; set; }
         public ExpressionNode Predicate { get; set; }
@@ -108,7 +108,7 @@ namespace ML4D.Compiler.Nodes
         }
     }
 
-    public class GradientsNode : Node // TODO, make dis
+    public class GradientsNode : Node 
     {
         public string tensorID { get; set; }
         public List<Node> GradVariables = new List<Node>(); // FunctionArgumentNode
