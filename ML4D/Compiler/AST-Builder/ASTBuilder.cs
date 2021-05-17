@@ -44,6 +44,16 @@ namespace ML4D.Compiler
 			return varDeclNode;
 		}
 
+		public override Node VisitTensorDecl(ML4DParser.TensorDeclContext context)
+		{
+			return base.VisitTensorDecl(context);
+		}
+
+		public override Node VisitTensor_init(ML4DParser.Tensor_initContext context)
+		{
+			return base.VisitTensor_init(context);
+		}
+
 		public override Node VisitFuncDecl(ML4DParser.FuncDeclContext context)
 		{
 			FunctionDCLNode functionDclNode;
@@ -76,10 +86,14 @@ namespace ML4D.Compiler
 		}
 
 		// Statements
-		public override Node VisitAssignStmt(ML4DParser.AssignStmtContext context)
+		public override Node VisitIfStmt(ML4DParser.IfStmtContext context)
 		{
-			AssignNode assignNode = new AssignNode(context.id.Text, (ExpressionNode) Visit(context.right));
-			return assignNode;
+			return base.VisitIfStmt(context);
+		}
+
+		public override Node VisitForStmt(ML4DParser.ForStmtContext context)
+		{
+			return base.VisitForStmt(context);
 		}
 
 		public override Node VisitWhileStmt(ML4DParser.WhileStmtContext context)
@@ -106,6 +120,21 @@ namespace ML4D.Compiler
 			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
 				functionStmtNode.Arguments.Add(Visit(argument));
 			return functionStmtNode;
+		}
+
+		public override Node VisitGradientsStmt(ML4DParser.GradientsStmtContext context)
+		{
+			return base.VisitGradientsStmt(context);
+		}
+
+		public override Node VisitAssignStmt(ML4DParser.AssignStmtContext context)
+		{
+			return Visit(context.assign_expr());
+		}
+
+		public override Node VisitAssign_expr(ML4DParser.Assign_exprContext context)
+		{
+			return new AssignNode(context.id.Text, (ExpressionNode) Visit(context.right));
 		}
 		
 		// Expressions
@@ -203,6 +232,9 @@ namespace ML4D.Compiler
 			
 			switch (context.op.Type)
 			{
+				case ML4DLexer.MINUS:
+					node = new UnaryMinusNode("-");
+					break;
 				case ML4DLexer.NOT:
 					node = new NotNode("not");
 					break;
