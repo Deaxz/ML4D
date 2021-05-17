@@ -63,7 +63,7 @@ namespace ML4D.Compiler.Nodes
     }
     
     // Nyt shit fra 2.0
-    public class IfElseNode : Node 
+    public class IfElseChainNode : Node 
     {
         public List<IfNode> IfNodes = new List<IfNode>();
         public LinesNode? ElseBody = new LinesNode();
