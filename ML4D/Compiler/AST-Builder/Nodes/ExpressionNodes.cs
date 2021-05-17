@@ -78,6 +78,10 @@ namespace ML4D.Compiler.Nodes
     {
         public PowerNode(string symbol) : base(symbol) {}
     }
+    public class UnaryMinusNode : UnaryExpressionNode
+    {
+        public UnaryMinusNode(string symbol) : base(symbol) {}
+    }
 
     // Boolean nodes
     public class AndNode : InfixExpressionNode

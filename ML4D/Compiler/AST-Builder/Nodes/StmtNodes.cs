@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ML4D.Compiler.Nodes
 {
@@ -33,11 +34,8 @@ namespace ML4D.Compiler.Nodes
 
         public override List<Node> GetChildren()
         {
-            List<Node> children = new List<Node>();
-            children.Add(Predicate);
-            foreach (Node node in Body.lines)
-                children.Add(node);
-            return children;
+            List<Node> children = new List<Node>() {Predicate};
+            return children.Concat(Body.lines).ToList();
         }
     }
 
