@@ -7,7 +7,7 @@ lines
 
 dcl
     :   type=types id=ID op='=' right=bool_expr ';'                                                              # varDecl
-    |   type=types id=ID '[' rows=INUM ']' '[' coloumns=INUM ']' op='=' right=tensor_init ';'                    # tensorDecl
+    |   type=types id=ID '[' rows=INUM ']' '[' coloumns=INUM ']' op='=' right=tensor_init ';'                    # tensorDecl // TODO overvej INUM -> ID, tjek det er INT ved typechecking
     |   type=types id=ID '(' (argtype+=types argid+=ID (',' argtype+=types argid+=ID)*)? ')' '{' body=lines '}'  # funcDecl
     ;
 

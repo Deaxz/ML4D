@@ -24,7 +24,6 @@ namespace ML4D.Compiler
         public virtual void Visit(TensorDCLNode node) {VisitChildren(node);}
         public virtual void Visit(TensorInit node) {}
         
-        
         //-----Statement-----
         public virtual void Visit(AssignNode node) {VisitChildren(node);}
         public virtual void Visit(WhileNode node) {VisitChildren(node);}

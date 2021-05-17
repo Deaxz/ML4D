@@ -51,7 +51,17 @@ namespace ML4D.Compiler.ASTVisitors
                 throw new VariableAlreadyDeclaredException(
                     $"The variable \"{node.ID}\" has already been declared. And would hide the variable in the parent scope if declared inside the function.");
         }
-        
+
+        public override void Visit(TensorDCLNode node)
+        {
+            base.Visit(node);
+        }
+
+        public override void Visit(TensorInit node)
+        {
+            base.Visit(node);
+        }
+
         // Statement      
         public override void Visit(AssignNode node)
         {
@@ -98,6 +108,21 @@ namespace ML4D.Compiler.ASTVisitors
             
             base.Visit(node);
             node.Type = functionDCL.Type;
+        }
+
+        public override void Visit(IfElseChainNode node)
+        {
+            base.Visit(node);
+        }
+
+        public override void Visit(ForNode node)
+        {
+            base.Visit(node);
+        }
+
+        public override void Visit(GradientsNode node)
+        {
+            base.Visit(node);
         }
 
         // Expression

@@ -25,10 +25,9 @@ namespace ML4D.Compiler.ASTVisitors
         {
             string CIncludes = "#include <stdio.h>\n#include <stdbool.h>\n#include <math.h>\n\n";
             string CMainFunction = "\nint main() {\n";
-            
             string programText = CIncludes + _FuncPrototypes + _GlobalVariables + 
                                  CMainFunction + _MainText + "return 1;\n}\n\n" + _FuncDCLs;
-
+            
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + fileName + ".c", programText);
         }
         
@@ -87,7 +86,12 @@ namespace ML4D.Compiler.ASTVisitors
             Emit("}\n");
             InsideFunc = false;
         }
-        
+
+        public override void Visit(TensorDCLNode node)
+        {
+            base.Visit(node);
+        }
+
         // --- Statements ---
         public override void Visit(AssignNode node)
         {
@@ -126,6 +130,21 @@ namespace ML4D.Compiler.ASTVisitors
                     Emit(", ");
             }
             Emit(node is FunctionStmtNode ? ");\n" : ")");
+        }
+
+        public override void Visit(IfElseChainNode node)
+        {
+            base.Visit(node);
+        }
+
+        public override void Visit(ForNode node)
+        {
+            base.Visit(node);
+        }
+
+        public override void Visit(GradientsNode node)
+        {
+            base.Visit(node);
         }
 
         // --- Values ---
