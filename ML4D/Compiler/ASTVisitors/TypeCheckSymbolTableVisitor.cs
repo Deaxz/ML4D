@@ -57,7 +57,7 @@ namespace ML4D.Compiler.ASTVisitors
             base.Visit(node);
         }
 
-        public override void Visit(TensorInit node)
+        public override void Visit(TensorInitNode node)
         {
             base.Visit(node);
         }

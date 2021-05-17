@@ -22,7 +22,7 @@ namespace ML4D.Compiler
         public virtual void Visit(FunctionDCLNode node) {VisitChildren(node);}
         public virtual void Visit(FunctionArgumentNode node) {VisitChildren(node);}
         public virtual void Visit(TensorDCLNode node) {VisitChildren(node);}
-        public virtual void Visit(TensorInit node) {}
+        public virtual void Visit(TensorInitNode node) {}
         
         //-----Statement-----
         public virtual void Visit(AssignNode node) {VisitChildren(node);}

@@ -33,11 +33,11 @@ namespace ML4D.Compiler.Nodes
     
     public class TensorDCLNode : DCLNode // TODO, make dis
     {
-        public TensorInit Init { get; set; }
+        public TensorInitNode Init { get; set; }
         public int Rows { get; set; }
         public int Columns { get; set; }
         
-        public TensorDCLNode(string type, string id, int rows, int columns, TensorInit init) : base(type, id)
+        public TensorDCLNode(string type, string id, int rows, int columns, TensorInitNode init) : base(type, id)
         {
             Rows = rows;
             Columns = columns;
@@ -55,7 +55,7 @@ namespace ML4D.Compiler.Nodes
         }
     }
 
-    public class TensorInit : Node
+    public class TensorInitNode : Node
     {
         public List<double> Elements = new List<double>();
         public override List<Node> GetChildren() { return new List<Node>(); }
