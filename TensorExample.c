@@ -328,47 +328,51 @@ Tensor newTensor(Value* rows[], Value* columns[], int rowLength, int columnLengt
 
 
 int main(){
-    // Value* first = newValue(10);
-    // Value* second = newValue(20);
-    // Value* third = mul(first, second);
-    // Value* forth = newValue(44);
-
-    // Value* result = mul(third, forth);
-    // //f()=((10*20)*44)^2
-    // //f'()=2*(10*20*44)=17600
-
-    // Value* final = power(result, newValue(2));
-    // //final= ax
-
-    // backward(final);
-    // printf("result data: %lf, grad: %lf\n", result->data, result->grad);
-    // printf("data: %lf, grad: %lf\n", final->data, final->grad);
-    // printf("first: data: %lf, grad: %lf\n", first->data, first->grad);
-
-    Value* r1 = newValue(0);
-    Value* r2 = newValue(1);
-    //Value* r3 = newValue(2);
-    //Value* r4 = newValue(3);
+    Value* t1r1c1 = newValue(1);
+    Value* t1r1c2 = newValue(2);
     
-    Value* c1 = newValue(20);
-    Value* c2 = newValue(21);
-    //Value* c3 = newValue(22);
-    //Value* c4 = newValue(23);
+    Value* t1r2c1 = newValue(2);
+    Value* t1r2c2 = newValue(3);
 
-    Value* p1 = mul(r1, c1);
-    Value* p2 = mul(r2, c2);
-    //Value* p3 = mul(r3, c3);
-    //Value* p4 = mul(r4, c4);
+    Value* t2r1c1 = newValue(20);
+    Value* t2r1c2 = newValue(21);
     
-    //Value* res = add(add(add(p1, p2), p3), p4);
-    Value* res = add(p1, p2);
+    Value* t2r2c1 = newValue(21);
+    Value* t2r2c2 = newValue(22);
+    //f(x)= x*20 + x*21 = 20 + 21
+    //f(x)= 1*20 + 2*20 = 1 + 2
 
-    backward(res);
-    printf("res data: %lf\n", res->data);
-    printf("res grad: %lf\n", res->grad);
+    //f(x)= 1*21
 
-    printf("r1 data: %lf\n", r1->data);
-    printf("r1 grad: %lf\n", r1->grad);
+    // t1
+    // [1, 2]
+    // [2, 3]
+
+    // t2
+    // [20, 21]
+    // [21, 22]
+
+    //t3
+    //[f(x), ..]
+    //[.., ..]
+
+    Value* t3r1c1 = add(mul(t1r1c1, t2r1c1), mul(t1r1c2, t2r2c1)); //1*20 + 2*21
+    Value* t3r1c2 = add(mul(t1r1c1, t2r1c2), mul(t1r1c2, t2r2c2)); //1*
+    Value* t3r2c1 = add(mul(t1r2c1, t2r1c1), mul(t1r2c2, t2r2c1));
+    Value* t3r2c2 = add(mul(t1r2c1, t2r1c2), mul(t1r2c2, t2r2c2));
+    
+
+    printf("Res:\n %lf %lf \n %lf %lf", t3r1c1->data, t3r1c2->data, t3r2c1->data, t3r2c2->data);
+    backward(t3r1c1);
+    backward(t3r1c2);
+    backward(t3r2c1);
+    backward(t3r2c2);
+
+    printf("\ngrads t1:\n %lf %lf \n %lf %lf", t1r1c1->grad, t1r1c2->grad, t1r2c1->grad, t1r2c2->grad);
+    printf("\ngrads t2:\n %lf %lf \n %lf %lf", t2r1c1->grad, t2r1c2->grad, t2r2c1->grad, t2r2c2->grad);
+    printf("\ngrads res:\n %lf %lf \n %lf %lf", t3r1c1->grad, t3r1c2->grad, t3r2c1->grad, t3r2c2->grad);
+
+    //backward(res);
 }
 
 void tensorBackwards(Tensor tensor){
