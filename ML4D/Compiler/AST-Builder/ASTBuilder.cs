@@ -96,7 +96,29 @@ namespace ML4D.Compiler
 		// Statements
 		public override Node VisitIfStmt(ML4DParser.IfStmtContext context)
 		{
-			return base.VisitIfStmt(context);
+			IfElseChainNode ifElseNode = new IfElseChainNode();
+			
+			int conditionals = context._cond.Count;
+			int bodies = context._body.Count;
+
+			if (conditionals == 1 && conditionals == bodies)
+			{
+				// if
+			} 
+			else if (conditionals == 1 && conditionals < bodies)
+			{
+				// if-else
+			}
+			else if (conditionals > 1 && conditionals == bodies)
+			{
+				// if-elseif
+			}
+			else if (conditionals > 1 && conditionals < bodies)
+			{
+				// if-elseif-else
+			}
+			
+			return ifElseNode;
 		}
 
 		public override Node VisitForStmt(ML4DParser.ForStmtContext context)
