@@ -54,4 +54,17 @@ namespace ML4D.Compiler.Exceptions
             Node = node;
         }   
     }
+    
+    public class TensorInitialisationException : Exception
+    {
+        public TensorInitNode Node { get; }
+        
+        public TensorInitialisationException() : base() {}
+        public TensorInitialisationException(string message) : base(message) {}
+        public TensorInitialisationException(string message, Exception inner) : base(message, inner) {}
+        public TensorInitialisationException(TensorInitNode node, string message) : base(message)
+        {
+            Node = node;
+        }   
+    }
 }
