@@ -48,10 +48,6 @@ namespace ML4D.Compiler
 		{
 			TensorDCLNode tensorDclNode = new TensorDCLNode("tensor", context.id.Text, int.Parse(context.rows.Text),
 				int.Parse(context.coloumns.Text), (TensorInitNode) Visit(context.init));
-			
-			// Tjek init dimensioner
-					
-			
 			return tensorDclNode;
 		}
 

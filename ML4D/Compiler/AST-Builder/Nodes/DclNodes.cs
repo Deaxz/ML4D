@@ -54,8 +54,16 @@ namespace ML4D.Compiler.Nodes
     {
         public List<ExpressionNode> FirstRowElements = new List<ExpressionNode>();
         public List<ExpressionNode> Elements = new List<ExpressionNode>();
-        
-        public override List<Node> GetChildren() { return new List<Node>(); }
+
+        public override List<Node> GetChildren()
+        {
+            List<Node> children = new List<Node>();
+            foreach (ExpressionNode child in FirstRowElements)
+                children.Add(child);
+            foreach (ExpressionNode child in Elements)
+                children.Add(child);
+            return children;
+        }
     }
 
     public class FunctionDCLNode : DCLNode
