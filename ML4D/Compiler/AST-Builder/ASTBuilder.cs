@@ -187,7 +187,8 @@ namespace ML4D.Compiler
 					node = new NotEqualNode("!=");
 					break;
 				default:
-					throw new NotSupportedException($"The operator {context.op.Text}, is not a valid relational operator.");
+					throw new NotSupportedException(
+						$"The operator {context.op.Text}, is not a valid relational operator.");
 			}
 			node.Left = (ExpressionNode) Visit(context.left);
 			node.Right = (ExpressionNode) Visit(context.right);
@@ -207,7 +208,8 @@ namespace ML4D.Compiler
 					node = new OrNode("or");
 					break;
 				default:
-					throw new NotSupportedException($"The operator {context.op.Text}, is not a valid bool operator.");
+					throw new NotSupportedException(
+						$"The operator {context.op.Text}, is not a valid bool operator.");
 			}
 			node.Left = (ExpressionNode) Visit(context.left);
 			node.Right = (ExpressionNode) Visit(context.right);
@@ -243,7 +245,8 @@ namespace ML4D.Compiler
 					node = new PowerNode("**");
 					break;
 				default:
-					throw new NotSupportedException($"The operator {context.op.Text}, is not a valid arithmetic operator.");
+					throw new NotSupportedException(
+						$"The operator {context.op.Text}, is not a valid arithmetic operator.");
 			}
 			node.Left = (ExpressionNode) Visit(context.left);
 			node.Right = (ExpressionNode) Visit(context.right);
@@ -263,7 +266,8 @@ namespace ML4D.Compiler
 					node = new NotNode("not");
 					break;
 				default:
-					throw new NotSupportedException("The operator ");
+					throw new NotSupportedException(
+						$"The operator {context.op.Text}, is not a valid unary operator.");
 			}
 			node.Inner = (ExpressionNode) Visit(context.inner);
 			return node;
