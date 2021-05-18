@@ -56,12 +56,10 @@ namespace ML4D.Compiler
 			TensorInitNode tensorInitNode = new TensorInitNode();
 			
 			foreach (ML4DParser.ExprContext expr in context._firstRow)
-				tensorInitNode.FirstRowElements.Add((ExpressionNode) Visit(expr));				
-
+				tensorInitNode.FirstRowElements.Add((ExpressionNode) Visit(expr));
 			foreach (ML4DParser.ExprContext expr in context._elements)
 				tensorInitNode.Elements.Add((ExpressionNode) Visit(expr));
-			
-			return base.VisitTensor_init(context);
+			return tensorInitNode;
 		}
 
 		public override Node VisitFuncDecl(ML4DParser.FuncDeclContext context)
