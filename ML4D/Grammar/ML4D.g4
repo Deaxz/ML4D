@@ -6,13 +6,13 @@ lines
     ;
 
 dcl
-    :   type=types id=ID op='=' right=bool_expr ';'                                                              # varDecl
-    |   type=types id=ID '[' rows=INUM ']' '[' coloumns=INUM ']' op='=' right=tensor_init ';'                    # tensorDecl // TODO overvej INUM -> ID, tjek det er INT ved typechecking
-    |   type=types id=ID '(' (argtype+=types argid+=ID (',' argtype+=types argid+=ID)*)? ')' '{' body=lines '}'  # funcDecl
+    :   type=types id=ID '=' init=bool_expr ';'                                                                 # varDecl
+    |   type=types id=ID '[' rows=INUM ']' '[' coloumns=INUM ']' '=' init=tensor_init ';'                       # tensorDecl // TODO overvej INUM -> ID, tjek det er INT ved typechecking
+    |   type=types id=ID '(' (argtype+=types argid+=ID (',' argtype+=types argid+=ID)*)? ')' '{' body=lines '}' # funcDecl
     ;
 
 tensor_init
-    :   '{' '[' entry+=expr (',' entry+=expr)*']' (',' '[' entry+=expr (',' entry+=expr)*']')* '}' // Strategien må være at map entries til rows og columns. Jeg kan ikke finde på andet. Men ret sikker på det funker
+    :   '{' '[' firstRow+=expr (',' firstRow+=expr)*']' (',' '[' elements+=expr (',' elements+=expr)*']')* '}' // Strategien må være at map entries til rows og columns. Jeg kan ikke finde på andet. Men ret sikker på det funker
     ;
 
 stmt

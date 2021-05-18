@@ -54,6 +54,23 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(TensorDCLNode node)
         {
+            if (SymbolTable.Retrieve(node.ID) is null)
+                SymbolTable.Insert(node.ID, node.Type, false);
+            else
+                throw new VariableAlreadyDeclaredException(
+                    $"The variable \"{node.ID}\" could not be declared, as it has already been declared in the current or parent scope.");
+            
+            base.Visit(node);
+            
+            //node.Init.Elements
+            // TODO, problem med elements. 3x4 giver samme entries som 4x3. Det skal laves bedre.
+            
+            //if (node.Type == node.Init.Type || node.Type == "double" && node.Init.Type == "int")
+                return;
+            throw new VariableInitialisationException(
+                "Failed to initialise in declaration. The expression has an incorrect type.");
+            
+            
             base.Visit(node);
         }
 
@@ -82,6 +99,7 @@ namespace ML4D.Compiler.ASTVisitors
         {
             SymbolTable.OpenScope("while");
             base.Visit(node);
+            // TODO type check predicate
             SymbolTable.CloseScope();
         }
         
@@ -112,6 +130,9 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(IfElseChainNode node)
         {
+            
+            
+            
             base.Visit(node);
         }
 

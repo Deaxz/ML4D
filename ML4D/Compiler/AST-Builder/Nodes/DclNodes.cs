@@ -31,7 +31,7 @@ namespace ML4D.Compiler.Nodes
         }
     }
     
-    public class TensorDCLNode : DCLNode // TODO, make dis
+    public class TensorDCLNode : DCLNode
     {
         public TensorInitNode Init { get; set; }
         public int Rows { get; set; }
@@ -44,11 +44,6 @@ namespace ML4D.Compiler.Nodes
             Init = init;
         }
 
-        public double GetElement(int row, int column)
-        {
-            return Init.Elements[(row - 1) * Columns + column - 1];
-        }
-        
         public override List<Node> GetChildren()
         {
             return new List<Node>() { Init };
@@ -57,7 +52,9 @@ namespace ML4D.Compiler.Nodes
 
     public class TensorInitNode : Node
     {
-        public List<double> Elements = new List<double>();
+        public List<ExpressionNode> FirstRowElements = new List<ExpressionNode>();
+        public List<ExpressionNode> Elements = new List<ExpressionNode>();
+        
         public override List<Node> GetChildren() { return new List<Node>(); }
     }
 
@@ -77,7 +74,7 @@ namespace ML4D.Compiler.Nodes
     public class FunctionArgumentNode : DCLNode
     {
         public FunctionArgumentNode(string type, string id) : base(type, id) {}
-
+        
         public override List<Node> GetChildren() { return new List<Node>(); }
     }
 }

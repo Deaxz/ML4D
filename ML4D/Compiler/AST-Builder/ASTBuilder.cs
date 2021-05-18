@@ -29,13 +29,13 @@ namespace ML4D.Compiler
 			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token. 
 			{
 				case ML4DLexer.INT:
-					varDeclNode = new VariableDCLNode("int", context.id.Text, (ExpressionNode) Visit(context.right));
+					varDeclNode = new VariableDCLNode("int", context.id.Text, (ExpressionNode) Visit(context.init));
 					break;
 				case ML4DLexer.DOUBLE:
-					varDeclNode = new VariableDCLNode("double", context.id.Text, (ExpressionNode) Visit(context.right));
+					varDeclNode = new VariableDCLNode("double", context.id.Text, (ExpressionNode) Visit(context.init));
 					break;
 				case ML4DLexer.BOOL:
-					varDeclNode = new VariableDCLNode("bool", context.id.Text, (ExpressionNode) Visit(context.right));
+					varDeclNode = new VariableDCLNode("bool", context.id.Text, (ExpressionNode) Visit(context.init));
 					break;
 				default:
 					throw new NotSupportedException(
@@ -46,11 +46,25 @@ namespace ML4D.Compiler
 
 		public override Node VisitTensorDecl(ML4DParser.TensorDeclContext context)
 		{
-			return base.VisitTensorDecl(context);
+			TensorDCLNode tensorDclNode = new TensorDCLNode("tensor", context.id.Text, int.Parse(context.rows.Text),
+				int.Parse(context.coloumns.Text), (TensorInitNode) Visit(context.init));
+			
+			// Tjek init dimensioner
+					
+			
+			return tensorDclNode;
 		}
 
 		public override Node VisitTensor_init(ML4DParser.Tensor_initContext context)
 		{
+			TensorInitNode tensorInitNode = new TensorInitNode();
+			
+			foreach (ML4DParser.ExprContext expr in context._firstRow)
+				tensorInitNode.FirstRowElements.Add((ExpressionNode) Visit(expr));				
+
+			foreach (ML4DParser.ExprContext expr in context._elements)
+				tensorInitNode.Elements.Add((ExpressionNode) Visit(expr));
+			
 			return base.VisitTensor_init(context);
 		}
 
@@ -93,6 +107,16 @@ namespace ML4D.Compiler
 
 		public override Node VisitForStmt(ML4DParser.ForStmtContext context)
 		{
+			// for (loop init; loop cond; loop inc)
+			// {body}
+
+			// loop inititialization statement
+			// loop condition expression
+			// loop increment statement
+			// body - loop statement
+			
+			
+
 			return base.VisitForStmt(context);
 		}
 
@@ -163,7 +187,7 @@ namespace ML4D.Compiler
 					node = new NotEqualNode("!=");
 					break;
 				default:
-					throw new NotSupportedException();
+					throw new NotSupportedException($"The operator {context.op.Text}, is not a valid relational operator.");
 			}
 			node.Left = (ExpressionNode) Visit(context.left);
 			node.Right = (ExpressionNode) Visit(context.right);
@@ -183,7 +207,7 @@ namespace ML4D.Compiler
 					node = new OrNode("or");
 					break;
 				default:
-					throw new NotSupportedException();
+					throw new NotSupportedException($"The operator {context.op.Text}, is not a valid bool operator.");
 			}
 			node.Left = (ExpressionNode) Visit(context.left);
 			node.Right = (ExpressionNode) Visit(context.right);
@@ -219,7 +243,7 @@ namespace ML4D.Compiler
 					node = new PowerNode("**");
 					break;
 				default:
-					throw new NotSupportedException(); // TODO overvej i cleanup at slette alle notsupportedexceptions, da de er umulige at nå. Men måske er de fine ift. udvidelser
+					throw new NotSupportedException($"The operator {context.op.Text}, is not a valid arithmetic operator.");
 			}
 			node.Left = (ExpressionNode) Visit(context.left);
 			node.Right = (ExpressionNode) Visit(context.right);
@@ -239,7 +263,7 @@ namespace ML4D.Compiler
 					node = new NotNode("not");
 					break;
 				default:
-					throw new NotSupportedException();
+					throw new NotSupportedException("The operator ");
 			}
 			node.Inner = (ExpressionNode) Visit(context.inner);
 			return node;
@@ -274,7 +298,7 @@ namespace ML4D.Compiler
 					node = new IDNode(context.value.Text);
 					break;
 				default:
-					throw new NotSupportedException();
+					throw new NotSupportedException($"The value {context.value.Text}, is not allowed.");
 			}
 			return node;
 		}

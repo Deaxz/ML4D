@@ -93,10 +93,18 @@ namespace ML4D.Compiler.Nodes
 
     public class ForNode : Node 
     {
-        public AssignNode Init { get; set; }
+        public VariableDCLNode Init { get; set; }
         public ExpressionNode Predicate { get; set; }
         public AssignNode Final { get; set; }
         public LinesNode Body { get; set; }
+
+        public ForNode(VariableDCLNode init, ExpressionNode predicate, AssignNode final, LinesNode body)
+        {
+            Init = init;
+            Predicate = predicate;
+            Final = final;
+            Body = body;
+        }
 
         public override List<Node> GetChildren()
         {
