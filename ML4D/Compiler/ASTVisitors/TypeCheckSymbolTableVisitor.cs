@@ -159,12 +159,23 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(ForNode node)
         {
+            SymbolTable.OpenScope("for");
             base.Visit(node);
+            
+            if (node.Predicate.Type != "bool")
+                throw new PredicateTypeException(node, "Predicate is not of type bool.");
+            SymbolTable.CloseScope();
         }
 
         public override void Visit(GradientsNode node)
         {
+            SymbolTable.OpenScope("gradients");
             base.Visit(node);
+
+            foreach (string tensorID in node.GradTensors)
+                if (SymbolTable.Retrieve(tensorID).Type != "tensor")
+                    throw new Exception($"Can only calculate gradients from tensors."); // TODO, overvej custom exception
+            SymbolTable.CloseScope();
         }
 
         // Expression
@@ -243,8 +254,7 @@ namespace ML4D.Compiler.ASTVisitors
                 }
             }
         }
-        
-        
+
         public override void Visit(InfixExpressionNode node)
         {
             base.Visit(node);
