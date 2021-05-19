@@ -97,56 +97,41 @@ namespace ML4D.Compiler
 		// Statements
 		public override Node VisitIfStmt(ML4DParser.IfStmtContext context)
 		{
-			IfElseChainNode ifElseNode = new IfElseChainNode();
-
+			IfElseChainNode ifElseChainNode = new IfElseChainNode();
 			int conditionals = context._cond.Count;
 			int bodies = context._body.Count;
-			IfNode ifNode = new IfNode((ExpressionNode) Visit(context._cond[0]), (LinesNode) Visit(context._body[0]));
-
 			
-			//If {Then}
-			ifElseNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._cond[0]),
-											  (LinesNode) Visit(context._body[0])));
+			// If
+			ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._cond[0]),
+														(LinesNode) Visit(context._body[0])));
+			// Else
+			if (conditionals == 1 && conditionals < bodies)
+				ifElseChainNode.ElseBody = (LinesNode) Visit(context._body[bodies-1]);
 
-    
-
-            //else if kæde
-			if (conditionals > 1 && bodies == conditionals) // if false jump to else if
-            {
-
-                for (int i = 1; i < bodies; i++)
-                {
-                    ifElseNode.IfNodes.Add(new IfNode((ExpressionNode)Visit(context._cond[i]),
-                                              (LinesNode)Visit(context._body[i])));
-                }
-            }
-            
-			// else if tilføjes i loop indtil der er et else tilbage, som tilføjes.
-			else if (conditionals > 1 && bodies > conditionals) // if false jump to next
+			// Else if/Else if Else
+			if (conditionals > 1 && conditionals == bodies)
+			{
+				for (int i = 1; i < bodies; i++)
+					ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._cond[i]),
+																(LinesNode) Visit(context._body[i])));
+			}
+			else if (conditionals > 1 && conditionals < bodies)
             {
                 for (int i = 1; i < conditionals; i++)
-                {
-                    ifElseNode.IfNodes.Add(new IfNode((ExpressionNode)Visit(context._cond[i]),
-                                              (LinesNode)Visit(context._body[i])));
-                }
+                    ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._cond[i]),
+																(LinesNode) Visit(context._body[i])));
+                ifElseChainNode.ElseBody = (LinesNode) Visit(context._body[bodies-1]);
             }
-			ifElseNode.ElseBody = (LinesNode)Visit(context._body[bodies-1]);
-			
-            return ifElseNode;
+			return ifElseChainNode;
 		}
 		
 		public override Node VisitForStmt(ML4DParser.ForStmtContext context)
 		{
 			Node initNode = Visit(context.init);
 			if (initNode is not VariableDCLNode)
-			{
-				throw new Exception("Init in for loop is not of type VariableDCLNode");
-			}
-			ForNode forNode = new ForNode(
-				(VariableDCLNode) initNode,
-				(ExpressionNode) Visit(context.cond),
-				(AssignNode) Visit(context.final),
-				(LinesNode) Visit(context.body));
+				throw new Exception("Init is not of type VariableDCLNode");
+			ForNode forNode = new ForNode((VariableDCLNode) initNode,(ExpressionNode) Visit(context.cond),
+									(AssignNode) Visit(context.final),(LinesNode) Visit(context.body));
 			return forNode;
 		}
 
@@ -179,6 +164,7 @@ namespace ML4D.Compiler
 		public override Node VisitGradientsStmt(ML4DParser.GradientsStmtContext context)
 		{
 			GradientsNode gradientsNode = new GradientsNode(context.tensor.Text, (LinesNode) Visit(context.body));
+			
 			for (int i = 0; i < context._gradvar.Count; i++)
 			{
 				gradientsNode.GradVariables.Add(new FunctionArgumentNode("double", context._gradvar[i].Text));
@@ -307,7 +293,6 @@ namespace ML4D.Compiler
 					throw new NotSupportedException(
 						$"The operator {context.op.Text}, is not a valid unary operator.");
 			}
-			
 			return node;
 		}
 

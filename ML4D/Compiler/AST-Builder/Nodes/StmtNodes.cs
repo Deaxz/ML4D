@@ -74,30 +74,26 @@ namespace ML4D.Compiler.Nodes
             if (ElseBody is null)
             {
                 List<Node> children = new List<Node>();
-                
                 return children.Concat(IfNodes).ToList();  // TODO tjek den returnere korrekt
             }
-
-            
             return IfNodes.Concat(ElseBody.lines).ToList(); // TODO tjek den returnere korrekt
         }
     }
     
     public class IfNode : Node 
     {
+        public ExpressionNode Predicate { get; set; }
+        public LinesNode Body { get; set; }
+        
         public IfNode(ExpressionNode predicate, LinesNode body)
         {
             Predicate = predicate;
             Body = body;
         }
 
-        public ExpressionNode Predicate { get; set; }
-        public LinesNode Body { get; set; }
-        
-        
         public override List<Node> GetChildren()
         {
-            List<Node> children = new List<Node>() {Predicate};
+            List<Node> children = new List<Node>() { Predicate };
             return children.Concat(Body.lines).ToList();
         }
     }
