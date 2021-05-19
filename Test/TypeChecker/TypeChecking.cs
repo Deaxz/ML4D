@@ -85,7 +85,41 @@ namespace Test
             Assert.AreEqual(node.Type, "bool");
         }
 
+        [TestMethod]
+        public void DuplicateVariableDeclarationErrorTest()
+        {
+            VariableDCLNode dclNode1 = new VariableDCLNode("int", "var1", new IntNode(10));
+            VariableDCLNode dclNode2 = new VariableDCLNode("int", "var1", new IntNode(20));
 
+            SymbolTable symbolTable = new SymbolTable();
+            TypeCheckSymbolTableVisitor visitor = new TypeCheckSymbolTableVisitor(symbolTable);
+
+            visitor.Visit(dclNode1);
+
+            Assert.ThrowsException<VariableAlreadyDeclaredException>(() =>
+            {
+                visitor.Visit(dclNode2);
+            });
+        }
+
+        [TestMethod]
+        public void DuplicateFunctionDeclarationErrorTest()
+        {
+            FunctionDCLNode funcDclNode1 = new FunctionDCLNode("void", "myFunction");
+            funcDclNode1.Body = new LinesNode();
+            FunctionDCLNode funcDclNode2 = new FunctionDCLNode("int", "myFunction");
+            funcDclNode2.Body = new LinesNode();
+
+            SymbolTable symbolTable = new SymbolTable();
+            TypeCheckSymbolTableVisitor visitor = new TypeCheckSymbolTableVisitor(symbolTable);
+
+            visitor.Visit(funcDclNode1);
+
+            Assert.ThrowsException<FunctionAlreadyDeclaredException>(() =>
+            {
+                visitor.Visit(funcDclNode2);
+            });            
+        }
 
 
     }
