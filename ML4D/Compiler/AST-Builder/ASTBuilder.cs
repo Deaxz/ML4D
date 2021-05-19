@@ -297,15 +297,17 @@ namespace ML4D.Compiler
 			{
 				case ML4DLexer.MINUS:
 					node = new UnaryMinusNode("-");
+					node.Inner = (ExpressionNode) Visit(context.right);
 					break;
 				case ML4DLexer.NOT:
 					node = new NotNode("not");
+					node.Inner = (ExpressionNode) Visit(context.inner);
 					break;
 				default:
 					throw new NotSupportedException(
 						$"The operator {context.op.Text}, is not a valid unary operator.");
 			}
-			node.Inner = (ExpressionNode) Visit(context.inner);
+			
 			return node;
 		}
 
