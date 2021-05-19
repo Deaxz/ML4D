@@ -79,3 +79,11 @@ ML4D/obj/Debug/net5.0/ML4D.GeneratedMSBuildEditorConfig.editorconfig
 ML4D/obj/Debug/net5.0/ML4D.genruntimeconfig.cache
 ML4D/obj/Debug/net5.0/ML4D.pdb
 ML4D/obj/Debug/net5.0/ref/ML4D.dll
+ML4D/bin/Debug/net5.0/Antlr4.Runtime.Standard.dll
+ML4D/bin/Debug/net5.0/ML4D.deps.json
+ML4D/bin/Debug/net5.0/ML4D.dll
+ML4D/bin/Debug/net5.0/ML4D.exe
+ML4D/bin/Debug/net5.0/ML4D.pdb
+ML4D/bin/Debug/net5.0/ML4D.runtimeconfig.dev.json
+ML4D/bin/Debug/net5.0/ML4D.runtimeconfig.json
+ML4D/bin/Debug/net5.0/ref/ML4D.dll
