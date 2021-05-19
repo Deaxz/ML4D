@@ -87,17 +87,28 @@ namespace ML4D.Compiler.ASTVisitors
         // Statement      
         public override void Visit(AssignNode node)
         {
+            Symbol variableDCL = SymbolTable.Retrieve(node.ID);
+            
             if (SymbolTable.Retrieve(node.ID) is null)
                 throw new VariableNotDeclaredException(
                     $"The variable \"{node.ID}\" cannot be assigned, as it has not been declared.");
             
             base.Visit(node);
-            node.Type = SymbolTable.Retrieve(node.ID).Type;
             
-            if (node.Type == node.Right.Type || node.Type == "double" && node.Right.Type == "int")
-                return;
-            throw new VariableAssignmentException(node, 
-                "Failed to assign variable. The expression has an incorrect type.");
+            if (variableDCL is TensorSymbol tensorDcl)
+            {
+                if (tensorDcl.Rows != node.Right.Rows || tensorDcl.Columns != node.Right.Columns)
+                    throw new VariableAssignmentException(node,
+                        $"A tensor's dimensions cannot be changed during run-time. " +
+                                $"Rows: {tensorDcl.Rows} - {node.Right.Rows}, Columns:{tensorDcl.Columns} - {node.Right.Columns}");
+                node.Type = tensorDcl.Type;
+            } 
+            else
+                node.Type = variableDCL.Type;
+
+            if (node.Type != node.Right.Type && (node.Type == "double" && node.Right.Type == "int"))
+                throw new VariableAssignmentException(node, 
+                    "Failed to assign variable. The expression has an incorrect type.");
         }
         
         public override void Visit(WhileNode node)
