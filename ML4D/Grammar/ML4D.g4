@@ -12,7 +12,7 @@ dcl
     ;
 
 tensor_init
-    :   '{' '[' firstRow+=expr (',' firstRow+=expr)*']' (',' '[' elements+=expr (',' elements+=expr)*']')* '}' // Strategien må være at map entries til rows og columns. Jeg kan ikke finde på andet. Men ret sikker på det funker
+    :   '{' '[' firstRow+=expr (',' firstRow+=expr)*']' (',' '[' elements+=expr (',' elements+=expr)*']')* '}'
     ;
 
 stmt

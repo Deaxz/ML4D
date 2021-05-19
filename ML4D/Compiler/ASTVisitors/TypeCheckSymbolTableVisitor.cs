@@ -63,7 +63,7 @@ namespace ML4D.Compiler.ASTVisitors
             base.Visit(node);
             
             int InitColumns = node.Init.FirstRowElements.Count;
-            int InitRows = node.Init.Elements.Count + 1;
+            int InitRows = (node.Init.Elements.Count / InitColumns) + 1;
             
             if (InitColumns != node.Columns || InitRows != node.Rows)
                 throw new Exception(
@@ -77,11 +77,11 @@ namespace ML4D.Compiler.ASTVisitors
             base.Visit(node);
 
             foreach (ExpressionNode element in node.FirstRowElements)
-                if (element.Type != "double" && element.Type != "int")
+                if (element.Type == "bool")
                     throw new TensorInitialisationException(node, 
                         $"Incorrect element type: {element.Type}, only double and int are allowed");
             foreach (ExpressionNode element in node.Elements)
-                if (element.Type != "double" && element.Type != "int")
+                if (element.Type == "bool")
                     throw new TensorInitialisationException(node, 
                         $"Incorrect element type: {element.Type}, only double and int are allowed");
         }

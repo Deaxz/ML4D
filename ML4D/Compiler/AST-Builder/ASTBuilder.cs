@@ -66,7 +66,7 @@ namespace ML4D.Compiler
 		public override Node VisitFuncDecl(ML4DParser.FuncDeclContext context)
 		{
 			FunctionDCLNode functionDclNode;
-
+			
 			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token.
 			{
 				case ML4DLexer.INT:
@@ -292,7 +292,7 @@ namespace ML4D.Compiler
 					throw new NotSupportedException(
 						$"The operator {context.op.Text}, is not a valid unary operator.");
 			}
-			node.Inner = (ExpressionNode) Visit(context.inner);
+			node.Inner = (ExpressionNode) Visit(context.right);
 			return node;
 		}
 
