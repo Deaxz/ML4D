@@ -75,11 +75,11 @@ namespace ML4D.Compiler.ASTVisitors
             base.Visit(node);
 
             foreach (ExpressionNode element in node.FirstRowElements)
-                if (element.Type == "bool")
+                if (element.Type == "bool" || element.Type == "tensor")
                     throw new TensorInitialisationException(node, 
                         $"Incorrect element type: {element.Type}, only double and int are allowed");
             foreach (ExpressionNode element in node.Elements)
-                if (element.Type == "bool")
+                if (element.Type == "bool" || element.Type == "tensor")
                     throw new TensorInitialisationException(node, 
                         $"Incorrect element type: {element.Type}, only double and int are allowed");
         }
@@ -171,12 +171,11 @@ namespace ML4D.Compiler.ASTVisitors
                 throw new VariableNotDeclaredException(node, 
                     $"The variable \"{node.ID}\" cannot be used, as it has not been declared.");
             
-            if (variableDCL is TensorSymbol)
+            if (variableDCL is TensorSymbol tensorDcl)
             {
-                TensorSymbol tensorDCL = (TensorSymbol) variableDCL;
-                node.Type = tensorDCL.Type;
-                node.Rows = tensorDCL.Rows;
-                node.Columns = tensorDCL.Columns;
+                node.Type = tensorDcl.Type;
+                node.Rows = tensorDcl.Rows;
+                node.Columns = tensorDcl.Columns;
             } 
             else
                 node.Type = variableDCL.Type;
