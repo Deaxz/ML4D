@@ -127,8 +127,10 @@ namespace ML4D.Compiler.ASTVisitors
             if (!SymbolTable.ScopeList().Contains("function"))
                 throw new ReturnOutsideFunctionException(node, 
                     "Return was called outside function scope, which is not allowed");
-            if (node.Inner is not null)
-                node.Type = node.Inner.Type;
+            if (node.Inner is null || node.Inner.Type == "tensor")
+                throw new Exception("A tensor cannot be returned from a function."); // TODO overvej at lave custom exception.
+            
+            node.Type = node.Inner.Type;
         }
 
         public override void Visit(FunctionNode node)
