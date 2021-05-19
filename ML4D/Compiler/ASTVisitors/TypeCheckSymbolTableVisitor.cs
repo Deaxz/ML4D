@@ -180,6 +180,66 @@ namespace ML4D.Compiler.ASTVisitors
             else
                 node.Type = variableDCL.Type;
         }
+
+        private void TensorTypecheck(InfixExpressionNode node)
+        {
+            if (node.Left.Type == "tensor" && node.Right.Type == "tensor")
+            {
+                switch (node)
+                {
+                    case AdditionNode:
+                    case SubtractionNode:
+                        if (node.Left.Rows != node.Right.Rows || node.Left.Columns != node.Right.Columns)
+                            throw new InvalidOperandsException(node, 
+                                $"The dimensions of the tensors are incorrect for the operation \"{node.Symbol}\".");
+                        node.Type = "tensor";
+                        break;
+                    
+                    case MultiplicationNode:
+                        if (node.Left.Columns != node.Right.Rows)
+                            throw new InvalidOperandsException(node, 
+                                $"The dimensions of the tensors are incorrect for the operation \"{node.Symbol}\".");
+                        node.Type = "tensor";
+                        break;
+                    default:
+                        throw new InvalidOperandsException(node, 
+                            $"The operator \"{node.Symbol}\", does not allow operands of type tensor.");
+                }
+                return;
+            }
+            
+            if (node.Left.Type == "tensor")
+            {
+                switch (node)
+                {
+                    case AdditionNode:
+                    case SubtractionNode:
+                    case MultiplicationNode:
+                    case PowerNode:
+                        node.Type = "tensor";
+                        break;
+                    default:
+                        throw new InvalidOperandsException(node, 
+                            $"The operator \"{node.Symbol}\", does not allow operands of type tensor.");
+                }
+                return;
+            }
+            
+            if (node.Right.Type == "tensor")
+            {
+                switch (node)
+                {
+                    case AdditionNode:
+                    case MultiplicationNode:
+                        node.Type = "tensor";
+                        break;
+                    default:
+                        throw new InvalidOperandsException(node, 
+                            $"The operator \"{node.Symbol}\", does not allow operands of type tensor.");
+                }
+            }
+        }
+        
         
         public override void Visit(InfixExpressionNode node)
         {
@@ -193,19 +253,15 @@ namespace ML4D.Compiler.ASTVisitors
                 case MultiplicationNode:
                 case DivisionNode:
                 case PowerNode:
-                    
                     if (node.Left.Type == "bool" || node.Right.Type == "bool")
                         throw new InvalidOperandsException(node, 
                             "The operands of a arithmetic operator can only be int and double. It does not allow bool.");
                     else if (node.Left.Type == "int" && node.Right.Type == "int")
                         node.Type = "int";
-                    else if (node.Left.Type == "tensor")
-                    {
-                        
-                    }
-                    
-                    
-                    
+                    else if (node.Left.Type == "tensor" || node.Right.Type == "tensor")
+                        TensorTypecheck(node);
+                    else if (node.Left.Type == "double" || node.Right.Type == "double")
+                        node.Type = "double";
                     break;
                     
                 // Relational
@@ -215,7 +271,6 @@ namespace ML4D.Compiler.ASTVisitors
                 case GreaterEqualThanNode:
                 case EqualNode:
                 case NotEqualNode:
-                    
                     if (node.Left.Type == "bool" || node.Right.Type == "bool")
                         throw new InvalidOperandsException(node,
                             "The operands of a relational operator can only be int and double. It does not allow bool.");
@@ -229,7 +284,6 @@ namespace ML4D.Compiler.ASTVisitors
                 // Boolean
                 case AndNode:
                 case OrNode:
-                   
                     if (node.Left.Type != "bool" || node.Right.Type != "bool")
                         throw new InvalidOperandsException(node, 
                             "The operands of a bool operator can only be bool. It does not allow int, double or tensor.");
