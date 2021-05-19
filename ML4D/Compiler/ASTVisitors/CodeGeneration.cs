@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using ML4D.Compiler.Nodes;
 
@@ -134,16 +135,38 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(IfElseChainNode node)
         {
-            base.Visit(node);
+            Emit("if (");
+            Visit(node.IfNodes[0].Predicate);
+            Emit(") {\n");
+            Visit(node.IfNodes[0].Body);
+            Emit("}\n"); // TODO Tjek om C tillader newline her!!!!
+            
+            foreach (IfNode elseifNode in node.IfNodes.Skip(1)) // TODO tjek om .Skip(1) gør det jeg forventer (skip første if)
+            {
+                Emit("else if (");
+                Visit(elseifNode.Predicate);
+                Emit(") {\n");
+                Visit(elseifNode.Body);
+                Emit("}\n"); // TODO Tjek om C tillader newline her!!!!
+            }
+
+            if (node.ElseBody is not null)
+            {
+                Emit("else {\n");
+                Visit(node.ElseBody);
+                Emit("}\n");
+            }
         }
 
         public override void Visit(ForNode node)
         {
+            // You got it Team TvebakkexZacho <333333
             base.Visit(node);
         }
 
         public override void Visit(GradientsNode node)
         {
+            // Det her bliver det spændende.
             base.Visit(node);
         }
 
