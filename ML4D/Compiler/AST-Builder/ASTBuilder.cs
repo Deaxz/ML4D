@@ -98,27 +98,27 @@ namespace ML4D.Compiler
 		public override Node VisitIfStmt(ML4DParser.IfStmtContext context)
 		{
 			IfElseChainNode ifElseChainNode = new IfElseChainNode();
-			int conditionals = context._cond.Count;
+			int predicates = context._pred.Count;
 			int bodies = context._body.Count;
 			
 			// If
-			ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._cond[0]),
+			ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._pred[0]),
 														(LinesNode) Visit(context._body[0])));
 			// Else
-			if (conditionals == 1 && conditionals < bodies)
+			if (predicates == 1 && predicates < bodies)
 				ifElseChainNode.ElseBody = (LinesNode) Visit(context._body[bodies-1]);
 
 			// Else if/Else if Else
-			if (conditionals > 1 && conditionals == bodies)
+			if (predicates > 1 && predicates == bodies)
 			{
 				for (int i = 1; i < bodies; i++)
-					ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._cond[i]),
+					ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._pred[i]),
 																(LinesNode) Visit(context._body[i])));
 			}
-			else if (conditionals > 1 && conditionals < bodies)
+			else if (predicates > 1 && predicates < bodies)
             {
-                for (int i = 1; i < conditionals; i++)
-                    ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._cond[i]),
+                for (int i = 1; i < predicates; i++)
+                    ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._pred[i]),
 																(LinesNode) Visit(context._body[i])));
                 ifElseChainNode.ElseBody = (LinesNode) Visit(context._body[bodies-1]);
             }
@@ -130,7 +130,7 @@ namespace ML4D.Compiler
 			Node initNode = Visit(context.init);
 			if (initNode is not VariableDCLNode)
 				throw new Exception("Init is not of type VariableDCLNode");
-			ForNode forNode = new ForNode((VariableDCLNode) initNode,(ExpressionNode) Visit(context.cond),
+			ForNode forNode = new ForNode((VariableDCLNode) initNode,(ExpressionNode) Visit(context.pred),
 									(AssignNode) Visit(context.final),(LinesNode) Visit(context.body));
 			return forNode;
 		}
@@ -138,7 +138,7 @@ namespace ML4D.Compiler
 		public override Node VisitWhileStmt(ML4DParser.WhileStmtContext context)
 		{
 			WhileNode whileNode = new WhileNode(
-				(ExpressionNode) Visit(context.predicate), (LinesNode) Visit(context.body));
+				(ExpressionNode) Visit(context.pred), (LinesNode) Visit(context.body));
 			return whileNode;
 		}
 
@@ -301,7 +301,7 @@ namespace ML4D.Compiler
 			FunctionExprNode functionExprNode = new FunctionExprNode(context.id.Text);
 
 			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
-				functionExprNode.Arguments.Add((ExpressionNode) Visit(argument));
+				functionExprNode.Arguments.Add(Visit(argument));
 			return functionExprNode;
 		}
 

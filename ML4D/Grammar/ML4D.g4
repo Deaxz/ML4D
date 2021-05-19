@@ -16,9 +16,9 @@ tensor_init
     ;
 
 stmt
-    :   IF '(' cond+=bool_expr ')' '{' body+=lines '}' (ELSE IF '(' cond+=bool_expr ')' '{' body+=lines '}' )* (ELSE '{' body+=lines '}')?   # ifStmt
-    |   FOR '(' init=dcl cond=bool_expr ';' final=assign_expr ')' '{' body=lines '}'                                                         # forStmt
-    |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'                                                                                 # whileStmt
+    :   IF '(' pred+=bool_expr ')' '{' body+=lines '}' (ELSE IF '(' pred+=bool_expr ')' '{' body+=lines '}' )* (ELSE '{' body+=lines '}')?   # ifStmt
+    |   FOR '(' init=dcl pred=bool_expr ';' final=assign_expr ')' '{' body=lines '}'                                                         # forStmt
+    |   WHILE '(' pred=bool_expr ')' '{' body=lines '}'                                                                                 # whileStmt
     |   RETURN inner=bool_expr? ';'                                                                                                          # returnStmt
     |   id=ID '(' (argexpr+=bool_expr (',' argexpr+=bool_expr)*)? ')' ';'                                                                    # funcStmt
     |   GRADIENTS '(' tensor=ID ',' '(' gradvar+=ID '<<' gradtensor+=ID (',' gradvar+=ID '<<' gradtensor+=ID)* ')' ',' '{' body=lines '}' ')' ';' # gradientsStmt
