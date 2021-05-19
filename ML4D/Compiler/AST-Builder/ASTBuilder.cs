@@ -66,7 +66,7 @@ namespace ML4D.Compiler
 		public override Node VisitFuncDecl(ML4DParser.FuncDeclContext context)
 		{
 			FunctionDCLNode functionDclNode;
-			
+
 			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token.
 			{
 				case ML4DLexer.INT:
@@ -95,33 +95,46 @@ namespace ML4D.Compiler
 		}
 
 		// Statements
-		/*public override Node VisitIfStmt(ML4DParser.IfStmtContext context)
+		public override Node VisitIfStmt(ML4DParser.IfStmtContext context)
 		{
 			IfElseChainNode ifElseNode = new IfElseChainNode();
 
 			int conditionals = context._cond.Count;
 			int bodies = context._body.Count;
+			IfNode ifNode = new IfNode((ExpressionNode) Visit(context._cond[0]), (LinesNode) Visit(context._body[0]));
 
-			if (conditionals == 1 && conditionals == bodies)
-			{
-				// if
-			}
-			else if (conditionals == 1 && conditionals < bodies)
-			{
-				// if-else
-			}
-			else if (conditionals > 1 && conditionals == bodies)
-			{
-				// if-elseif
-			}
-			else if (conditionals > 1 && conditionals < bodies)
-			{
-				// if-elseif-else
-			}
+			
+			//If {Then}
+			ifElseNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._cond[0]),
+											  (LinesNode) Visit(context._body[0])));
 
-			return ifElseNode;
+    
+
+            //else if kæde
+			if (conditionals > 1 && bodies == conditionals) // if false jump to else if
+            {
+
+                for (int i = 1; i < bodies; i++)
+                {
+                    ifElseNode.IfNodes.Add(new IfNode((ExpressionNode)Visit(context._cond[i]),
+                                              (LinesNode)Visit(context._body[i])));
+                }
+            }
+            
+			// else if tilføjes i loop indtil der er et else tilbage, som tilføjes.
+			else if (conditionals > 1 && bodies > conditionals) // if false jump to next
+            {
+                for (int i = 1; i < conditionals; i++)
+                {
+                    ifElseNode.IfNodes.Add(new IfNode((ExpressionNode)Visit(context._cond[i]),
+                                              (LinesNode)Visit(context._body[i])));
+                }
+            }
+			ifElseNode.ElseBody = (LinesNode)Visit(context._body[bodies-1]);
+			
+            return ifElseNode;
 		}
-		*/
+		
 		public override Node VisitForStmt(ML4DParser.ForStmtContext context)
 		{
 			Node initNode = Visit(context.init);
@@ -292,7 +305,7 @@ namespace ML4D.Compiler
 					throw new NotSupportedException(
 						$"The operator {context.op.Text}, is not a valid unary operator.");
 			}
-			node.Inner = (ExpressionNode) Visit(context.right);
+			node.Inner = (ExpressionNode) Visit(context.inner);
 			return node;
 		}
 
