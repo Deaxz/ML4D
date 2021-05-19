@@ -16,18 +16,18 @@ namespace ML4D.Compiler
 			foreach (IParseTree child in context.children)
 			{
 				Node? node = Visit(child);
-				if (node is not null) 
+				if (node is not null)
 					linesNode.lines.Add(node);
 			}
 			return linesNode;
 		}
-		
+
 		// Declarations
 		public override Node VisitVarDecl(ML4DParser.VarDeclContext context)
 		{
 			VariableDCLNode varDeclNode;
 
-			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token. 
+			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token.
 			{
 				case ML4DLexer.INT:
 					varDeclNode = new VariableDCLNode("int", context.id.Text, (ExpressionNode) Visit(context.init));
@@ -49,31 +49,25 @@ namespace ML4D.Compiler
 		{
 			TensorDCLNode tensorDclNode = new TensorDCLNode("tensor", context.id.Text, int.Parse(context.rows.Text),
 				int.Parse(context.coloumns.Text), (TensorInitNode) Visit(context.init));
-			
-			// Tjek init dimensioner
-					
-			
 			return tensorDclNode;
 		}
 
 		public override Node VisitTensor_init(ML4DParser.Tensor_initContext context)
 		{
 			TensorInitNode tensorInitNode = new TensorInitNode();
-			
-			foreach (ML4DParser.ExprContext expr in context._firstRow)
-				tensorInitNode.FirstRowElements.Add((ExpressionNode) Visit(expr));				
 
+			foreach (ML4DParser.ExprContext expr in context._firstRow)
+				tensorInitNode.FirstRowElements.Add((ExpressionNode) Visit(expr));
 			foreach (ML4DParser.ExprContext expr in context._elements)
 				tensorInitNode.Elements.Add((ExpressionNode) Visit(expr));
-			
-			return base.VisitTensor_init(context);
+			return tensorInitNode;
 		}
 
 		public override Node VisitFuncDecl(ML4DParser.FuncDeclContext context)
 		{
 			FunctionDCLNode functionDclNode;
-			
-			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token. 
+
+			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token.
 			{
 				case ML4DLexer.INT:
 					functionDclNode = new FunctionDCLNode("int", context.id.Text);
@@ -91,11 +85,11 @@ namespace ML4D.Compiler
 					throw new NotSupportedException(
 						$"The function {context.id.Text}, was declared with an illegal type.");
 			}
-			
+
 			for (int i = 0; i < context._argid.Count; i++)
 				functionDclNode.Arguments.Add(new FunctionArgumentNode(
 					context._argtype[i].type.Text, context._argid[i].Text));
-			
+
 			functionDclNode.Body = VisitLines(context.body);
 			return functionDclNode;
 		}
@@ -103,7 +97,29 @@ namespace ML4D.Compiler
 		// Statements
 		/*public override Node VisitIfStmt(ML4DParser.IfStmtContext context)
 		{
-			return new node();
+			IfElseChainNode ifElseNode = new IfElseChainNode();
+
+			int conditionals = context._cond.Count;
+			int bodies = context._body.Count;
+
+			if (conditionals == 1 && conditionals == bodies)
+			{
+				// if
+			}
+			else if (conditionals == 1 && conditionals < bodies)
+			{
+				// if-else
+			}
+			else if (conditionals > 1 && conditionals == bodies)
+			{
+				// if-elseif
+			}
+			else if (conditionals > 1 && conditionals < bodies)
+			{
+				// if-elseif-else
+			}
+
+			return ifElseNode;
 		}
 		*/
 		public override Node VisitForStmt(ML4DParser.ForStmtContext context)
@@ -114,8 +130,8 @@ namespace ML4D.Compiler
 				throw new Exception("Init in for loop is not of type VariableDCLNode");
 			}
 			ForNode forNode = new ForNode(
-				(VariableDCLNode) initNode, 
-				(ExpressionNode) Visit(context.cond), 
+				(VariableDCLNode) initNode,
+				(ExpressionNode) Visit(context.cond),
 				(AssignNode) Visit(context.final),
 				(LinesNode) Visit(context.body));
 			return forNode;
@@ -141,7 +157,7 @@ namespace ML4D.Compiler
 		public override Node VisitFuncStmt(ML4DParser.FuncStmtContext context)
 		{
 			FunctionStmtNode functionStmtNode = new(context.id.Text);
-			
+
 			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
 				functionStmtNode.Arguments.Add(Visit(argument));
 			return functionStmtNode;
@@ -167,12 +183,12 @@ namespace ML4D.Compiler
 		{
 			return new AssignNode(context.id.Text, (ExpressionNode) Visit(context.right));
 		}
-		
+
 		// Expressions
 		public override Node VisitInfixRelationalExpr(ML4DParser.InfixRelationalExprContext context)
 		{
 			InfixExpressionNode node;
-			
+
 			switch (context.op.Type)
 			{
 				case ML4DLexer.LTHAN:
@@ -201,11 +217,11 @@ namespace ML4D.Compiler
 			node.Right = (ExpressionNode) Visit(context.right);
 			return node;
 		}
-		
+
 		public override Node VisitInfixBoolExpr(ML4DParser.InfixBoolExprContext context)
 		{
 			InfixExpressionNode node;
-			
+
 			switch (context.op.Type)
 			{
 				case ML4DLexer.AND:
@@ -229,11 +245,11 @@ namespace ML4D.Compiler
 			node.Parenthesized = true;
 			return node;
 		}
-		
+
 		public override Node VisitInfixValueExpr(ML4DParser.InfixValueExprContext context)
 		{
 			InfixExpressionNode node;
-			
+
 			switch (context.op.Type)
 			{
 				case ML4DLexer.PLUS:
@@ -263,7 +279,7 @@ namespace ML4D.Compiler
 		public override Node VisitUnaryExpr(ML4DParser.UnaryExprContext context)
 		{
 			UnaryExpressionNode node;
-			
+
 			switch (context.op.Type)
 			{
 				case ML4DLexer.MINUS:
@@ -280,10 +296,10 @@ namespace ML4D.Compiler
 			return node;
 		}
 
-		public override Node VisitFuncExpr(ML4DParser.FuncExprContext context) 
+		public override Node VisitFuncExpr(ML4DParser.FuncExprContext context)
 		{
 			FunctionExprNode functionExprNode = new FunctionExprNode(context.id.Text);
-			
+
 			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
 				functionExprNode.Arguments.Add((ExpressionNode) Visit(argument));
 			return functionExprNode;
@@ -293,7 +309,7 @@ namespace ML4D.Compiler
 		public override Node VisitTypeExpr(ML4DParser.TypeExprContext context)
 		{
 			ExpressionNode node;
-			
+
 			switch (context.value.Type)
 			{
 				case ML4DLexer.INUM:

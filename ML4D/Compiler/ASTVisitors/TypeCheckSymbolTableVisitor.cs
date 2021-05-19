@@ -62,21 +62,28 @@ namespace ML4D.Compiler.ASTVisitors
             
             base.Visit(node);
             
-            //node.Init.Elements
-            // TODO, problem med elements. 3x4 giver samme entries som 4x3. Det skal laves bedre.
+            int InitColumns = node.Init.FirstRowElements.Count;
+            int InitRows = node.Init.Elements.Count + 1;
             
-            //if (node.Type == node.Init.Type || node.Type == "double" && node.Init.Type == "int")
-                return;
-            throw new VariableInitialisationException(
-                "Failed to initialise in declaration. The expression has an incorrect type.");
+            if (InitColumns != node.Columns || InitRows != node.Rows)
+                throw new Exception(
+                    $"Declared dimensions rows: {node.Rows} - {InitRows}, columns: {node.Columns} - {InitColumns}");
             
-            
-            base.Visit(node);
+            // Entries er double/int udtryk, columns og rows er korrekte.
         }
 
         public override void Visit(TensorInitNode node)
         {
             base.Visit(node);
+
+            foreach (ExpressionNode element in node.FirstRowElements)
+                if (element.Type != "double" && element.Type != "int")
+                    throw new TensorInitialisationException(node, 
+                        $"Incorrect element type: {element.Type}, only double and int are allowed");
+            foreach (ExpressionNode element in node.Elements)
+                if (element.Type != "double" && element.Type != "int")
+                    throw new TensorInitialisationException(node, 
+                        $"Incorrect element type: {element.Type}, only double and int are allowed");
         }
 
         // Statement      
@@ -130,9 +137,6 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(IfElseChainNode node)
         {
-            
-            
-            
             base.Visit(node);
         }
 
