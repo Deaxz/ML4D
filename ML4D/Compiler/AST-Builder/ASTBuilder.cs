@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Globalization;
+using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using ML4D.Compiler.Nodes;
 
@@ -100,24 +101,24 @@ namespace ML4D.Compiler
 		}
 
 		// Statements
-		public override Node VisitIfStmt(ML4DParser.IfStmtContext context)
+		/*public override Node VisitIfStmt(ML4DParser.IfStmtContext context)
 		{
-			return base.VisitIfStmt(context);
+			return new node();
 		}
-
+		*/
 		public override Node VisitForStmt(ML4DParser.ForStmtContext context)
 		{
-			// for (loop init; loop cond; loop inc)
-			// {body}
-
-			// loop inititialization statement
-			// loop condition expression
-			// loop increment statement
-			// body - loop statement
-			
-			
-
-			return base.VisitForStmt(context);
+			Node initNode = Visit(context.init);
+			if (initNode is not VariableDCLNode)
+			{
+				throw new Exception("Init in for loop is not of type VariableDCLNode");
+			}
+			ForNode forNode = new ForNode(
+				(VariableDCLNode) initNode, 
+				(ExpressionNode) Visit(context.cond), 
+				(AssignNode) Visit(context.final),
+				(LinesNode) Visit(context.body));
+			return forNode;
 		}
 
 		public override Node VisitWhileStmt(ML4DParser.WhileStmtContext context)
@@ -148,7 +149,13 @@ namespace ML4D.Compiler
 
 		public override Node VisitGradientsStmt(ML4DParser.GradientsStmtContext context)
 		{
-			return base.VisitGradientsStmt(context);
+			GradientsNode gradientsNode = new GradientsNode(context.tensor.Text, (LinesNode) Visit(context.body));
+			for (int i = 0; i < context._gradvar.Count; i++)
+			{
+				gradientsNode.GradVariables.Add(new FunctionArgumentNode("double", context._gradvar[i].Text));
+				gradientsNode.GradTensors.Add(context._gradtensor[i].Text);
+			}
+			return gradientsNode;
 		}
 
 		public override Node VisitAssignStmt(ML4DParser.AssignStmtContext context)
