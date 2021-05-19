@@ -115,7 +115,9 @@ namespace ML4D.Compiler.ASTVisitors
         {
             SymbolTable.OpenScope("while");
             base.Visit(node);
-            // TODO type check predicate
+            
+            if (node.Predicate.Type != "bool")
+                throw new PredicateTypeException(node, "Predicate is not of type bool.");
             SymbolTable.CloseScope();
         }
         
