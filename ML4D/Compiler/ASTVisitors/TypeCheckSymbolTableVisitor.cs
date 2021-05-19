@@ -55,7 +55,7 @@ namespace ML4D.Compiler.ASTVisitors
         public override void Visit(TensorDCLNode node)
         {
             if (SymbolTable.Retrieve(node.ID) is null)
-                SymbolTable.Insert(node.ID, node.Type, false);
+                SymbolTable.Insert(node.ID, node.Type, false, node.Rows, node.Columns);
             else
                 throw new VariableAlreadyDeclaredException(
                     $"The variable \"{node.ID}\" could not be declared, as it has already been declared in the current or parent scope.");
@@ -68,8 +68,6 @@ namespace ML4D.Compiler.ASTVisitors
             if (InitColumns != node.Columns || InitRows != node.Rows)
                 throw new Exception(
                     $"Declared dimensions rows: {node.Rows} - {InitRows}, columns: {node.Columns} - {InitColumns}");
-            
-            // Entries er double/int udtryk, columns og rows er korrekte.
         }
 
         public override void Visit(TensorInitNode node)
@@ -157,7 +155,16 @@ namespace ML4D.Compiler.ASTVisitors
             if (variableDCL is null)
                 throw new VariableNotDeclaredException(node, 
                     $"The variable \"{node.ID}\" cannot be used, as it has not been declared.");
-            node.Type = variableDCL.Type;
+            
+            if (variableDCL is TensorSymbol)
+            {
+                TensorSymbol tensorDCL = (TensorSymbol) variableDCL;
+                node.Type = tensorDCL.Type;
+                node.Rows = tensorDCL.Rows;
+                node.Columns = tensorDCL.Columns;
+            } 
+            else
+                node.Type = variableDCL.Type;
         }
         
         public override void Visit(InfixExpressionNode node)
@@ -178,8 +185,13 @@ namespace ML4D.Compiler.ASTVisitors
                             "The operands of a arithmetic operator can only be int and double. It does not allow bool.");
                     else if (node.Left.Type == "int" && node.Right.Type == "int")
                         node.Type = "int";
-                    else
-                        node.Type = "double";
+                    else if (node.Left.Type == "tensor")
+                    {
+                        
+                    }
+                    
+                    
+                    
                     break;
                     
                 // Relational
@@ -193,6 +205,9 @@ namespace ML4D.Compiler.ASTVisitors
                     if (node.Left.Type == "bool" || node.Right.Type == "bool")
                         throw new InvalidOperandsException(node,
                             "The operands of a relational operator can only be int and double. It does not allow bool.");
+                    else if (node.Left.Type == "tensor" || node.Right.Type == "tensor")
+                        throw new InvalidOperandsException(node,
+                            "The operands of a relational operator can only be int and double. It does not allow tensor.");
                     else
                         node.Type = "bool";
                     break;
@@ -203,7 +218,7 @@ namespace ML4D.Compiler.ASTVisitors
                    
                     if (node.Left.Type != "bool" || node.Right.Type != "bool")
                         throw new InvalidOperandsException(node, 
-                            "The operands of a bool operator can only be bool. It does not allow int or double.");
+                            "The operands of a bool operator can only be bool. It does not allow int, double or tensor.");
                     else
                         node.Type = "bool";
                     break;
@@ -211,19 +226,31 @@ namespace ML4D.Compiler.ASTVisitors
                     throw new NotSupportedException();
             }
         }
-        
+
         public override void Visit(UnaryExpressionNode node)
         {
+            base.Visit(node);
+            
             switch (node)
             {
                 case NotNode:
-                    VisitChildren(node);
-                    
                     if (node.Inner.Type != "bool")
                         throw new InvalidOperandsException(node,
-                            "The operand of a bool operator can only be bool. It does not allow int or double.");
+                            "The operand of a bool operator can only be bool. It does not allow int, double or tensor.");
                     else
                         node.Type = "bool";
+                    break; 
+                
+                case UnaryMinusNode:
+                    if (node.Inner.Type == "int")
+                        node.Type = "int";
+                    else if (node.Inner.Type == "double")
+                        node.Type = "double";
+                    else if (node.Inner.Type == "tensor")
+                        node.Type = "tensor";
+                    else
+                        throw new InvalidOperandsException(node,
+                            "The operand of a arithmetic operator can not be bool. It does only allow int, double or tensor.");
                     break;
                 default:
                     throw new NotSupportedException();
