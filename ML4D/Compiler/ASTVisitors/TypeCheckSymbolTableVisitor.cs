@@ -46,7 +46,11 @@ namespace ML4D.Compiler.ASTVisitors
         public override void Visit(FunctionArgumentNode node)
         {
             if (SymbolTable.Retrieve(node.ID) is null)
-                SymbolTable.Insert(node.ID, node.Type, false);
+            {
+                if (node.Type == "tensor")
+                    throw new Exception("Functions cannot take tensors as parameters. Sorry :("); // TODO, lille meme
+                SymbolTable.Insert(node.ID, node.Type, false); 
+            }
             else
                 throw new VariableAlreadyDeclaredException(
                     $"The variable \"{node.ID}\" has already been declared. And would hide the variable in the parent scope if declared inside the function.");
