@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ML4D", "ML4D.csproj", "{5C10516C-9722-4BFE-AF24-A1CDFB930E77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "..\Test\Test.csproj", "{ECB7C938-0587-4D4C-AC7C-4302876C0C97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5C10516C-9722-4BFE-AF24-A1CDFB930E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C10516C-9722-4BFE-AF24-A1CDFB930E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C10516C-9722-4BFE-AF24-A1CDFB930E77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECB7C938-0587-4D4C-AC7C-4302876C0C97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECB7C938-0587-4D4C-AC7C-4302876C0C97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECB7C938-0587-4D4C-AC7C-4302876C0C97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECB7C938-0587-4D4C-AC7C-4302876C0C97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
