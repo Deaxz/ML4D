@@ -48,7 +48,7 @@ namespace ML4D.Compiler
 		public override Node VisitTensorDecl(ML4DParser.TensorDeclContext context)
 		{
 			TensorDCLNode tensorDclNode = new TensorDCLNode(
-				"tensor", context.id.Text, 
+				context.type.Text, context.id.Text, 
 				int.Parse(context.rows.Text),
 				int.Parse(context.coloumns.Text), 
 				(TensorInitNode) Visit(context.init));
