@@ -66,23 +66,23 @@ namespace ML4D.Compiler.ASTVisitors
             
             base.Visit(node);
             
-            int InitColumns;
-            int InitRows;
+            int initColumns = -1;
+            int initRows = -1;
 
             if (node.Init is TensorInitNode init)
             {
-                InitColumns = init.FirstRowElements.Count;
-                InitRows = (init.Elements.Count / InitColumns) + 1;
-            
-                if (InitColumns != node.Columns || InitRows != node.Rows)
-                    throw new Exception(
-                        $"Declared dimensions rows: {node.Rows} - {InitRows}, columns: {node.Columns} - {InitColumns}");
+                initColumns = init.FirstRowElements.Count;
+                initRows = (init.Elements.Count / initColumns) + 1;
             }
-            else
+            else if (node.Init is {Columns: { }, Rows: { }} assignInit) // node.Init.Rows is not null && node.Init.Columns is not null
             {
-                InitColumns = node.Init.Columns;
+                initColumns = (int) assignInit.Columns;
+                initRows = (int) assignInit.Rows;
             }
             
+            if (initColumns != node.Columns || initRows != node.Rows)
+                throw new Exception(
+                    $"Declared dimensions rows: {node.Rows} - {initRows}, columns: {node.Columns} - {initColumns}");
         }
 
         public override void Visit(TensorInitNode node)
@@ -90,11 +90,11 @@ namespace ML4D.Compiler.ASTVisitors
             base.Visit(node);
 
             foreach (ExpressionNode element in node.FirstRowElements)
-                if (element.Type == "bool" || element.Type == "tensor")
+                if (element.Type is "bool" or "tensor")
                     throw new TensorInitialisationException(node, 
                         $"Incorrect element type: {element.Type}, only double and int are allowed");
             foreach (ExpressionNode element in node.Elements)
-                if (element.Type == "bool" || element.Type == "tensor")
+                if (element.Type is "bool" or "tensor")
                     throw new TensorInitialisationException(node, 
                         $"Incorrect element type: {element.Type}, only double and int are allowed");
         }
