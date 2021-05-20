@@ -169,9 +169,11 @@ namespace ML4D.Compiler.ASTVisitors
             {
                 base.Visit(ifNode);
             }
-            if (node.ElseBody != null)
+            if (node.ElseBody is not null)
             {
+                SymbolTable.OpenScope("else");
                 base.Visit(node.ElseBody);
+                SymbolTable.CloseScope();
             }
         }
 
