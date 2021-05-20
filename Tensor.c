@@ -41,14 +41,17 @@ typedef struct LinkedList {
 struct LinkedList* newLinkedList();
 struct Backward* newBackward();
 struct Value* newValue(double data);
-struct Tensor newTensor(Value* rows[], Value* columns[], int rowLength, int columnLength);
+struct Tensor* newTensor(double** inputValues, int rowLength, int columnLength);
+
 Value* add(Value* self, Value* other);
 Value* mul(Value* self, Value* other);
 Value* relu(Value* self);
+
 void add_backward(Value* self, Value* other, Value* out);
 void mul_backward(Value* self, Value* other, Value* out);
 void power_backward(Value* self, Value* other, Value* out);
 void relu_backward(Value* self, Value* other, Value* out);
+
 Value* neg(Value* self);
 Value* sub(Value* self, Value* other);
 Value* truediv(Value* self, Value* other);
@@ -56,6 +59,8 @@ Value* truediv(Value* self, Value* other);
 Tensor* tmul(Tensor* a, Tensor* b);
 Tensor* tadd(Tensor* a, Tensor* b);
 Tensor* tsub(Tensor* a, Tensor* b);
+void zeroValue(Node* head);
+void zeroGradients(Tensor* tensor);
 
 void scalarmul(double scalar, Tensor* tensor);
 void tensorBackwards(Tensor* tensor);
@@ -320,86 +325,27 @@ void freeBackward(struct Backward** backward){
   *backward = NULL;
 }
 
-Tensor newTensor(Value* rows[], Value* columns[], int rowLength, int columnLength){
-    Tensor res;
+Tensor* newTensor(double** inputValues, int rowLength, int columnLength){
+    Value*** tensorValues = (Value***)malloc(rowLength * sizeof(Value*));
 
-    res.values = malloc(rowLength * columnLength * sizeof(Value));
-    res.rows = rowLength;
-    res.columns = columnLength;
+    for(int i=0; i < rowLength; i++){
+      for(int j=0; j < columnLength; j++){
+        tensorValues[i][j] = newValue(inputValues[i][j]);
+      }
+    }
 
-    return res;
+    Tensor res = {
+      .values = tensorValues,
+      .rows = rowLength,
+      .columns = columnLength
+    };
+
+    free(inputValues);
+    return &res;
 }
 
-// int main(){
-//   printf("hello world2\n");
-//   int rowcount = 1;
-//   int colcount = 1;
 
-//   Value*** values1 = (Value***)malloc(rowcount * sizeof(Value*));
-//     for(int i=0; i < rowcount; i++) values1[i] = (Value*)malloc(colcount * sizeof(Value*));
 
-//   //Value *values1[1][1];
-
-//   values1[0][0] = newValue(0.0);
-
-//   Tensor r1 = {
-//       .values = values1,
-//       .rows = rowcount,
-//       .columns = colcount        
-//   };
-
-//   Value*** values2 = (Value***)malloc(rowcount * sizeof(Value*));
-//     for(int i=0; i < rowcount; i++) values2[i] = (Value *)malloc(colcount * sizeof(Value*));
-//   // Value *values2[1][1];
-
-//   values2[0][0] = newValue(1.0);
-
-//   Tensor r2 = {
-//       .values = values2,
-//       .rows = rowcount,
-//       .columns = colcount        
-//   };
-
-//   Value*** values3 = (Value***)malloc(rowcount * sizeof(Value*));
-//     for(int i=0; i < rowcount; i++) values3[i] = (Value *)malloc(colcount * sizeof(Value*));
-//   // Value *values3[1][1];
-
-//   values3[0][0] = newValue(20.0);
-
-//   Tensor c1 = {
-//       .values = values3,
-//       .rows = rowcount,
-//       .columns = colcount        
-//   };
-
-//   Value*** values4 = (Value***)malloc(rowcount * sizeof(Value*));
-//     for(int i=0; i < rowcount; i++) values4[i] = (Value *)malloc(colcount * sizeof(Value*));
-//   // Value *values4[1][1];
-
-//   values4[0][0] = newValue(21.0);
-
-//   Tensor c2 = {
-//       .values = values4,
-//       .rows = rowcount,
-//       .columns = colcount        
-//   };
-
-//   Tensor* p1 = tmul(&r1, &c1);
-//   Tensor* p2 = tmul(&r2, &c2);
-//   Tensor* res = tadd(p1, p2);
-//   printf("before backwards\n");
-//   printf("res data: %lf\n", res->values[0][0]->data);
-//   printf("res grad: %lf\n", res->values[0][0]->grad);
-//   tensorBackwards(res);
-//   printf("res data: %lf\n", res->values[0][0]->data);
-//   printf("res grad: %lf\n", res->values[0][0]->grad);
-
-//   printf("r1 data: %lf\n", r1.values[0][0]->data);
-//   printf("r1 grad: %lf\n", r1.values[0][0]->grad);
-//   printf("r2 data: %lf\n", r2.values[0][0]->data);
-//   printf("r2 grad: %lf\n", r2.values[0][0]->grad);
-  
-// }
 
 int main(){
     printf("hello world\n");
@@ -491,6 +437,7 @@ int main(){
 void tensorBackwards(Tensor* tensor){
   backward(tensor->values[0][0]);
 }
+
 
 void printTensor(Tensor* t){
   for (int i = 0; i < t->rows; ++i) {
@@ -591,5 +538,18 @@ void scalarmul(double scalar, Tensor* tensor){
     {
         tensor->values[i][j] = mul(valueScalar, tensor->values[i][j]);
     }    
+  }
+}
+
+void zeroGradients(Tensor* tensor){
+  zeroValue(tensor->values[0][0]->_prev->head);
+}
+
+void zeroValue(Node* head){
+  Node* curr = head;
+  while(curr != NULL){
+    curr->value->grad = 0; 
+    zeroValue(curr->next);
+    curr = curr->next;
   }
 }
