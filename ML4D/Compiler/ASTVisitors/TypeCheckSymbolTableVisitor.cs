@@ -167,12 +167,12 @@ namespace ML4D.Compiler.ASTVisitors
         {
             foreach (IfNode ifNode in node.IfNodes)
             {
-                base.Visit(ifNode);
+                Visit(ifNode);
             }
             if (node.ElseBody is not null)
             {
                 SymbolTable.OpenScope("else");
-                base.Visit(node.ElseBody);
+                Visit(node.ElseBody);
                 SymbolTable.CloseScope();
             }
         }

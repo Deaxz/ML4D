@@ -160,8 +160,17 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(ForNode node)
         {
-            // You got it Team TvebakkexZacho <333333
-            base.Visit(node);
+            Emit("for (");
+            Emit(node.Init.Type + " " + node.Init.ID + " = ");
+            base.Visit(node.Init);
+            Emit("; ");
+            Visit(node.Predicate);
+            Emit("; ");
+            Emit(node.Final.ID + " = ");
+            base.Visit(node.Final);
+            Emit(") {\n");
+            Visit(node.Body);
+            Emit("}\n");
         }
 
         public override void Visit(GradientsNode node)
