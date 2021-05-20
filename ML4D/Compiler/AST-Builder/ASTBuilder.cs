@@ -52,7 +52,7 @@ namespace ML4D.Compiler
 			if (context.init is not null)
 				tensorDclNode = new TensorDCLNode(context.type.Text, context.id.Text, int.Parse(context.rows.Text), int.Parse(context.coloumns.Text), (TensorInitNode) Visit(context.init));
 			else 
-				tensorDclNode = new TensorDCLNode(context.type.Text, context.id.Text, int.Parse(context.rows.Text), int.Parse(context.coloumns.Text), (TensorInitNode) Visit(context.assign));
+				tensorDclNode = new TensorDCLNode(context.type.Text, context.id.Text, int.Parse(context.rows.Text), int.Parse(context.coloumns.Text), (TensorInitNode) Visit(context.assignInit));
 
 			return tensorDclNode;
 		}
