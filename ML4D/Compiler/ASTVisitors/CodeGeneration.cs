@@ -91,11 +91,29 @@ namespace ML4D.Compiler.ASTVisitors
         public override void Visit(TensorDCLNode node)
         {
             Emit("Tensor* " + node.ID + " = ");
-            base.Visit(node);
-            Emit(";\n");
+
+            if(node.Init is TensorInitNode initNode){
+                Emit($"newTensor(*(double[][{node.Columns}]){{");
+                int i=0;
+                foreach(ExpressionNode exprNode in initNode.GetChildren()){
+                    Visit(exprNode);
+                    Emit(",");
+                    if(i % node.Columns == 0){
+                        Emit("}\n");
+                        if(i-1 != node.Rows * node.Columns){
+                            Emit(",{");
+                        }
+                    }
+                    i++;
+                }
+                Emit($", {node.Rows}, {node.Columns});\n");
+            }else{
+
+            }
         }
 
         public override void Visit(TensorInitNode node){
+            Emit("newTensor(*(double[][");
             
         }
 

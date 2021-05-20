@@ -57,12 +57,8 @@ namespace ML4D.Compiler.Nodes
 
         public override List<Node> GetChildren()
         {
-            List<Node> children = new List<Node>();
-            foreach (ExpressionNode child in FirstRowElements)
-                children.Add(child);
-            foreach (ExpressionNode child in Elements)
-                children.Add(child);
-            return children;
+            List<Node> children = new List<Node>(FirstRowElements);
+            return children.Concat(Elements).ToList();
         }
     }
 
