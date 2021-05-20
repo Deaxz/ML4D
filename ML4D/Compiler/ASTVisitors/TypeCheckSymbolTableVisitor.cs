@@ -66,12 +66,23 @@ namespace ML4D.Compiler.ASTVisitors
             
             base.Visit(node);
             
-            int InitColumns = node.Init.FirstRowElements.Count;
-            int InitRows = (node.Init.Elements.Count / InitColumns) + 1;
+            int InitColumns;
+            int InitRows;
+
+            if (node.Init is TensorInitNode init)
+            {
+                InitColumns = init.FirstRowElements.Count;
+                InitRows = (init.Elements.Count / InitColumns) + 1;
             
-            if (InitColumns != node.Columns || InitRows != node.Rows)
-                throw new Exception(
-                    $"Declared dimensions rows: {node.Rows} - {InitRows}, columns: {node.Columns} - {InitColumns}");
+                if (InitColumns != node.Columns || InitRows != node.Rows)
+                    throw new Exception(
+                        $"Declared dimensions rows: {node.Rows} - {InitRows}, columns: {node.Columns} - {InitColumns}");
+            }
+            else
+            {
+                InitColumns = node.Init.Columns;
+            }
+            
         }
 
         public override void Visit(TensorInitNode node)
@@ -154,7 +165,6 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(IfElseChainNode node)
         {
-            
             foreach (IfNode ifNode in node.IfNodes)
             {
                 base.Visit(ifNode);
