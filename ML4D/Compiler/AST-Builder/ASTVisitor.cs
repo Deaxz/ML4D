@@ -30,6 +30,7 @@ namespace ML4D.Compiler
         public virtual void Visit(ReturnNode node) {VisitChildren(node);}
         public virtual void Visit(FunctionNode node) {VisitChildren(node);}
         public virtual void Visit(IfElseChainNode node) {VisitChildren(node);}
+        public virtual void Visit(IfNode node) {VisitChildren(node);}
         public virtual void Visit(ForNode node) {VisitChildren(node);}
         public virtual void Visit(GradientsNode node) {VisitChildren(node);}
         

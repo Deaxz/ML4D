@@ -154,8 +154,27 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(IfElseChainNode node)
         {
-            base.Visit(node);
+            
+            foreach (IfNode ifNode in node.IfNodes)
+            {
+                base.Visit(ifNode);
+            }
+            if (node.ElseBody != null)
+            {
+                base.Visit(node.ElseBody);
+            }
         }
+
+        public override void Visit(IfNode node)
+        {
+            SymbolTable.OpenScope("if");
+            base.Visit(node);
+            
+            if (node.Predicate.Type != "bool")
+                throw new PredicateTypeException(node, "Predicate is not of type bool.");
+            SymbolTable.CloseScope();
+        }
+
 
         public override void Visit(ForNode node)
         {
