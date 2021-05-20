@@ -172,6 +172,9 @@ namespace ML4D.Compiler.ASTVisitors
             SymbolTable.OpenScope("gradients");
             base.Visit(node);
 
+            if (node.tensorID != "tensor") 
+                throw new Exception($"Can only calculate gradients from tensors."); // TODO, overvej custom exception
+            
             foreach (string tensorID in node.GradTensors)
                 if (SymbolTable.Retrieve(tensorID).Type != "tensor")
                     throw new Exception($"Can only calculate gradients from tensors."); // TODO, overvej custom exception
