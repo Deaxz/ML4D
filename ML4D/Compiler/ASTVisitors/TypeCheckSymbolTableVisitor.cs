@@ -154,14 +154,15 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(IfElseChainNode node)
         {
-            
             foreach (IfNode ifNode in node.IfNodes)
             {
                 base.Visit(ifNode);
             }
-            if (node.ElseBody != null)
+            if (node.ElseBody is not null)
             {
+                SymbolTable.OpenScope("else");
                 base.Visit(node.ElseBody);
+                SymbolTable.CloseScope();
             }
         }
 
