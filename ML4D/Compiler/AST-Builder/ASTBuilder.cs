@@ -47,8 +47,11 @@ namespace ML4D.Compiler
 
 		public override Node VisitTensorDecl(ML4DParser.TensorDeclContext context)
 		{
-			TensorDCLNode tensorDclNode = new TensorDCLNode("tensor", context.id.Text, int.Parse(context.rows.Text),
-				int.Parse(context.coloumns.Text), (TensorInitNode) Visit(context.init));
+			TensorDCLNode tensorDclNode = new TensorDCLNode(
+				"tensor", context.id.Text, 
+				int.Parse(context.rows.Text),
+				int.Parse(context.coloumns.Text), 
+				(TensorInitNode) Visit(context.init));
 			return tensorDclNode;
 		}
 
@@ -130,8 +133,11 @@ namespace ML4D.Compiler
 			Node initNode = Visit(context.init);
 			if (initNode is not VariableDCLNode)
 				throw new Exception("Init is not of type VariableDCLNode");
-			ForNode forNode = new ForNode((VariableDCLNode) initNode,(ExpressionNode) Visit(context.pred),
-									(AssignNode) Visit(context.final),(LinesNode) Visit(context.body));
+			ForNode forNode = new ForNode(
+				(VariableDCLNode) initNode,
+				(ExpressionNode) Visit(context.pred), 
+				(AssignNode) Visit(context.final),
+				(LinesNode) Visit(context.body));
 			return forNode;
 		}
 
@@ -191,22 +197,22 @@ namespace ML4D.Compiler
 			switch (context.op.Type)
 			{
 				case ML4DLexer.LTHAN:
-					node = new LessThanNode("<");
+					node = new LessThanNode(context.op.Text);
 					break;
 				case ML4DLexer.GTHAN:
-					node = new GreaterThanNode(">");
+					node = new GreaterThanNode(context.op.Text);
 					break;
 				case ML4DLexer.LETHAN:
-					node = new LessEqualThanNode("<=");
+					node = new LessEqualThanNode(context.op.Text);
 					break;
 				case ML4DLexer.GETHAN:
-					node = new GreaterEqualThanNode(">=");
+					node = new GreaterEqualThanNode(context.op.Text);
 					break;
 				case ML4DLexer.EQUALS:
-					node = new EqualNode("==");
+					node = new EqualNode(context.op.Text);
 					break;
 				case ML4DLexer.NOTEQUALS:
-					node = new NotEqualNode("!=");
+					node = new NotEqualNode(context.op.Text);
 					break;
 				default:
 					throw new NotSupportedException(
