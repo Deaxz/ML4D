@@ -90,7 +90,13 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(TensorDCLNode node)
         {
+            Emit("Tensor* " + node.ID + " = ");
             base.Visit(node);
+            Emit(";\n");
+        }
+
+        public override void Visit(TensorInitNode node){
+            
         }
 
         // --- Statements ---
