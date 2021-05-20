@@ -7,7 +7,7 @@ lines
 
 dcl
     :   type=types id=ID '=' init=bool_expr ';'                                                                 # varDecl
-    |   type=types id=ID '[' rows=INUM ']' '[' coloumns=INUM ']' '=' init=tensor_init ';'                       # tensorDecl // TODO overvej INUM -> ID, tjek det er INT ved typechecking
+    |   type=TENSOR id=ID '[' rows=INUM ']' '[' coloumns=INUM ']' '=' (init=tensor_init | assign=bool_expr) ';' # tensorDecl // TODO overvej INUM -> ID, tjek det er INT ved typechecking
     |   type=types id=ID '(' (argtype+=types argid+=ID (',' argtype+=types argid+=ID)*)? ')' '{' body=lines '}' # funcDecl
     ;
 
@@ -52,7 +52,6 @@ types
     :   type=INT
     |   type=BOOL
     |   type=DOUBLE
-    |   type=TENSOR
     |   type=VOID
     ;
 

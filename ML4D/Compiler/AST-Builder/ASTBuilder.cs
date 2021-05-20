@@ -47,11 +47,13 @@ namespace ML4D.Compiler
 
 		public override Node VisitTensorDecl(ML4DParser.TensorDeclContext context)
 		{
-			TensorDCLNode tensorDclNode = new TensorDCLNode(
-				context.type.Text, context.id.Text, 
-				int.Parse(context.rows.Text),
-				int.Parse(context.coloumns.Text), 
-				(TensorInitNode) Visit(context.init));
+			TensorDCLNode tensorDclNode;
+			
+			if (context.init is not null)
+				tensorDclNode = new TensorDCLNode(context.type.Text, context.id.Text, int.Parse(context.rows.Text), int.Parse(context.coloumns.Text), (TensorInitNode) Visit(context.init));
+			else 
+				tensorDclNode = new TensorDCLNode(context.type.Text, context.id.Text, int.Parse(context.rows.Text), int.Parse(context.coloumns.Text), (TensorInitNode) Visit(context.assign));
+
 			return tensorDclNode;
 		}
 
