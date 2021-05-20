@@ -47,8 +47,11 @@ namespace ML4D.Compiler
 
 		public override Node VisitTensorDecl(ML4DParser.TensorDeclContext context)
 		{
-			TensorDCLNode tensorDclNode = new TensorDCLNode("tensor", context.id.Text, int.Parse(context.rows.Text),
-				int.Parse(context.coloumns.Text), (TensorInitNode) Visit(context.init));
+			TensorDCLNode tensorDclNode = new TensorDCLNode(
+				context.type.Text, context.id.Text, 
+				int.Parse(context.rows.Text),
+				int.Parse(context.coloumns.Text), 
+				(TensorInitNode) Visit(context.init));
 			return tensorDclNode;
 		}
 
@@ -95,43 +98,44 @@ namespace ML4D.Compiler
 		}
 
 		// Statements
-		/*public override Node VisitIfStmt(ML4DParser.IfStmtContext context)
+		public override Node VisitIfStmt(ML4DParser.IfStmtContext context)
 		{
-			IfElseChainNode ifElseNode = new IfElseChainNode();
-
-			int conditionals = context._cond.Count;
+			IfElseChainNode ifElseChainNode = new IfElseChainNode();
+			int predicates = context._pred.Count;
 			int bodies = context._body.Count;
+			
+			// If
+			ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._pred[0]),
+														(LinesNode) Visit(context._body[0])));
+			// Else
+			if (predicates == 1 && predicates < bodies)
+				ifElseChainNode.ElseBody = (LinesNode) Visit(context._body[bodies-1]);
 
-			if (conditionals == 1 && conditionals == bodies)
+			// Else if/Else if Else
+			if (predicates > 1 && predicates == bodies)
 			{
-				// if
+				for (int i = 1; i < bodies; i++)
+					ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._pred[i]),
+																(LinesNode) Visit(context._body[i])));
 			}
-			else if (conditionals == 1 && conditionals < bodies)
-			{
-				// if-else
-			}
-			else if (conditionals > 1 && conditionals == bodies)
-			{
-				// if-elseif
-			}
-			else if (conditionals > 1 && conditionals < bodies)
-			{
-				// if-elseif-else
-			}
-
-			return ifElseNode;
+			else if (predicates > 1 && predicates < bodies)
+            {
+                for (int i = 1; i < predicates; i++)
+                    ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._pred[i]),
+																(LinesNode) Visit(context._body[i])));
+                ifElseChainNode.ElseBody = (LinesNode) Visit(context._body[bodies-1]);
+            }
+			return ifElseChainNode;
 		}
-		*/
+		
 		public override Node VisitForStmt(ML4DParser.ForStmtContext context)
 		{
 			Node initNode = Visit(context.init);
 			if (initNode is not VariableDCLNode)
-			{
-				throw new Exception("Init in for loop is not of type VariableDCLNode");
-			}
+				throw new Exception("Init is not of type VariableDCLNode");
 			ForNode forNode = new ForNode(
 				(VariableDCLNode) initNode,
-				(ExpressionNode) Visit(context.cond),
+				(ExpressionNode) Visit(context.pred), 
 				(AssignNode) Visit(context.final),
 				(LinesNode) Visit(context.body));
 			return forNode;
@@ -140,7 +144,7 @@ namespace ML4D.Compiler
 		public override Node VisitWhileStmt(ML4DParser.WhileStmtContext context)
 		{
 			WhileNode whileNode = new WhileNode(
-				(ExpressionNode) Visit(context.predicate), (LinesNode) Visit(context.body));
+				(ExpressionNode) Visit(context.pred), (LinesNode) Visit(context.body));
 			return whileNode;
 		}
 
@@ -166,6 +170,7 @@ namespace ML4D.Compiler
 		public override Node VisitGradientsStmt(ML4DParser.GradientsStmtContext context)
 		{
 			GradientsNode gradientsNode = new GradientsNode(context.tensor.Text, (LinesNode) Visit(context.body));
+			
 			for (int i = 0; i < context._gradvar.Count; i++)
 			{
 				gradientsNode.GradVariables.Add(new FunctionArgumentNode("double", context._gradvar[i].Text));
@@ -192,22 +197,22 @@ namespace ML4D.Compiler
 			switch (context.op.Type)
 			{
 				case ML4DLexer.LTHAN:
-					node = new LessThanNode("<");
+					node = new LessThanNode(context.op.Text);
 					break;
 				case ML4DLexer.GTHAN:
-					node = new GreaterThanNode(">");
+					node = new GreaterThanNode(context.op.Text);
 					break;
 				case ML4DLexer.LETHAN:
-					node = new LessEqualThanNode("<=");
+					node = new LessEqualThanNode(context.op.Text);
 					break;
 				case ML4DLexer.GETHAN:
-					node = new GreaterEqualThanNode(">=");
+					node = new GreaterEqualThanNode(context.op.Text);
 					break;
 				case ML4DLexer.EQUALS:
-					node = new EqualNode("==");
+					node = new EqualNode(context.op.Text);
 					break;
 				case ML4DLexer.NOTEQUALS:
-					node = new NotEqualNode("!=");
+					node = new NotEqualNode(context.op.Text);
 					break;
 				default:
 					throw new NotSupportedException(
@@ -284,15 +289,16 @@ namespace ML4D.Compiler
 			{
 				case ML4DLexer.MINUS:
 					node = new UnaryMinusNode("-");
+					node.Inner = (ExpressionNode) Visit(context.right);
 					break;
 				case ML4DLexer.NOT:
 					node = new NotNode("not");
+					node.Inner = (ExpressionNode) Visit(context.inner);
 					break;
 				default:
 					throw new NotSupportedException(
 						$"The operator {context.op.Text}, is not a valid unary operator.");
 			}
-			node.Inner = (ExpressionNode) Visit(context.inner);
 			return node;
 		}
 
@@ -301,7 +307,7 @@ namespace ML4D.Compiler
 			FunctionExprNode functionExprNode = new FunctionExprNode(context.id.Text);
 
 			foreach (ML4DParser.Bool_exprContext argument in context._argexpr)
-				functionExprNode.Arguments.Add((ExpressionNode) Visit(argument));
+				functionExprNode.Arguments.Add(Visit(argument));
 			return functionExprNode;
 		}
 

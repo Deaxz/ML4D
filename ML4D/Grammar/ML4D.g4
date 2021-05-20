@@ -12,13 +12,13 @@ dcl
     ;
 
 tensor_init
-    :   '{' '[' firstRow+=expr (',' firstRow+=expr)*']' (',' '[' elements+=expr (',' elements+=expr)*']')* '}' // Strategien må være at map entries til rows og columns. Jeg kan ikke finde på andet. Men ret sikker på det funker
+    :   '{' '[' firstRow+=expr (',' firstRow+=expr)*']' (',' '[' elements+=expr (',' elements+=expr)*']')* '}'
     ;
 
 stmt
-    :   IF '(' cond+=bool_expr ')' '{' body+=lines '}' (ELSE IF '(' cond+=bool_expr ')' '{' body+=lines '}' )* (ELSE '{' body+=lines '}')?   # ifStmt
-    |   FOR '(' init=dcl cond=bool_expr ';' final=assign_expr ')' '{' body=lines '}'                                                         # forStmt
-    |   WHILE '(' predicate=bool_expr ')' '{' body=lines '}'                                                                                 # whileStmt
+    :   IF '(' pred+=bool_expr ')' '{' body+=lines '}' (ELSE IF '(' pred+=bool_expr ')' '{' body+=lines '}' )* (ELSE '{' body+=lines '}')?   # ifStmt
+    |   FOR '(' init=dcl pred=bool_expr ';' final=assign_expr ')' '{' body=lines '}'                                                         # forStmt
+    |   WHILE '(' pred=bool_expr ')' '{' body=lines '}'                                                                                 # whileStmt
     |   RETURN inner=bool_expr? ';'                                                                                                          # returnStmt
     |   id=ID '(' (argexpr+=bool_expr (',' argexpr+=bool_expr)*)? ')' ';'                                                                    # funcStmt
     |   GRADIENTS '(' tensor=ID ',' '(' gradvar+=ID '<<' gradtensor+=ID (',' gradvar+=ID '<<' gradtensor+=ID)* ')' ',' '{' body=lines '}' ')' ';' # gradientsStmt

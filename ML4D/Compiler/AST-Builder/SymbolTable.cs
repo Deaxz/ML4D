@@ -35,6 +35,11 @@ namespace ML4D.Compiler
             symbolTableStack.Peek().symbols.Add(ID, new Symbol(ID, type, isFunction));            
         }
 
+        public void Insert(string ID, string type, bool isFunction, int rows, int columns)
+        {
+            symbolTableStack.Peek().symbols.Add(ID, new TensorSymbol(ID, type, isFunction, rows, columns));            
+        }
+        
         public Symbol Retrieve(string ID)
         {
             foreach (SymbolTable symTab in symbolTableStack)
@@ -71,6 +76,18 @@ namespace ML4D.Compiler
             Name = name;
             Type = type;
             IsFunction = isfunction;
+        }
+    }
+
+    public class TensorSymbol : Symbol
+    {
+        public int Rows { get; set; }
+        public int Columns { get; set; }
+        
+        public TensorSymbol(string name, string type, bool isfunction, int rows, int columns) : base(name, type, isfunction)
+        {
+            Rows = rows;
+            Columns = columns;
         }
     }
 }

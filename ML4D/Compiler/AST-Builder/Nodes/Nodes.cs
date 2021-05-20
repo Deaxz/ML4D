@@ -23,6 +23,8 @@ namespace ML4D.Compiler.Nodes
         public bool Parenthesized { get; set; }
         public string Type { get; set; }
         public string Symbol { get; set; }
+        public int? Rows { get; set; }
+        public int? Columns { get; set; }
     }
     
     // Infix operator node

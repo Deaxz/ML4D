@@ -67,4 +67,17 @@ namespace ML4D.Compiler.Exceptions
             Node = node;
         }   
     }
+    
+    public class PredicateTypeException : Exception
+    {
+        public Node Node { get; }
+        
+        public PredicateTypeException() : base() {}
+        public PredicateTypeException(string message) : base(message) {}
+        public PredicateTypeException(string message, Exception inner) : base(message, inner) {}
+        public PredicateTypeException(Node node, string message) : base(message)
+        {
+            Node = node;
+        }   
+    }
 }

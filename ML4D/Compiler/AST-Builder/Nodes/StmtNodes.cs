@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ML4D.Compiler.Nodes
@@ -84,9 +85,15 @@ namespace ML4D.Compiler.Nodes
         public ExpressionNode Predicate { get; set; }
         public LinesNode Body { get; set; }
         
+        public IfNode(ExpressionNode predicate, LinesNode body)
+        {
+            Predicate = predicate;
+            Body = body;
+        }
+
         public override List<Node> GetChildren()
         {
-            List<Node> children = new List<Node>() {Predicate};
+            List<Node> children = new List<Node>() { Predicate };
             return children.Concat(Body.lines).ToList();
         }
     }
