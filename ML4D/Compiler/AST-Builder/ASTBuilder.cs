@@ -175,7 +175,7 @@ namespace ML4D.Compiler
 			
 			for (int i = 0; i < context._gradvar.Count; i++)
 			{
-				gradientsNode.GradVariables.Add(new FunctionArgumentNode("double", context._gradvar[i].Text));
+				gradientsNode.GradVariables.Add(context._gradvar[i].Text);
 				gradientsNode.GradTensors.Add(context._gradtensor[i].Text);
 			}
 			return gradientsNode;
