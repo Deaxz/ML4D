@@ -283,7 +283,7 @@ namespace ML4D.Compiler.ASTVisitors
             // TJEK DET FUNGERER 
             if (node is UnaryMinusNode && node.Type is "tensor")
             {
-                Emit("scalarmul(" + "-1, ");
+                Emit("scalarmul(-1, ");
                 Visit(node.Inner);
                 Emit(")");
             }

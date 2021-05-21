@@ -373,14 +373,22 @@ namespace ML4D.Compiler.ASTVisitors
                     break;
 
                 case UnaryMinusNode:
-                    node.Type = node.Inner.Type switch // Fuck den ser spændende ud hahahah - dion
+                    switch (node.Inner.Type)
                     {
-                        "int" => "int",
-                        "double" => "double",
-                        "tensor" => "tensor",
-                        _ => throw new InvalidOperandsException(node,
-                            "The operand of a arithmetic operator can not be bool. It does only allow int, double or tensor.")
-                    };
+                        case "int":
+                            node.Type = "int";
+                            break;
+                        case "double":
+                            node.Type = "double";
+                            break;
+                        case "tensor":
+                            node.Rows = node.Inner.Rows;
+                            node.Columns = node.Inner.Columns;
+                            break;
+                        default:
+                            throw new InvalidOperandsException(node,
+                                "The operand of a arithmetic operator can not be bool. It does only allow int, double or tensor.");
+                    }
                     break;
                 default:
                     throw new NotSupportedException();
