@@ -64,7 +64,6 @@ ML4D/.idea/.idea.ML4D/.idea/indexLayout.xml
 .idea/.idea.p4.dir/.idea/indexLayout.xml
 .idea/.idea.p4.dir/.idea/encodings.xml
 ML4D/.idea/.idea.ML4D/.idea/indexLayout.xml
-ML4D/bin
 ML4D/obj
 Test/bin
 Test/obj
@@ -75,3 +74,12 @@ ML4D/.vs/ML4D/v16/TestStore/0/000.testlog
 ML4D/.vs/ML4D/v16/.suo
 ML4D/ML4D.sln.DotSettings.user
 *.v2
+ML4D/bin/Debug/net5.0/ref/ML4D.dll
+ML4D/bin/Debug/net5.0/ML4D.runtimeconfig.json
+ML4D/bin/Debug/net5.0/ML4D.runtimeconfig.dev.json
+ML4D/bin/Debug/net5.0/ML4D.pdb
+ML4D/bin/Debug/net5.0/ML4D.exe
+ML4D/bin/Debug/net5.0/ML4D.dll
+ML4D/bin/Debug/net5.0/ML4D.deps.json
+ML4D/bin/Debug/net5.0/Antlr4.Runtime.Standard.dll
+ML4D/bin/Debug/net5.0/file.c

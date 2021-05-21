@@ -190,12 +190,12 @@ namespace ML4D.Compiler.ASTVisitors
         {
             Emit("for (");
             Emit(node.Init.Type + " " + node.Init.ID + " = ");
-            base.Visit(node.Init);
+            Visit(node.Init.Init);
             Emit("; ");
             Visit(node.Predicate);
             Emit("; ");
             Emit(node.Final.ID + " = ");
-            base.Visit(node.Final);
+            Visit(node.Final.Right);
             Emit(") {\n");
             Visit(node.Body);
             Emit("}\n");

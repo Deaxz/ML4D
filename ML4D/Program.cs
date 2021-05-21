@@ -90,7 +90,7 @@ namespace ML4D
                       // Code generation
                       CodeGeneration codeGen = new CodeGeneration(symbolTable);
                       codeGen.Visit(ast);
-                      codeGen.WriteToFile("file.c");
+                      codeGen.WriteToFile("file");
                       symbolTable.Clear();
                   }
                   catch (NullReferenceException ex)
