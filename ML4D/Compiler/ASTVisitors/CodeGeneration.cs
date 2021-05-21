@@ -280,8 +280,18 @@ namespace ML4D.Compiler.ASTVisitors
         
         private void PrintExpression(UnaryExpressionNode node)
         {
-            Emit(node is NotNode ? "!" : "-");
-            Visit(node.Inner);
+            // TJEK DET FUNGERER 
+            if (node is UnaryMinusNode && node.Type is "tensor")
+            {
+                Emit("scalarmul(" + "-1, ");
+                Visit(node.Inner);
+                Emit(")");
+            }
+            else
+            {
+                Emit(node is NotNode ? "!" : "-");
+                Visit(node.Inner);                
+            }
         }
 
         private void TensorCodeGen(InfixExpressionNode node)
