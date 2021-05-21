@@ -210,15 +210,37 @@ namespace ML4D.Compiler.ASTVisitors
         public override void Visit(GradientsNode node)
         {
             SymbolTable.OpenScope();
-            base.Visit(node);
 
-            if (node.tensorID != "tensor")
-                throw new Exception($"Can only calculate gradients from tensors."); // TODO, overvej custom exception
+            Symbol tensorDCL = SymbolTable.Retrieve(node.tensorID); 
+            
+            if (SymbolTable.Retrieve(node.tensorID) is null)
+                throw new VariableNotDeclaredException(
+                    $"The variable \"{tensorDCL.Name}\" cannot be assigned, as it has not been declared.");
+            if (tensorDCL.Type != "tensor")
+                throw new Exception($"Variable \"{tensorDCL.Name}\" is not a tensor. Grads can only be derived from tensors.");
 
-            foreach (string tensorID in node.GradTensors)
-                if (SymbolTable.Retrieve(tensorID).Type != "tensor")
+            for (int i = 0; i < node.GradVariables.Count; i++)
+            {
+                string gradVar = node.GradVariables[i];
+                string gradTensor = node.GradTensors[i];
+
+                Symbol symbol = SymbolTable.Retrieve(gradTensor);
+
+                if (symbol is TensorSymbol tensorSymbol) // Er null check nødvendigt? eller implicit i "is" operator?
+                {
+                    if (SymbolTable.Retrieve(gradVar) is null)
+                        SymbolTable.Insert(gradVar, "tensor", false, tensorSymbol.Rows, tensorSymbol.Columns);
+                    else
+                        throw new VariableAlreadyDeclaredException(
+                            $"The variable \"{gradVar}\" could not be declared, as it has already been declared in the current or parent scope.");
+                }
+                else if (symbol is null)
+                    throw new VariableNotDeclaredException(
+                        $"The variable \"{gradTensor}\" cannot be assigned, as it has not been declared.");
+                else
                     throw new Exception(
-                        $"Can only calculate gradients from tensors."); // TODO, overvej custom exception
+                        $"Variable \"{symbol.Name}\" is not a tensor. Grads can only be derived from tensors.");
+            }
             SymbolTable.CloseScope();
         }
 
