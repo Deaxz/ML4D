@@ -10,6 +10,8 @@ namespace ML4D.Compiler.ASTVisitors
 
         public TypeCheckSymbolTableVisitor(SymbolTable symbolTable)
         {
+            // Reserved function name
+            symbolTable.Insert("gradients", "void", true);
             SymbolTable = symbolTable;
         }
 
@@ -75,9 +77,7 @@ namespace ML4D.Compiler.ASTVisitors
                 initColumns = init.FirstRowElements.Count;
                 initRows = (init.Elements.Count / initColumns) + 1;
             }
-            else if (
-                node.Init.Rows is not null &&
-                node.Init.Columns is not null) // node.Init.Rows is not null && node.Init.Columns is not null
+            else if (node.Init.Rows is not null && node.Init.Columns is not null)
             {
                 initColumns = (int) node.Init.Columns;
                 initRows = (int) node.Init.Rows;
@@ -175,7 +175,6 @@ namespace ML4D.Compiler.ASTVisitors
             if (!functionDCL.IsFunction)
                 throw new InvalidCallToVariable(node,
                     $"The identifier \"{node.ID}\" refers to a variable, not a function");
-
             base.Visit(node);
             node.Type = functionDCL.Type;
         }
@@ -183,9 +182,7 @@ namespace ML4D.Compiler.ASTVisitors
         public override void Visit(IfElseChainNode node)
         {
             foreach (IfNode ifNode in node.IfNodes)
-            {
                 Visit(ifNode);
-            }
 
             if (node.ElseBody is not null)
             {
