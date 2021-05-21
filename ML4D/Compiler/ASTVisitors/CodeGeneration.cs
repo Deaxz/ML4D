@@ -297,12 +297,32 @@ namespace ML4D.Compiler.ASTVisitors
 
         private void TensorCodeGen(InfixExpressionNode node)
         {
-            if (node is AdditionNode)
+
+            if (node is AdditionNode || node is SubtractionNode)
             {
-                Emit("tadd(");
-                Visit(node.Left);
+                Emit(node is AdditionNode ? "tadd(" : "tsub(");
+                if (node.Left.Type != "tensor")
+                {
+                    Emit("convertToTensor(");
+                    Visit(node.Left);
+                    Emit($", {node.Rows}, {node.Columns})");
+                } else
+                {
+                    Visit(node.Left);
+                }
+
                 Emit(",");
-                Visit(node.Right);
+
+                if (node.Right.Type != "tensor")
+                {
+                    Emit("convertToTensor(");
+                    Visit(node.Right);
+                    Emit($", {node.Rows}, {node.Columns})");
+                } else
+                {
+                    Visit(node.Right);
+                }
+                
                 Emit(")");
             }
             else if (node is MultiplicationNode)
@@ -336,15 +356,7 @@ namespace ML4D.Compiler.ASTVisitors
                     Visit(node.Right);
                     Emit(")");
                 }
-            } else if(node is SubtractionNode)
-            {
-                //todo add implict typeconversion if left or right are ints/doubles
-                Emit("tsub(");
-                Visit(node.Left);
-                Emit(",");
-                Visit(node.Right);
-                Emit(")");
-            }          
+            }       
 
         }
     }
