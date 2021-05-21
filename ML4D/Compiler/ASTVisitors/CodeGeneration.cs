@@ -93,22 +93,26 @@ namespace ML4D.Compiler.ASTVisitors
             Emit("Tensor* " + node.ID + " = ");
 
             if(node.Init is TensorInitNode initNode){
-                Emit($"newTensor(*(double[][{node.Columns}]){{");
-                int i=0;
+                Emit($"newTensor(*(double[][{node.Columns}]){{{{");
+                int i=1;
                 foreach(ExpressionNode exprNode in initNode.GetChildren()){
                     Visit(exprNode);
-                    Emit(",");
+                                      
                     if(i % node.Columns == 0){
-                        Emit("}\n");
-                        if(i-1 != node.Rows * node.Columns){
+                        Emit("}");
+                        if(i != node.Rows * node.Columns){
                             Emit(",{");
                         }
+                    }else
+                    {
+                        Emit(",");
                     }
                     i++;
                 }
-                Emit($", {node.Rows}, {node.Columns});\n");
+                Emit($"}}, {node.Rows}, {node.Columns});\n");
             }else{
-
+                //might be wrong
+                Visit(node.Init);
             }
         }
 
@@ -246,7 +250,11 @@ namespace ML4D.Compiler.ASTVisitors
         
         private void PrintExpression(InfixExpressionNode node)
         {
-            if (node is PowerNode)
+            if (node.Type.Equals("tensor"))
+            {
+                TensorCodeGen(node);
+            }
+            else if (node is PowerNode)
             {
                 Emit("pow(");
                 Visit(node.Left);
@@ -272,6 +280,51 @@ namespace ML4D.Compiler.ASTVisitors
             if (node is NotNode)
                 Emit("!");
             Visit(node.Inner);
+        }
+
+        private void TensorCodeGen(InfixExpressionNode node)
+        {
+            if (node is AdditionNode)
+            {
+                Emit("tadd(");
+                Visit(node.Left);
+                Emit(",");
+                Visit(node.Right);
+                Emit(")");
+            }
+            else if (node is MultiplicationNode)
+            {
+
+                //At least left or right is of type tensor
+                if (node.Left.Type != "tensor" || node.Right.Type != "tensor")
+                {
+                    Emit("scalarmul(");
+                    if (node.Left.Type != "tensor")
+                    {
+                        Visit(node.Left);
+                        Emit(",");
+                        Visit(node.Right);
+                        Emit(")");
+                    }
+                    else
+                    {
+                        Visit(node.Right);
+                        Emit(",");
+                        Visit(node.Left);
+                        Emit(")");
+                    }
+                }
+                else
+                {
+                    //left and right are tensors
+                    Emit("tmul(");
+                    Visit(node.Left);
+                    Emit(",");
+                    Visit(node.Right);
+                    Emit(")");
+                }
+            }           
+
         }
     }
 }
