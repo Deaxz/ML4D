@@ -35,13 +35,12 @@ namespace ML4D.Compiler.ASTVisitors
         public override void Visit(FunctionDCLNode node)
         {
             if (SymbolTable.Retrieve(node.ID) is null)
-                //SymbolTable.Insert(node.ID, node.Type, true);
-                SymbolTable.Insert(node);
+                SymbolTable.Insert(node.ID, node.Type, true);
             else
                 throw new FunctionAlreadyDeclaredException(node,
                     $"The function \"{node.ID}\" has already been declared in the current or parent scope.");
 
-            SymbolTable.OpenScope("function");
+            SymbolTable.OpenScope();
             base.Visit(node);
             SymbolTable.CloseScope();
         }
@@ -131,7 +130,7 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(WhileNode node)
         {
-            SymbolTable.OpenScope("while");
+            SymbolTable.OpenScope();
             base.Visit(node);
 
             if (node.Predicate.Type != "bool")
@@ -142,27 +141,22 @@ namespace ML4D.Compiler.ASTVisitors
         public override void Visit(ReturnNode node)
         {
             base.Visit(node);
-            if (!SymbolTable.ScopeList().Contains("function"))
+            string funcType = SymbolTable.GetCurrentFunctionType();
+            
+            if (funcType is null)
                 throw new ReturnOutsideFunctionException(node,
                     "Return was called outside function scope, which is not allowed");
             
-            string type = SymbolTable.getCurrentFunction().Type;
             if (node.Inner is not null)
             {
-
-                if (node.Inner.Type != type)
-                {
+                if (node.Inner.Type != funcType)
                     throw new InvalidOperationException(
-                        $"Function has return type: {type} but you are returning a {node.Inner.Type}.\n");
-                }
+                        $"Function has return type: {funcType} but you are returning a {node.Inner.Type}.\n");
                 node.Type = node.Inner.Type;
             }
-            else if(type is not "void")
-            {
+            else if(funcType is not "void")
                 throw new InvalidOperationException(
-                        $"Function has return type: {type} but you are returning a void.\n");
-            }
-
+                        $"Function has return type: {funcType} but you are returning a void.\n");
         }
 
         public override void Visit(FunctionNode node)
@@ -186,7 +180,7 @@ namespace ML4D.Compiler.ASTVisitors
 
             if (node.ElseBody is not null)
             {
-                SymbolTable.OpenScope("else");
+                SymbolTable.OpenScope();
                 Visit(node.ElseBody);
                 SymbolTable.CloseScope();
             }
@@ -194,7 +188,7 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(IfNode node)
         {
-            SymbolTable.OpenScope("if");
+            SymbolTable.OpenScope();
             base.Visit(node);
 
             if (node.Predicate.Type != "bool")
@@ -205,7 +199,7 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(ForNode node)
         {
-            SymbolTable.OpenScope("for");
+            SymbolTable.OpenScope();
             base.Visit(node);
 
             if (node.Predicate.Type != "bool")
@@ -215,7 +209,7 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(GradientsNode node)
         {
-            SymbolTable.OpenScope("gradients");
+            SymbolTable.OpenScope();
             base.Visit(node);
 
             if (node.tensorID != "tensor")
