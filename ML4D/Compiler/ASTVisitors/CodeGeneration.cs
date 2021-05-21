@@ -204,8 +204,11 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(GradientsNode node)
         {
-            // Det her bliver det spændende.
-            base.Visit(node);
+            Emit("tensorBackwards(" + node.tensorID + ");\n");
+            for (int i = 0; i < node.GradVariables.Count; i++)
+                Emit("Tensor* " + node.GradVariables[i] + " = readGradients(" + node.GradTensors[i] + ");\n");
+            Visit(node.Body);
+            Emit("zeroGradients(" + node.tensorID + ");\n");
         }
 
         // --- Values ---
@@ -278,9 +281,18 @@ namespace ML4D.Compiler.ASTVisitors
         
         private void PrintExpression(UnaryExpressionNode node)
         {
-            if (node is NotNode)
-                Emit("!");
-            Visit(node.Inner);
+            // TJEK DET FUNGERER 
+            if (node is UnaryMinusNode && node.Type is "tensor")
+            {
+                Emit("scalarmul(" + "-1, ");
+                Visit(node.Inner);
+                Emit(")");
+            }
+            else
+            {
+                Emit(node is NotNode ? "!" : "-");
+                Visit(node.Inner);                
+            }
         }
 
         private void TensorCodeGen(InfixExpressionNode node)

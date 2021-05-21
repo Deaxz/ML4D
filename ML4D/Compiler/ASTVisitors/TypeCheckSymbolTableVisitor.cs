@@ -125,7 +125,7 @@ namespace ML4D.Compiler.ASTVisitors
 
             if (node.Type != node.Right.Type && (node.Type == "double" && node.Right.Type == "int"))
                 throw new VariableAssignmentException(node,
-                    "Failed to assign variable. The expression has an incorrect type.");
+                    $"Illegal assignment. Left side: \"{node.Type}\", right side: \"{node.Right.Type}\".");
         }
 
         public override void Visit(WhileNode node)
@@ -263,7 +263,6 @@ namespace ML4D.Compiler.ASTVisitors
                         throw new InvalidOperandsException(node,
                             $"The operator \"{node.Symbol}\", does not allow right operands of type tensor.");
                 }
-
                 return;
             }
 
@@ -284,7 +283,6 @@ namespace ML4D.Compiler.ASTVisitors
                         throw new InvalidOperandsException(node,
                             $"The operator \"{node.Symbol}\", does not allow operands of type tensor.");
                 }
-
                 return;
             }
 

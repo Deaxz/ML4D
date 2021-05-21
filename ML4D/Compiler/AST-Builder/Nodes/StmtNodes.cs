@@ -126,11 +126,11 @@ namespace ML4D.Compiler.Nodes
     public class GradientsNode : Node 
     {
         public string tensorID { get; set; }
-        public List<Node> GradVariables = new List<Node>(); // FunctionArgumentNode
+        public List<string> GradVariables = new List<string>();
         public List<string> GradTensors = new List<string>();
         public  LinesNode Body { get; set; }
         
-        public GradientsNode(string tensorId, LinesNode body) // Arguments bliver lavet ligesom med funktioner
+        public GradientsNode(string tensorId, LinesNode body)
         {
             tensorID = tensorId;
             Body = body;
@@ -138,7 +138,7 @@ namespace ML4D.Compiler.Nodes
 
         public override List<Node> GetChildren()
         {
-            return GradVariables;
+            return new List<Node>();
         }
     }
 }
