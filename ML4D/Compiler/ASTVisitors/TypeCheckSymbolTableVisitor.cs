@@ -74,10 +74,10 @@ namespace ML4D.Compiler.ASTVisitors
                 initColumns = init.FirstRowElements.Count;
                 initRows = (init.Elements.Count / initColumns) + 1;
             }
-            else if (node.Init is {Columns: { }, Rows: { }} assignInit) // node.Init.Rows is not null && node.Init.Columns is not null
+            else if (node.Init.Rows is not null && node.Init.Columns is not null) // node.Init.Rows is not null && node.Init.Columns is not null
             {
-                initColumns = (int) assignInit.Columns;
-                initRows = (int) assignInit.Rows;
+                initColumns = (int) node.Init.Columns;
+                initRows = (int) node.Init.Rows;
             }
             
             if (initColumns != node.Columns || initRows != node.Rows)
