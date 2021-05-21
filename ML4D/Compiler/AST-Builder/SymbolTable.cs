@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ML4D.Compiler.Nodes;
 
 namespace ML4D.Compiler
 {
@@ -7,6 +8,7 @@ namespace ML4D.Compiler
         private static Stack<SymbolTable> symbolTableStack = new Stack<SymbolTable>();
         private Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
         private string _scopeName { get; set; }
+        private FunctionDCLNode functionNode;
 
         // Init constructor
         public SymbolTable()
@@ -28,6 +30,12 @@ namespace ML4D.Compiler
         public void CloseScope()
         {
             symbolTableStack.Pop();
+        }
+
+        public void Insert(FunctionDCLNode node)
+        {
+            functionNode = node;
+            Insert(node.ID, node.Type, true);
         }
 
         public void Insert(string ID, string type, bool isFunction)
@@ -58,7 +66,25 @@ namespace ML4D.Compiler
                 scopes.Add(symTab._scopeName);
             return scopes;
         }
-        
+
+        public FunctionDCLNode getCurrentFunction()
+        {
+            if(functionNode is not null)
+            {
+                return functionNode;
+            }
+
+            foreach (SymbolTable symTab in symbolTableStack)
+            {
+                if(symTab.functionNode is not null)
+                {
+                    return functionNode;
+                }
+            }
+            return null;
+        }
+
+
         public void Clear()
         {
             symbolTableStack.Clear();
