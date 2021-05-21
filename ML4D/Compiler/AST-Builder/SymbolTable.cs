@@ -7,24 +7,17 @@ namespace ML4D.Compiler
     {
         private static Stack<SymbolTable> symbolTableStack = new Stack<SymbolTable>();
         private Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
-        private string _scopeName { get; set; }
-        private FunctionDCLNode functionNode;
+        private string FuncType { get; set; }
 
         // Init constructor
         public SymbolTable()
         {
-            _scopeName = "global";
             symbolTableStack.Push(this);
         }
-        
-        public SymbolTable(string scopeName)
-        {
-            _scopeName = scopeName;
-        }
 
-        public void OpenScope(string scopeName)
+        public void OpenScope()
         {
-            symbolTableStack.Push(new SymbolTable(scopeName));
+            symbolTableStack.Push(new SymbolTable());
         }
         
         public void CloseScope()
@@ -32,15 +25,11 @@ namespace ML4D.Compiler
             symbolTableStack.Pop();
         }
 
-        public void Insert(FunctionDCLNode node)
-        {
-            functionNode = node;
-            Insert(node.ID, node.Type, true);
-        }
-
         public void Insert(string ID, string type, bool isFunction)
         {
-            symbolTableStack.Peek().symbols.Add(ID, new Symbol(ID, type, isFunction));            
+            symbolTableStack.Peek().symbols.Add(ID, new Symbol(ID, type, isFunction)); 
+            if (isFunction)
+                FuncType = type;
         }
 
         public void Insert(string ID, string type, bool isFunction, int rows, int columns)
@@ -59,32 +48,17 @@ namespace ML4D.Compiler
             return null;
         }
 
-        public List<string> ScopeList()
+        public string GetCurrentFunctionType()
         {
-            List<string> scopes = new List<string>();
-            foreach (SymbolTable symTab in symbolTableStack)
-                scopes.Add(symTab._scopeName);
-            return scopes;
-        }
-
-        public FunctionDCLNode getCurrentFunction()
-        {
-            if(functionNode is not null)
-            {
-                return functionNode;
-            }
+            if (FuncType is not null)
+                return FuncType;
 
             foreach (SymbolTable symTab in symbolTableStack)
-            {
-                if(symTab.functionNode is not null)
-                {
-                    return functionNode;
-                }
-            }
+                if(symTab.FuncType is not null)
+                    return FuncType;
             return null;
         }
-
-
+        
         public void Clear()
         {
             symbolTableStack.Clear();
