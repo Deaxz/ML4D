@@ -109,11 +109,12 @@ namespace ML4D.Compiler.ASTVisitors
                     }
                     i++;
                 }
-                Emit($"}}, {node.Rows}, {node.Columns});\n");
+                Emit($"}}, {node.Rows}, {node.Columns})");
             }else{
                 //might be wrong
                 Visit(node.Init);
             }
+            Emit(";\n");
         }
 
         public override void Visit(TensorInitNode node){
@@ -323,7 +324,15 @@ namespace ML4D.Compiler.ASTVisitors
                     Visit(node.Right);
                     Emit(")");
                 }
-            }           
+            } else if(node is SubtractionNode)
+            {
+                //todo add implict typeconversion if left or right are ints/doubles
+                Emit("tsub(");
+                Visit(node.Left);
+                Emit(",");
+                Visit(node.Right);
+                Emit(")");
+            }          
 
         }
     }
