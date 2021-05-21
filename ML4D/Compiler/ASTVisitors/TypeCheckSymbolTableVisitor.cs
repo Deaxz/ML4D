@@ -263,7 +263,6 @@ namespace ML4D.Compiler.ASTVisitors
                         throw new InvalidOperandsException(node,
                             $"The operator \"{node.Symbol}\", does not allow right operands of type tensor.");
                 }
-
                 return;
             }
 
@@ -284,7 +283,6 @@ namespace ML4D.Compiler.ASTVisitors
                         throw new InvalidOperandsException(node,
                             $"The operator \"{node.Symbol}\", does not allow operands of type tensor.");
                 }
-
                 return;
             }
 
