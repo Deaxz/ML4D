@@ -136,9 +136,6 @@ namespace ML4D.Compiler.Nodes
             Body = body;
         }
 
-        public override List<Node> GetChildren()
-        {
-            return new List<Node>();
-        }
+        public override List<Node> GetChildren() { return new List<Node>(); }
     }
 }

@@ -90,8 +90,21 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(TensorDCLNode node)
         {
-            Emit("Tensor* " + node.ID + " = ");
+            if (SymbolTable.Retrieve(node.ID) is null)
+            {
+                PrintLocalTensorDCL(node);
+            }
+            else
+            {
+                GlobalScope = true;
+                PrintGlobalTensorDCL(node);
+                GlobalScope = false;
+            }
+        }
 
+        private void PrintLocalTensorDCL(TensorDCLNode node)
+        {
+            Emit("Tensor* " + node.ID + " = ");
             if (node.Init is TensorInitNode initNode)
             {
                 Emit($"newTensor(*(double[][{node.Columns}]){{{{");
@@ -99,7 +112,6 @@ namespace ML4D.Compiler.ASTVisitors
                 foreach(ExpressionNode exprNode in initNode.GetChildren())
                 {
                     Visit(exprNode);
-                                      
                     if (i % node.Columns == 0)
                     {
                         Emit("}");
@@ -115,6 +127,33 @@ namespace ML4D.Compiler.ASTVisitors
             else
                 Visit(node.Init);
             Emit(";\n");
+        }
+        
+        private void PrintGlobalTensorDCL(TensorDCLNode node)
+        {
+            Emit("static " + "Tensor*" + " " + node.ID + " = ");
+            if (node.Init is TensorInitNode initNode)
+            {
+                Emit($"newTensor(*(double[][{node.Columns}]){{{{");
+                int i = 1;
+                foreach (ExpressionNode exprNode in initNode.GetChildren())
+                {
+                    Visit(exprNode);
+                    if (i % node.Columns == 0)
+                    {
+                        Emit("}");
+                        if (i != node.Rows * node.Columns)
+                            Emit(",{");
+                    }
+                    else
+                        Emit(",");
+                    i++;
+                }
+                Emit($"}}, {node.Rows}, {node.Columns})");
+            }
+            else
+                Visit(node.Init);
+            Emit(";\n");   
         }
 
         // --- Statements ---
@@ -138,7 +177,6 @@ namespace ML4D.Compiler.ASTVisitors
         {
             if (node.Inner is null)
                 Emit("return;\n");
-            
             Emit("return ");
             Visit(node.Inner);
             Emit(";\n");
@@ -150,7 +188,6 @@ namespace ML4D.Compiler.ASTVisitors
             foreach (Node argumentNode in node.Arguments)
             {
                 Visit(argumentNode);
-                
                 if (argumentNode != node.Arguments[^1])
                     Emit(", ");
             }
@@ -314,9 +351,7 @@ namespace ML4D.Compiler.ASTVisitors
                         Emit($", {node.Rows}, {node.Columns})");
                     } 
                     else
-                    {
                         Visit(node.Right);
-                    }
                     Emit(")");
                     break;
                 
