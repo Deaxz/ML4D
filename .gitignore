@@ -73,6 +73,7 @@ ML4D/.vs/ML4D/v16/TestStore/0/testlog.manifest
 ML4D/.vs/ML4D/v16/TestStore/0/000.testlog
 ML4D/.vs/ML4D/v16/.suo
 ML4D/ML4D.sln.DotSettings.user
+*.v2
 ML4D/bin/Debug/net5.0/ref/ML4D.dll
 ML4D/bin/Debug/net5.0/ML4D.runtimeconfig.json
 ML4D/bin/Debug/net5.0/ML4D.runtimeconfig.dev.json
