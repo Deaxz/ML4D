@@ -325,8 +325,7 @@ namespace ML4D.Compiler.ASTVisitors
                     Visit(node.Right);
                     Emit(")");
                 }
-            }           
-
+            }
         }
     }
 }
