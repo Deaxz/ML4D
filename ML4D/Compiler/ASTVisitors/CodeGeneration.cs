@@ -92,34 +92,29 @@ namespace ML4D.Compiler.ASTVisitors
         {
             Emit("Tensor* " + node.ID + " = ");
 
-            if(node.Init is TensorInitNode initNode){
+            if (node.Init is TensorInitNode initNode)
+            {
                 Emit($"newTensor(*(double[][{node.Columns}]){{{{");
-                int i=1;
-                foreach(ExpressionNode exprNode in initNode.GetChildren()){
+                int i = 1;
+                foreach(ExpressionNode exprNode in initNode.GetChildren())
+                {
                     Visit(exprNode);
                                       
-                    if(i % node.Columns == 0){
-                        Emit("}");
-                        if(i != node.Rows * node.Columns){
-                            Emit(",{");
-                        }
-                    }else
+                    if (i % node.Columns == 0)
                     {
-                        Emit(",");
+                        Emit("}");
+                        if (i != node.Rows * node.Columns)
+                            Emit(",{");
                     }
+                    else
+                        Emit(",");
                     i++;
                 }
                 Emit($"}}, {node.Rows}, {node.Columns})");
-            }else{
-                //might be wrong
-                Visit(node.Init);
             }
+            else
+                Visit(node.Init);
             Emit(";\n");
-        }
-
-        public override void Visit(TensorInitNode node){
-            Emit("newTensor(*(double[][");
-            
         }
 
         // --- Statements ---
@@ -254,10 +249,8 @@ namespace ML4D.Compiler.ASTVisitors
         
         private void PrintExpression(InfixExpressionNode node)
         {
-            if (node.Type.Equals("tensor"))
-            {
+            if (node.Type == "tensor")
                 TensorCodeGen(node);
-            }
             else if (node is PowerNode)
             {
                 Emit("pow(");
@@ -273,7 +266,8 @@ namespace ML4D.Compiler.ASTVisitors
                 {
                     string symbol = node is AndNode ? "&&" : "||";
                     Emit(" " + symbol + " ");
-                } else
+                }
+                else
                     Emit(" " + node.Symbol + " ");
                 Visit(node.Right);
             }
@@ -297,40 +291,37 @@ namespace ML4D.Compiler.ASTVisitors
 
         private void TensorCodeGen(InfixExpressionNode node)
         {
-
-            if (node is AdditionNode || node is SubtractionNode)
+            switch (node)
             {
-                Emit(node is AdditionNode ? "tadd(" : "tsub(");
-                if (node.Left.Type != "tensor")
-                {
-                    Emit("convertToTensor(");
-                    Visit(node.Left);
-                    Emit($", {node.Rows}, {node.Columns})");
-                } else
-                {
-                    Visit(node.Left);
-                }
+                case AdditionNode or SubtractionNode:
+                    Emit(node is AdditionNode ? "tadd(" : "tsub(");
+                    
+                    if (node.Left.Type != "tensor")
+                    {
+                        Emit("convertToTensor(");
+                        Visit(node.Left);
+                        Emit($", {node.Rows}, {node.Columns})");
+                    } 
+                    else
+                        Visit(node.Left);
 
-                Emit(",");
+                    Emit(",");
 
-                if (node.Right.Type != "tensor")
-                {
-                    Emit("convertToTensor(");
-                    Visit(node.Right);
-                    Emit($", {node.Rows}, {node.Columns})");
-                } else
-                {
-                    Visit(node.Right);
-                }
+                    if (node.Right.Type != "tensor")
+                    {
+                        Emit("convertToTensor(");
+                        Visit(node.Right);
+                        Emit($", {node.Rows}, {node.Columns})");
+                    } 
+                    else
+                    {
+                        Visit(node.Right);
+                    }
+                    Emit(")");
+                    break;
                 
-                Emit(")");
-            }
-            else if (node is MultiplicationNode)
-            {
-
                 //At least left or right is of type tensor
-                if (node.Left.Type != "tensor" || node.Right.Type != "tensor")
-                {
+                case MultiplicationNode when node.Left.Type != "tensor" || node.Right.Type != "tensor":
                     Emit("scalarmul(");
                     if (node.Left.Type != "tensor")
                     {
@@ -346,18 +337,17 @@ namespace ML4D.Compiler.ASTVisitors
                         Visit(node.Left);
                         Emit(")");
                     }
-                }
-                else
-                {
+                    break;
+                
+                case MultiplicationNode:
                     //left and right are tensors
                     Emit("tmul(");
                     Visit(node.Left);
                     Emit(",");
                     Visit(node.Right);
                     Emit(")");
-                }
-            }       
-
+                    break;
+            }
         }
     }
 }
