@@ -35,7 +35,7 @@ namespace ML4D.Compiler.Nodes
 
         public override List<Node> GetChildren()
         {
-            List<Node> children = new List<Node>() {Predicate};
+            List<Node> children = new List<Node>() { Predicate };
             return children.Concat(Body.lines).ToList();
         }
     }
