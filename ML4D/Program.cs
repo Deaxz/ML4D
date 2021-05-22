@@ -67,7 +67,6 @@ namespace ML4D
                   {
                       string text = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "SRA.txt");
                   
-                  
                       var inputStream = new AntlrInputStream(new StringReader(text));
                       var lexer = new ML4DLexer(inputStream);
                       var tokenStream = new CommonTokenStream(lexer);
@@ -91,6 +90,7 @@ namespace ML4D
                       //Console.WriteLine(AppDomain.CurrentDomain.BaseDirectory + "file" + ".c");
              
                       // Code generation
+                      symbolTable.OnlyGlobalScope();
                       CodeGeneration codeGen = new CodeGeneration(symbolTable);
                       codeGen.Visit(ast);
                       codeGen.WriteToFile("file");
