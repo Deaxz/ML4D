@@ -24,9 +24,9 @@ namespace ML4D.Compiler.ASTVisitors
         
         public void WriteToFile(string fileName)
         {
-            string CIncludes = "#include <stdio.h>\n#include <stdbool.h>\n#include <math.h>\n\n";
+            string Includes = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "Tensor.c");
             string CMainFunction = "\nint main() {\n";
-            string programText = CIncludes + _FuncPrototypes + _GlobalVariables + 
+            string programText = Includes + _FuncPrototypes + _GlobalVariables + 
                                  CMainFunction + _MainText + "return 1;\n}\n\n" + _FuncDCLs;
             
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + fileName + ".c", programText);
