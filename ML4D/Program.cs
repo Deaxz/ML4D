@@ -55,17 +55,20 @@ namespace ML4D
             // }
             
              // Command line version
-              while (true)
-              {
-                  Console.Write("> ");
-                  var exprText = Console.ReadLine();
-             
-                  if (string.IsNullOrWhiteSpace(exprText))
-                      break; 
+              // while (true)
+              // {
+              //     Console.Write("> ");
+              //     var exprText = Console.ReadLine();
+              //
+              //     if (string.IsNullOrWhiteSpace(exprText))
+              //         break; 
              
                   try
                   {
-                      var inputStream = new AntlrInputStream(new StringReader(exprText));
+                      string text = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "SRA.txt");
+                  
+                  
+                      var inputStream = new AntlrInputStream(new StringReader(text));
                       var lexer = new ML4DLexer(inputStream);
                       var tokenStream = new CommonTokenStream(lexer);
                       var parser = new ML4DParser(tokenStream);
@@ -74,9 +77,9 @@ namespace ML4D
                       var ast = new ASTBuilder().VisitLines(cst);
                       
                       // Pretty print
-                      PrettyPrintVisitor prettyprint = new PrettyPrintVisitor();
-                      prettyprint.Visit(ast);
-                      Console.WriteLine("^ Is pretty print");
+                      // PrettyPrintVisitor prettyprint = new PrettyPrintVisitor();
+                      // prettyprint.Visit(ast);
+                      // Console.WriteLine("^ Is pretty print");
                       
                       // Symbol Table and Type check
                       SymbolTable symbolTable = new SymbolTable();
@@ -103,6 +106,6 @@ namespace ML4D
                   }
                   Console.WriteLine();
              }
-        }
+        // }
     }
 }
