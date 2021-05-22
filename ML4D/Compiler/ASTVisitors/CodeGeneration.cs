@@ -98,9 +98,10 @@ namespace ML4D.Compiler.ASTVisitors
             else
             {
                 GlobalScope = true;
-                Emit("static Tensor* " + node.ID + " = ");
-                PrintTensorDCL(node);
+                Emit("static Tensor* " + node.ID + ";\n");
                 GlobalScope = false;
+                Emit(node.ID + " = ");
+                PrintTensorDCL(node);
             }
         }
 
