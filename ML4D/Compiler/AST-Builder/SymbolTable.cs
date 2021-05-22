@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ML4D.Compiler.Nodes;
+using System.Linq;
 
 namespace ML4D.Compiler
 {
@@ -7,7 +7,7 @@ namespace ML4D.Compiler
     {
         private static Stack<SymbolTable> symbolTableStack = new Stack<SymbolTable>();
         private Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
-        private string FuncType { get; set; }
+        private string? FuncType { get; set; }
 
         // Init constructor
         public SymbolTable()
@@ -62,6 +62,13 @@ namespace ML4D.Compiler
         public void Clear()
         {
             symbolTableStack.Clear();
+        }
+        
+        public void OnlyGlobalScope()
+        {
+            SymbolTable global = symbolTableStack.Last(); 
+            symbolTableStack.Clear();
+            symbolTableStack.Push(global);
         }
     }
 
