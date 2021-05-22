@@ -65,7 +65,12 @@ namespace ML4D
              
                   try
                   {
-                      string text = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "SRA.txt");
+                      if (string.IsNullOrEmpty(args[0]) || string.IsNullOrEmpty(args[1]))
+                          throw new Exception("No run arguments were found. Missing arguments: <source filename> <destination filename>");
+
+                      Console.WriteLine("1. " + args[0] + " 2. " + args[1] + "\n");
+                      
+                      string text = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + args[0] + ".txt");
                   
                       var inputStream = new AntlrInputStream(new StringReader(text));
                       var lexer = new ML4DLexer(inputStream);
@@ -93,7 +98,7 @@ namespace ML4D
                       symbolTable.OnlyGlobalScope();
                       CodeGeneration codeGen = new CodeGeneration(symbolTable);
                       codeGen.Visit(ast);
-                      codeGen.WriteToFile("file");
+                      codeGen.WriteToFile(args[1]);
                       symbolTable.Clear();
                   }
                   catch (NullReferenceException ex)
