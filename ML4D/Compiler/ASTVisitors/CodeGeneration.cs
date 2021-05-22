@@ -362,7 +362,7 @@ namespace ML4D.Compiler.ASTVisitors
                     Visit(node.Left);
                     Emit(",");
                     Visit(node.Right);
-                    Emit(")")
+                    Emit(")");
                     break;
 
                 case PowerNode:
