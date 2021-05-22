@@ -10,8 +10,8 @@ int x2 = 2;
 int x3 = 3;
 int x4 = 4;
 
-int y0 = 0;
-int y1 = 1;
+int z0 = 0;
+int z1 = 1;
 int y2 = 2;
 int y3 = 3;
 int y4 = 4;
@@ -20,9 +20,8 @@ double step_size = 0.1;
     
 int i = 0;
 while (i < 100) {
-
-  tensor y_hat0[1][1] = ((a * x0 + b) - y0)**2;
-  tensor y_hat1[1][1] = ((a * x1 + b) - y1)**2;
+  tensor y_hat0[1][1] = ((a * x0 + b) - z0)**2;
+  tensor y_hat1[1][1] = ((a * x1 + b) - z1)**2;
   tensor y_hat2[1][1] = ((a * x2 + b) - y2)**2;
   tensor y_hat3[1][1] = ((a * x3 + b) - y3)**2;
   tensor y_hat4[1][1] = ((a * x4 + b) - y4)**2;
