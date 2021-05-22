@@ -120,7 +120,5 @@ namespace Test
                 visitor.Visit(funcDclNode2);
             });            
         }
-
-
     }
 }

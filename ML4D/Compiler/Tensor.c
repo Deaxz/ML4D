@@ -35,7 +35,6 @@ typedef struct Node {
 /* Needed for backward (visited = set()) */
 typedef struct LinkedList {
   struct Node* head;
-  //  void (*append)(struct Node** head, Value* new_value);
 } LinkedList;
 
 struct LinkedList* newLinkedList();
@@ -246,15 +245,13 @@ void backward(Value* self) {
             pointer->value->backward->self,
             pointer->value->backward->other,
             pointer->value->backward->out
-          ); // v._backward()
+          );
         }
         
         pointer = pointer->prev;
     }
   }
-  //printf("topo pointer = %p\n", topo);
   freeLinkedList(&topo);
-  //printf("topo pointer = %p\n", topo);
   freeLinkedList(&visited);
 }
 
@@ -277,29 +274,9 @@ void freeLinkedList(struct LinkedList** linkedList){
   struct Node* next;
 
   freeNodeRec(&(*linkedList)->head);
-  // while (current != NULL)
-  // {
-  //   next = current->next;
-  //   //printf("current data = %lf\n", current->value->data);
-  //   free(current);
-  //   //current = NULL;
-  //   //printf("current data = %lf\n", current->value->data);
-  //   current = next;
-  // }
   free(*linkedList);
   *linkedList = NULL;
 }
-
-// 
-
-// typedef struct Value {       <----- malloc
-//   double data;
-//   double grad;
-//   struct Backward* backward; <----- malloc
-//   struct LinkedList* _prev;  <----- malloc
-//   char op[];
-// } Value;
-
 
 void freeNodeRec(Node** node){
   if((*node) == NULL){
@@ -307,7 +284,6 @@ void freeNodeRec(Node** node){
   } 
   Node* next = (*node)->next;
   freeNodeRec(&next);
-  //freeNode(node);
   free(node);
 }
 
@@ -350,100 +326,9 @@ Tensor* newTensor(double* inputValues, int rowLength, int columnLength){
     return res;
 }
 
-
-
-
-int main(){
-    printf("hello world\n");
-
-    int rowcount = 2;
-    int colcount = 2;
-
-    Value*** values1 = (Value***)malloc(rowcount * sizeof(Value*));
-    for(int i=0; i < rowcount; i++) values1[i] = (Value*)malloc(colcount * sizeof(Value*));
-
-    for(int i=0; i < rowcount; i++){
-        for (int j = 0; j < colcount; j++)
-        {
-            values1[i][j] = newValue(i+j+1);
-        }
-    }
-
-    Tensor t1 = {
-        .values = values1,
-        .rows = rowcount,
-        .columns = colcount        
-    };
-
-    printf("Tensor t1: \n");
-    printTensor(&t1);
-
-    Value*** values2 = (Value***)malloc(rowcount * sizeof(Value*));
-    for(int i=0; i < rowcount; i++) values2[i] = (Value*)malloc(colcount * sizeof(Value*));
-
-    for(int i=0; i < rowcount; i++){
-        for (int j = 0; j < colcount; j++)
-        {
-            values2[i][j] = newValue(i+j+j+j+j+20);
-        }
-    }
-
-    Tensor t2 = {
-        .values = values2,
-        .rows = rowcount,
-        .columns = colcount        
-    };
-
-    printf("Tensor t2: \n");
-    printTensor(&t2);
-    // scalarmul(10, &t2);
-    // printf("after scalar mul with 10\n");
-    // printTensor(&t2);
-
-    Tensor* c = tmul(&t1, &t2);
-
-    printf("rows of tensor c: %d\n", c->rows);
-
-    printf("\nOutput Matrix:\n");
-    printTensor(c);
-
-    tensorBackwards(c);   
-    double** gradients = readGradients(c);
-
-    printf("\ngradients Matrix C:\n");
-    for (int i = 0; i < c->rows; i++) {
-        for (int j = 0; j < c->columns; j++) {
-            printf("%lf  ", gradients[i][j]);
-            if (j == c->columns - 1)
-            printf("\n");
-        }
-    }
-
-    double** gradients1 = readGradients(&t1);
-    printf("\ngradients Matrix t1:\n");
-    for (int i = 0; i < t1.rows; i++) {
-        for (int j = 0; j < t1.columns; j++) {
-            printf("%lf  ", gradients1[i][j]);
-            if (j == t1.columns - 1)
-            printf("\n");
-        }
-    }
-
-    double** gradients2 = readGradients(&t2);
-    printf("\ngradients Matrix t2:\n");
-    for (int i = 0; i < t2.rows; i++) {
-        for (int j = 0; j < t2.columns; j++) {
-            printf("%lf  ", gradients2[i][j]);
-            if (j == t1.columns - 1)
-            printf("\n");
-        }
-    }
-}
-
 void tensorBackwards(Tensor* tensor){
   backward(tensor->values[0][0]);
 }
-
 
 void printTensor(Tensor* t){
   for (int i = 0; i < t->rows; ++i) {

@@ -35,5 +35,17 @@ while (i < 100) {
     //frees the entire computation graph of loss
   });
   
+  for (int j = 0; j < 100; j = j + 1) {
+    if (i < 20 or i < 20 + 10) {
+      double ab = 2.2;
+    } else if (i > 30) {
+      double ba = 4.4;
+    } else if (i == 80 or i == 90) {
+      double cd = 5.5;
+    } else {
+      double dc = 7.7;
+    }
+  }
+
   i = i + 1;
 }

@@ -7,7 +7,7 @@ lines
 
 dcl
     :   type=types id=ID '=' init=bool_expr ';'                                                                 # varDecl
-    |   type=TENSOR id=ID '[' rows=INUM ']' '[' coloumns=INUM ']' '=' (init=tensor_init | assignInit=bool_expr) ';' # tensorDecl // TODO overvej INUM -> ID, tjek det er INT ved typechecking
+    |   type=TENSOR id=ID '[' rows=INUM ']' '[' coloumns=INUM ']' '=' (init=tensor_init | assignInit=bool_expr) ';' # tensorDecl
     |   type=types id=ID '(' (argtype+=types argid+=ID (',' argtype+=types argid+=ID)*)? ')' '{' body=lines '}' # funcDecl
     ;
 
@@ -39,8 +39,8 @@ bool_expr
 
 expr
     :   '(' inner=bool_expr ')'                                         # parensExpr
-    |   <assoc=right> op='-' right=expr                                 # unaryExpr  // TODO unary minus (virker umiddelbart, men skal måske udskydes?) (Check træet for -1**-2**-3**-4, event unary minus under power)
-    |   <assoc=right> op='not' inner=bool_expr                          # unaryExpr  // TODO Man kan skrive "b = not not not not a;", men den kan ikke flyttes pga precendence, men tror heller ikke det er et problem.
+    |   <assoc=right> op='-' right=expr                                 # unaryExpr  
+    |   <assoc=right> op='not' inner=bool_expr                          # unaryExpr 
     |   <assoc=right> left=expr op='**' right=expr                      # infixValueExpr
     |   left=expr op=('*'|'/') right=expr                               # infixValueExpr
     |   left=expr op=('+'|'-') right=expr                               # infixValueExpr
