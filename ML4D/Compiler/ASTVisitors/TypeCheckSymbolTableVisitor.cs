@@ -241,6 +241,9 @@ namespace ML4D.Compiler.ASTVisitors
                     throw new Exception(
                         $"Variable \"{symbol.Name}\" is not a tensor. Grads can only be derived from tensors.");
             }
+            
+            base.Visit(node);
+            
             SymbolTable.CloseScope();
         }
 
