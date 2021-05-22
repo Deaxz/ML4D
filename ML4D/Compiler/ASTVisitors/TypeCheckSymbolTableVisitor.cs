@@ -10,7 +10,6 @@ namespace ML4D.Compiler.ASTVisitors
 
         public TypeCheckSymbolTableVisitor(SymbolTable symbolTable)
         {
-            // Reserved function name
             symbolTable.Insert("gradients", "void", true);
             SymbolTable = symbolTable;
         }
@@ -50,7 +49,7 @@ namespace ML4D.Compiler.ASTVisitors
             if (SymbolTable.Retrieve(node.ID) is null)
             {
                 if (node.Type == "tensor")
-                    throw new Exception("Functions cannot take tensors as parameters. Sorry :("); // TODO, lille meme
+                    throw new Exception("Functions cannot take tensors as parameters.");
                 SymbolTable.Insert(node.ID, node.Type, false);
             }
             else

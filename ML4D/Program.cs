@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Antlr4.Runtime;
 using ML4D.Compiler;
@@ -11,7 +10,7 @@ namespace ML4D
     {
         static void Main(string[] args)
         {
-            // Automatic test - TODO flere strings så vi presser sproget og finder flere bugs.
+            // Automatic test
             // List<string> examples = new List<string>()
             // {
 

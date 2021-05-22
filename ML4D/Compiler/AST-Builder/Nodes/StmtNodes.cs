@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace ML4D.Compiler.Nodes
@@ -63,7 +62,6 @@ namespace ML4D.Compiler.Nodes
         }
     }
     
-    // Nyt shit fra 2.0
     public class IfElseChainNode : Node 
     {
         public List<IfNode> IfNodes = new List<IfNode>();
@@ -74,9 +72,9 @@ namespace ML4D.Compiler.Nodes
             if (ElseBody is null)
             {
                 List<Node> children = new List<Node>();
-                return children.Concat(IfNodes).ToList();  // TODO tjek den returnere korrekt
+                return children.Concat(IfNodes).ToList();  
             }
-            return IfNodes.Concat(ElseBody.lines).ToList(); // TODO tjek den returnere korrekt
+            return IfNodes.Concat(ElseBody.lines).ToList();
         }
     }
     

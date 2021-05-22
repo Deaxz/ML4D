@@ -28,7 +28,6 @@ namespace ML4D.Compiler.ASTVisitors
             string CMainFunction = "\nint main() {\n";
             string programText = Includes + "\n" +  _FuncPrototypes + _GlobalVariables + 
                                  CMainFunction + _MainText + "return 1;\n}\n\n" + _FuncDCLs;
-            
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + fileName + ".c", programText);
         }
         
@@ -177,15 +176,15 @@ namespace ML4D.Compiler.ASTVisitors
             Visit(node.IfNodes[0].Predicate);
             Emit(") {\n");
             Visit(node.IfNodes[0].Body);
-            Emit("} "); // TODO Tjek om C tillader newline her!!!!
+            Emit("} ");
             
-            foreach (IfNode elseifNode in node.IfNodes.Skip(1)) // TODO tjek om .Skip(1) gør det jeg forventer (skip første if)
+            foreach (IfNode elseifNode in node.IfNodes.Skip(1))
             {
                 Emit("else if (");
                 Visit(elseifNode.Predicate);
                 Emit(") {\n");
                 Visit(elseifNode.Body);
-                Emit("} "); // TODO Tjek om C tillader newline her!!!!
+                Emit("} ");
             }
 
             if (node.ElseBody is not null)

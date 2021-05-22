@@ -1,16 +1,9 @@
 grammar ML4Dv1;
   
 lines
-   :   ((dcl | stmt) ';')+   // TODO forestiller mig comments bliver et | her
-  //:   (udensemi | (dcl | stmt) ';')+ // Fungere, men på både vores nuværende, og udensemi, så yeeter den resten af træet ved ";;" og ";" respectively.
+   :   ((dcl | stmt) ';')+   
    |   EOF
    ;
-
-//udensemi 
-//    : WHILE '(' predicate=bool_expr ')' '{' body=lines '}'                                    # whileStmt
-//    | type=types id=ID '(' (argtype+=types argid+=ID (',' types ID)*)? ')' '{' body=lines '}'  # funcDecl
-//    | For loop        
-//    ;
 
 dcl
     :   type=types id=ID op='=' right=bool_expr                                                                  # varDecl                        
@@ -32,10 +25,9 @@ bool_expr
     |   expr                                                    # exprExpr
     ;
     
-expr  // TODO introduce unary minus, can be done similarly to Math AST
+expr  
     :   '(' inner=bool_expr ')'                                         # parensExpr 
-//    |   op='-' left=expr                                                # unaryExpr // TODO unary minus
-    |   op='not' inner=bool_expr                                        # unaryExpr  // TODO Man kan skrive "b = not not not not a;", men den kan ikke flyttes pga precendence, men tror heller ikke det er et problem.
+    |   op='not' inner=bool_expr                                        # unaryExpr  
     |   <assoc=right> left=expr op='**' right=expr                      # infixValueExpr
     |   left=expr op=('*'|'/') right=expr                               # infixValueExpr
     |   left=expr op=('+'|'-') right=expr                               # infixValueExpr
