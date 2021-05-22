@@ -54,10 +54,11 @@ namespace ML4D.Compiler.ASTVisitors
             else
             {
                 GlobalScope = true;
-                Emit("static " + node.Type + " " + node.ID + " = ");
+                Emit("static " + node.Type + " " + node.ID + ";\n");
+                GlobalScope = false;
+                Emit(node.ID + " = ");
                 base.Visit(node);
                 Emit(";\n");
-                GlobalScope = false;
             }
         }
 
