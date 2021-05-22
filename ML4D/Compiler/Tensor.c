@@ -41,7 +41,7 @@ typedef struct LinkedList {
 struct LinkedList* newLinkedList();
 struct Backward* newBackward();
 struct Value* newValue(double data);
-struct Tensor* newTensor(double** inputValues, int rowLength, int columnLength);
+struct Tensor* newTensor(double* inputValues, int rowLength, int columnLength);
 
 Value* add(Value* self, Value* other);
 Value* mul(Value* self, Value* other);
@@ -329,23 +329,25 @@ void freeBackward(struct Backward** backward){
   *backward = NULL;
 }
 
-Tensor* newTensor(double** inputValues, int rowLength, int columnLength){
-    Value*** tensorValues = (Value***)malloc(rowLength * sizeof(Value*));
+Tensor* newTensor(double* inputValues, int rowLength, int columnLength){
+    Value*** tensorValues = (Value***)malloc(rowLength * sizeof(Value));
+    for(int i=0; i < rowLength; i++) tensorValues[i] = (Value*)malloc(columnLength * sizeof(Value*));
 
-    for(int i=0; i < rowLength; i++){
-      for(int j=0; j < columnLength; j++){
-        tensorValues[i][j] = newValue(inputValues[i][j]);
-      }
+    int length = rowLength * columnLength;
+    int i = 0;
+    for(int j=0; i < length; j++){
+      Value* val = newValue(inputValues[i]);
+      tensorValues[i][j] = val;
+      if(j % columnLength == 0) i++;
     }
 
-    Tensor res = {
-      .values = tensorValues,
-      .rows = rowLength,
-      .columns = columnLength
-    };
+    Tensor* res = malloc(sizeof(Tensor));
+    res->values = tensorValues;
+    res->rows = rowLength;
+    res->columns = columnLength;
 
     free(inputValues);
-    return &res;
+    return res;
 }
 
 
@@ -454,14 +456,14 @@ void printTensor(Tensor* t){
 }
 
 Tensor* readGradients(Tensor* tensor){
-  double** gradients = (double**)malloc(tensor->rows * sizeof(double));
-  for(int i=0; i < tensor->rows; i++) gradients[i] = (double *)malloc(tensor->columns * sizeof(double));
+  int length = tensor->rows + tensor->columns;
+  double* gradients = (double*)malloc(length * sizeof(double));
 
   for (int i = 0; i < tensor->rows; i++)
   {
     for (int j = 0; j < tensor->columns; j++)
     {
-      gradients[i][j] = tensor->values[i][j]->grad;
+      gradients[i+j] = tensor->values[i][j]->grad;
     }
   }
 
@@ -535,40 +537,54 @@ Tensor* tsub(Tensor* a, Tensor* b){
 }
 
 Tensor* tpow(Tensor* base, double exponent){
+  Tensor* res = (Tensor*)malloc(sizeof(Tensor));
+  res->rows = base->rows;
+  res->columns = base->columns;
+
+  Value*** resvalues = (Value***)malloc(res->rows * sizeof(Value*));
+  for(int i=0; i < res->rows; i++) resvalues[i] = (Value *)malloc(res->columns * sizeof(Value*));
+  res->values = resvalues;
+
   for(int i=0; i < base->rows; i++){
-    for (int j = 0; j < base->columns; i++)
+    for (int j = 0; j < base->columns; j++)
     {
-      power(base->values[i][j], newValue(exponent));
+      res->values[i][j] = power(base->values[i][j], newValue(exponent));
     }
   }
-  return base;
+  
+  return res;
 }
 
 
 Tensor* scalarmul(double scalar, Tensor* tensor){
   Value* valueScalar = newValue(scalar);
+  
+  Tensor* res = (Tensor*)malloc(sizeof(Tensor));
+  res->rows = tensor->rows;
+  res->columns = tensor->columns;
+
+  Value*** resvalues = (Value***)malloc(res->rows * sizeof(Value*));
+  for(int i=0; i < res->rows; i++) resvalues[i] = (Value *)malloc(res->columns * sizeof(Value*));
+  res->values = resvalues;
 
   for(int i=0; i < tensor->rows; i++){
     for (int j = 0; j < tensor->columns; j++)
     {
-        tensor->values[i][j] = mul(valueScalar, tensor->values[i][j]);
+        res->values[i][j] = mul(valueScalar, tensor->values[i][j]);
     }    
   }
 
-  return tensor;
+  return res;
 }
 
 Tensor* convertToTensor(double val, int rows, int cols){
-  double** values = (double**)malloc(rows * sizeof(double));
-  for(int i=0; i < rows; i++) values[i] = (double *)malloc(cols * sizeof(double));
+  int length = rows * cols;
+  double* values = (double*)malloc(length * sizeof(double));
 
-  for (int i = 0; i < rows; i++)
+  for (int i = 0; i < length; i++)
   {
-    for (int j = 0; j < cols; j++)
-    {
-      values[i][j] = val;
-    }
-  }  
+    values[i] = val;
+  }
 
   return newTensor(values, rows, cols);
 }

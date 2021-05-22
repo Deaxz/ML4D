@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -111,21 +112,16 @@ namespace ML4D.Compiler.ASTVisitors
             
             if (node.Init is TensorInitNode initNode)
             {
-                Emit($"newTensor(*(double[][{node.Columns}]){{{{");
-                int i = 1;
-                foreach(ExpressionNode exprNode in initNode.GetChildren())
+                Emit($"newTensor((double[]){{");
+
+                List<Node> children = initNode.GetChildren();
+                for(int i=0; i < children.Count - 1; i++)
                 {
-                    Visit(exprNode);
-                    if (i % node.Columns == 0)
-                    {
-                        Emit("}");
-                        if (i != node.Rows * node.Columns)
-                            Emit(",{");
-                    }
-                    else
-                        Emit(",");
-                    i++;
+                    Visit(children[i]);
+                    Emit(",");
                 }
+                Visit(children.Last());
+
                 Emit($"}}, {node.Rows}, {node.Columns})");
             }
             else
@@ -200,7 +196,7 @@ namespace ML4D.Compiler.ASTVisitors
         {
             Emit("for (");
             Emit(node.Init.Type + " " + node.Init.ID + " = ");
-            Visit(node.Init.Init);
+            Visit(node.Init.Init);  
             Emit("; ");
             Visit(node.Predicate);
             Emit("; ");
