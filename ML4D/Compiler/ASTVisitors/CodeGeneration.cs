@@ -357,6 +357,21 @@ namespace ML4D.Compiler.ASTVisitors
                     Visit(node.Right);
                     Emit(")");
                     break;
+                case DivisionNode:
+                    Emit("tdiv(");
+                    Visit(node.Left);
+                    Emit(",");
+                    Visit(node.Right);
+                    Emit(")")
+                    break;
+
+                case PowerNode:
+                    Emit("tpow(");
+                    Visit(node.Left);
+                    Emit(",");
+                    Visit(node.Right);
+                    Emit(")");
+                    break;
             }
         }
     }
