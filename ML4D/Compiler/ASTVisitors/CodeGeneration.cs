@@ -26,7 +26,7 @@ namespace ML4D.Compiler.ASTVisitors
         {
             string Includes = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "Tensor.c");
             string CMainFunction = "\nint main() {\n";
-            string programText = Includes + _FuncPrototypes + _GlobalVariables + 
+            string programText = Includes + "\n" +  _FuncPrototypes + _GlobalVariables + 
                                  CMainFunction + _MainText + "return 1;\n}\n\n" + _FuncDCLs;
             
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + fileName + ".c", programText);
@@ -177,7 +177,7 @@ namespace ML4D.Compiler.ASTVisitors
             Visit(node.IfNodes[0].Predicate);
             Emit(") {\n");
             Visit(node.IfNodes[0].Body);
-            Emit("}\n"); // TODO Tjek om C tillader newline her!!!!
+            Emit("} "); // TODO Tjek om C tillader newline her!!!!
             
             foreach (IfNode elseifNode in node.IfNodes.Skip(1)) // TODO tjek om .Skip(1) gør det jeg forventer (skip første if)
             {
@@ -185,7 +185,7 @@ namespace ML4D.Compiler.ASTVisitors
                 Visit(elseifNode.Predicate);
                 Emit(") {\n");
                 Visit(elseifNode.Body);
-                Emit("}\n"); // TODO Tjek om C tillader newline her!!!!
+                Emit("} "); // TODO Tjek om C tillader newline her!!!!
             }
 
             if (node.ElseBody is not null)
@@ -194,6 +194,8 @@ namespace ML4D.Compiler.ASTVisitors
                 Visit(node.ElseBody);
                 Emit("}\n");
             }
+            else
+                Emit("\n");
         }
 
         public override void Visit(ForNode node)
@@ -319,7 +321,7 @@ namespace ML4D.Compiler.ASTVisitors
                     else
                         Visit(node.Left);
 
-                    Emit(",");
+                    Emit(", ");
 
                     if (node.Right.Type != "tensor")
                     {
@@ -338,14 +340,14 @@ namespace ML4D.Compiler.ASTVisitors
                     if (node.Left.Type != "tensor")
                     {
                         Visit(node.Left);
-                        Emit(",");
+                        Emit(", ");
                         Visit(node.Right);
                         Emit(")");
                     }
                     else
                     {
                         Visit(node.Right);
-                        Emit(",");
+                        Emit(", ");
                         Visit(node.Left);
                         Emit(")");
                     }
@@ -355,14 +357,14 @@ namespace ML4D.Compiler.ASTVisitors
                     //left and right are tensors
                     Emit("tmul(");
                     Visit(node.Left);
-                    Emit(",");
+                    Emit(", ");
                     Visit(node.Right);
                     Emit(")");
                     break;
                 case DivisionNode:
                     Emit("tdiv(");
                     Visit(node.Left);
-                    Emit(",");
+                    Emit(", ");
                     Visit(node.Right);
                     Emit(")");
                     break;
@@ -370,7 +372,7 @@ namespace ML4D.Compiler.ASTVisitors
                 case PowerNode:
                     Emit("tpow(");
                     Visit(node.Left);
-                    Emit(",");
+                    Emit(", ");
                     Visit(node.Right);
                     Emit(")");
                     break;
