@@ -53,64 +53,41 @@ namespace ML4D
             //     }
             //     Console.WriteLine();
             // }
-            
-             // Command line version
-              // while (true)
-              // {
-              //     Console.Write("> ");
-              //     var exprText = Console.ReadLine();
-              //
-              //     if (string.IsNullOrWhiteSpace(exprText))
-              //         break; 
-             
-                  try
-                  {
-                      if (string.IsNullOrEmpty(args[0]) || string.IsNullOrEmpty(args[1]))
-                          throw new Exception("No run arguments were found. Missing arguments: <source filename> <destination filename>");
 
-                      Console.WriteLine("1. " + args[0] + " 2. " + args[1] + "\n");
-                      
-                      string text = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + args[0] + ".txt");
-                  
-                      var inputStream = new AntlrInputStream(new StringReader(text));
-                      var lexer = new ML4DLexer(inputStream);
-                      var tokenStream = new CommonTokenStream(lexer);
-                      var parser = new ML4DParser(tokenStream);
-             
-                      var cst = parser.lines();
-                      var ast = new ASTBuilder().VisitLines(cst);
-                      
-                      // Pretty print
-                      // PrettyPrintVisitor prettyprint = new PrettyPrintVisitor();
-                      // prettyprint.Visit(ast);
-                      // Console.WriteLine("^ Is pretty print");
-                      
-                      // Symbol Table and Type check
-                      SymbolTable symbolTable = new SymbolTable();
-                      var typesymbolVisitor = new TypeCheckSymbolTableVisitor(symbolTable);
-                      typesymbolVisitor.Visit(ast);
-                      Console.WriteLine("^ Symbol Table and Type check done");
-                
-                      // C:\Users\Dion\source\repos\p4\ML4D\bin\Debug\net5.0\file.c
-                      //Console.WriteLine(AppDomain.CurrentDomain.BaseDirectory + "file" + ".c");
-             
-                      // Code generation
-                      symbolTable.OnlyGlobalScope();
-                      CodeGeneration codeGen = new CodeGeneration(symbolTable);
-                      codeGen.Visit(ast);
-                      codeGen.WriteToFile(args[1]);
-                      symbolTable.Clear();
-                  }
-                  catch (NullReferenceException ex)
-                  {
-                      Console.WriteLine("fejler 1" + ex.Message);
-                  }
-                  catch (Exception ex)
-                  {
-                      Console.WriteLine("fejler 2" + ex.Message);
-                  }
-                  Console.WriteLine();
-             }
-        // }
+            try
+            {
+                if (string.IsNullOrEmpty(args[0]) || string.IsNullOrEmpty(args[1]))
+                    throw new Exception(
+                        "No run arguments were found. Missing arguments: <source filename> <target filename>");
+
+                string sourceFilename = args[0].Trim();
+                string targetFileName = args[1].Trim();
+                string text = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + sourceFilename + ".ML4D");
+
+                // ANTLR Lexer, Paser, and AST
+                var inputStream = new AntlrInputStream(new StringReader(text));
+                var lexer = new ML4DLexer(inputStream);
+                var tokenStream = new CommonTokenStream(lexer);
+                var parser = new ML4DParser(tokenStream);
+                var cst = parser.lines();
+                var ast = new ASTBuilder().VisitLines(cst);
+
+                // Symbol Table and Type check
+                SymbolTable symbolTable = new SymbolTable();
+                var typesymbolVisitor = new TypeCheckSymbolTableVisitor(symbolTable);
+                typesymbolVisitor.Visit(ast);
+
+                // Code generation
+                symbolTable.OnlyGlobalScope();
+                CodeGeneration codeGen = new CodeGeneration(symbolTable);
+                codeGen.Visit(ast);
+                codeGen.WriteToFile(targetFileName);
+                symbolTable.Clear();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
     }
 }
