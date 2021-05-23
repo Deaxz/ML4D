@@ -30,7 +30,7 @@ namespace Test
             //                    [1, 1],
             //                    [1, 1],
             //                    [1, 1] }
-            // tencor c[2][2] = a*b;
+            // tensor c[2][2] = a*b;
 
             TensorInitNode aInit = new TensorInitNode();
             aInit.FirstRowElements = new List<ExpressionNode>()

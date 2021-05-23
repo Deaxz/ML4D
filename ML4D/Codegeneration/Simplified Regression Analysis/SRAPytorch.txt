@@ -1,0 +1,36 @@
+import torch
+
+a = torch.tensor(-1.0, requires_grad=True)
+b = torch.tensor(2.0, requires_grad=True)
+
+f = lambda x: a * x + b 
+
+x0 = 0
+x1 = 1
+x2 = 2
+x3 = 3
+x4 = 4
+
+y0 = 0
+y1 = 1
+y2 = 2
+y3 = 3
+y4 = 4
+
+step_size = torch.tensor(0.1)
+
+for _ in range(100):
+  yhat0 = (f(x0) - y0)**2
+  yhat1 = (f(x1) - y1)**2
+  yhat2 = (f(x2) - y2)**2
+  yhat3 = (f(x3) - y3)**2
+  yhat4 = (f(x4) - y4)**2
+
+  loss = (yhat0 +yhat1 + yhat2 + yhat3 + yhat4)/5
+  loss.backward()
+
+  a.data -= a.grad * step_size
+  b.data -= b.grad * step_size
+
+  a.grad.zero_()
+  b.grad.zero_()
