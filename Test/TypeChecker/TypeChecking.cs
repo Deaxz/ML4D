@@ -9,6 +9,12 @@ namespace Test
     [TestClass]
     public class TypeChecking
     {
+        [TestCleanup]
+        public void ResetSymbolTable()
+        {
+            SymbolTable.Clear();
+        }
+
         [TestMethod]
         public void MixedExpressionDoubleAndIntBecomesDoubleNode()
         {

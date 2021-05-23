@@ -11,11 +11,18 @@ using ML4D.Compiler.Exceptions;
 
 namespace Test
 {
+
     [TestClass]
     public class TensorTypeChecking
     {
+        [TestCleanup]
+        public void ResetSymbolTable()
+        {
+            SymbolTable.Clear();
+        }
+
         [TestMethod]
-        public void IllegalMatrixMultiplicationTest()
+        public void IllegalTensorMultiplicationTest()
         {
             // tensor a[2][1] = { [2.4], [5.1] }
             // tensor b[5][2] = { [1, 1],
@@ -57,10 +64,10 @@ namespace Test
             SymbolTable symbolTable = new SymbolTable();
             TypeCheckSymbolTableVisitor visitor = new TypeCheckSymbolTableVisitor(symbolTable);
 
+            visitor.Visit(a);
+            visitor.Visit(b);
             Assert.ThrowsException<InvalidOperandsException>(() =>
-            {
-                visitor.Visit(a);
-                visitor.Visit(b);
+            { 
                 visitor.Visit(mulNode);
             });
         }
@@ -95,18 +102,18 @@ namespace Test
             };
             TensorDCLNode b = new TensorDCLNode("tensor", "b", 2, 2, bInit);
 
-            AdditionNode mulNode = new AdditionNode("+");
-            mulNode.Left = new IDNode("a");
-            mulNode.Right = new IDNode("b");
+            AdditionNode addNode = new AdditionNode("+");
+            addNode.Left = new IDNode("a");
+            addNode.Right = new IDNode("b");
 
             SymbolTable symbolTable = new SymbolTable();
             TypeCheckSymbolTableVisitor visitor = new TypeCheckSymbolTableVisitor(symbolTable);
 
+            visitor.Visit(a);
+            visitor.Visit(b);
             Assert.ThrowsException<InvalidOperandsException>(() =>
-            {
-                visitor.Visit(a);
-                visitor.Visit(b);
-                visitor.Visit(mulNode);
+            { 
+                visitor.Visit(addNode);
             });
         }
     }

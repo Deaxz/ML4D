@@ -59,7 +59,7 @@ namespace ML4D.Compiler
             return null;
         }
         
-        public void Clear()
+        public static void Clear()
         {
             symbolTableStack.Clear();
         }
