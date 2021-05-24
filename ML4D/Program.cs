@@ -73,6 +73,7 @@ namespace ML4D
 
                 // Symbol Table and Type check
                 SymbolTable symbolTable = new SymbolTable();
+                symbolTable.OpenScope(); // Global scope
                 var typesymbolVisitor = new TypeCheckSymbolTableVisitor(symbolTable);
                 typesymbolVisitor.Visit(ast);
 

@@ -9,12 +9,6 @@ namespace ML4D.Compiler
         private Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
         private string? FuncType { get; set; }
 
-        // Init constructor
-        public SymbolTable()
-        {
-            symbolTableStack.Push(this);
-        }
-
         public void OpenScope()
         {
             symbolTableStack.Push(new SymbolTable());
