@@ -286,7 +286,6 @@ namespace ML4D.Compiler.ASTVisitors
         
         private void PrintExpression(UnaryExpressionNode node)
         {
-            // TJEK DET FUNGERER 
             if (node is UnaryMinusNode && node.Type is "tensor")
             {
                 Emit("scalarmul(-1, ");
@@ -304,6 +303,7 @@ namespace ML4D.Compiler.ASTVisitors
         {
             switch (node)
             {
+                // Left or right is a tensor
                 case AdditionNode or SubtractionNode:
                     Emit(node is AdditionNode ? "tadd(" : "tsub(");
                     
@@ -329,7 +329,7 @@ namespace ML4D.Compiler.ASTVisitors
                     Emit(")");
                     break;
                 
-                //At least left or right is of type tensor
+                // Left or right is a tensor
                 case MultiplicationNode when node.Left.Type != "tensor" || node.Right.Type != "tensor":
                     Emit("scalarmul(");
                     if (node.Left.Type != "tensor")
@@ -348,8 +348,8 @@ namespace ML4D.Compiler.ASTVisitors
                     }
                     break;
                 
+                // Left and right are tensors
                 case MultiplicationNode:
-                    //left and right are tensors
                     Emit("tmul(");
                     Visit(node.Left);
                     Emit(", ");

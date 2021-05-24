@@ -27,7 +27,7 @@ namespace ML4D.Compiler
 		{
 			VariableDCLNode varDeclNode;
 
-			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token.
+			switch (context.type.type.Type)
 			{
 				case ML4DLexer.INT:
 					varDeclNode = new VariableDCLNode("int", context.id.Text, (ExpressionNode) Visit(context.init));
@@ -72,7 +72,7 @@ namespace ML4D.Compiler
 		{
 			FunctionDCLNode functionDclNode;
 
-			switch (context.type.type.Type) // 1. dcl type = types, 2. types type = INT..., 3. type.Type for token.
+			switch (context.type.type.Type)
 			{
 				case ML4DLexer.INT:
 					functionDclNode = new FunctionDCLNode("int", context.id.Text);
@@ -106,14 +106,11 @@ namespace ML4D.Compiler
 			int predicates = context._pred.Count;
 			int bodies = context._body.Count;
 			
-			// If
 			ifElseChainNode.IfNodes.Add(new IfNode((ExpressionNode) Visit(context._pred[0]),
 														(LinesNode) Visit(context._body[0])));
-			// Else
 			if (predicates == 1 && predicates < bodies)
 				ifElseChainNode.ElseBody = (LinesNode) Visit(context._body[bodies-1]);
 
-			// Else if/Else if Else
 			if (predicates > 1 && predicates == bodies)
 			{
 				for (int i = 1; i < bodies; i++)
