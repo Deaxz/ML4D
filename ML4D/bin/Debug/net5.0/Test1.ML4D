@@ -14,9 +14,9 @@ tensor d[2][1] = { [1],
 tensor e[2][1] = c * d;
 
 tensor f[1][2] = { [11, -19] };
-tensor res[1][1] = (f * e)**0.5;
+tensor result[1][1] = (f * e)**0.5;
 
-gradients(res, (aGrads << a), {
+gradients(result, (aGrads << a), {
 	int g = 0;
 	//read the gradients in debugger (ML4D has no print function atm)
 });

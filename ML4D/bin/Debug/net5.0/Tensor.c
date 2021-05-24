@@ -309,12 +309,18 @@ Tensor* newTensor(double* inputValues, int rowLength, int columnLength){
     Value*** tensorValues = (Value***)malloc(rowLength * sizeof(Value));
     for(int i=0; i < rowLength; i++) tensorValues[i] = (Value*)malloc(columnLength * sizeof(Value*));
 
-    int length = rowLength * columnLength;
-    int i = 0;
-    for(int j=0; i < length; j++){
-      Value* val = newValue(inputValues[i]);
-      tensorValues[i][j] = val;
-      if(j % columnLength == 0) i++;
+    int k=0;
+    for(int i=0; i < rowLength; i++){
+      int j=0;
+      while (true)
+      {
+        Value* val = newValue(inputValues[k++]);
+        tensorValues[i][j] = val;
+        if(((j+1) % columnLength) == 0){
+          break;
+        }
+        j++;
+      }      
     }
 
     Tensor* res = malloc(sizeof(Tensor));
