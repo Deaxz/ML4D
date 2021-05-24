@@ -39,7 +39,7 @@ namespace ML4D.Compiler.ASTVisitors
                 throw new FunctionAlreadyDeclaredException(node,
                     $"The function \"{node.ID}\" has already been declared in the current or parent scope.");
 
-            SymbolTable.OpenScope();
+            SymbolTable.OpenScope(node.Type);
             base.Visit(node);
             SymbolTable.CloseScope();
         }

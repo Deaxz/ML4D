@@ -14,6 +14,12 @@ namespace ML4D.Compiler
             symbolTableStack.Push(new SymbolTable());
         }
         
+        public void OpenScope(string funcReturnType)
+        {
+            symbolTableStack.Push(new SymbolTable());
+            symbolTableStack.Peek().FuncType = funcReturnType;
+        }
+        
         public void CloseScope()
         {
             symbolTableStack.Pop();
