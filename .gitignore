@@ -79,3 +79,6 @@ ML4D/Properties/launchSettings.json
 .vs/slnx.sqlite
 .vs/p4/v16/.suo
 .vs/VSWorkspaceState.json
+ML4D/bin/Debug/net5.0/Test1.exe
+ML4D/bin/Debug/net5.0/Program.exe
+ML4D/bin/Debug/net5.0/Test1.c
