@@ -38,16 +38,6 @@ ML4D/Compiler/gen/GrammarBaseVisitor.cs
 ML4D/Compiler/gen/GrammarBaseListener.cs
 ML4D/Compiler/gen/Grammar.tokens
 ML4D/Compiler/gen/Grammar.interp
-ML4D/Compiler/gen/ML4D.interp
-ML4D/Compiler/gen/ML4D.tokens
-ML4D/Compiler/gen/ML4DBaseListener.cs
-ML4D/Compiler/gen/ML4DBaseVisitor.cs
-ML4D/Compiler/gen/ML4DLexer.cs
-ML4D/Compiler/gen/ML4DLexer.interp
-ML4D/Compiler/gen/ML4DLexer.tokens
-ML4D/Compiler/gen/ML4DListener.cs
-ML4D/Compiler/gen/ML4DParser.cs
-ML4D/Compiler/gen/ML4DVisitor.cs
 ML4D/.idea/.idea.ML4D/.idea/misc.xml
 ML4D/.vs/slnx.sqlite
 ML4D/.idea/.idea.ML4D.dir/.idea/workspace.xml
