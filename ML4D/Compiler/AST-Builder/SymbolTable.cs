@@ -54,7 +54,7 @@ namespace ML4D.Compiler
                 return FuncType;
 
             foreach (SymbolTable symTab in symbolTableStack)
-                if(symTab.FuncType is not null)
+                if (symTab.FuncType is not null)
                     return FuncType;
             return null;
         }
