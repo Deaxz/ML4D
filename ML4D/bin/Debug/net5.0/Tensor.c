@@ -347,14 +347,15 @@ void printTensor(Tensor* t){
 }
 
 Tensor* readGradients(Tensor* tensor){
-  int length = tensor->rows + tensor->columns;
+  int length = tensor->rows * tensor->columns;
   double* gradients = (double*)malloc(length * sizeof(double));
 
+  int k = 0;
   for (int i = 0; i < tensor->rows; i++)
   {
     for (int j = 0; j < tensor->columns; j++)
     {
-      gradients[i+j] = tensor->values[i][j]->grad;
+      gradients[k++] = tensor->values[i][j]->grad;
     }
   }
 
