@@ -14,6 +14,12 @@ namespace ML4D.Compiler
             symbolTableStack.Push(new SymbolTable());
         }
         
+        public void OpenScope(string funcReturnType)
+        {
+            symbolTableStack.Push(new SymbolTable());
+            symbolTableStack.Peek().FuncType = funcReturnType;
+        }
+        
         public void CloseScope()
         {
             symbolTableStack.Pop();
@@ -48,7 +54,7 @@ namespace ML4D.Compiler
                 return FuncType;
 
             foreach (SymbolTable symTab in symbolTableStack)
-                if(symTab.FuncType is not null)
+                if (symTab.FuncType is not null)
                     return FuncType;
             return null;
         }

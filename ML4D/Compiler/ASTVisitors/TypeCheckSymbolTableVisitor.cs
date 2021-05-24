@@ -10,7 +10,7 @@ namespace ML4D.Compiler.ASTVisitors
 
         public TypeCheckSymbolTableVisitor(SymbolTable symbolTable)
         {
-            symbolTable.Insert("gradients", "void", true);
+            symbolTable.Insert("gradients", "void", false);
             SymbolTable = symbolTable;
         }
 
@@ -33,13 +33,19 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(FunctionDCLNode node)
         {
-            if (SymbolTable.Retrieve(node.ID) is null)
-                SymbolTable.Insert(node.ID, node.Type, true);
+            if (SymbolTable.GetCurrentFunctionType() is null)
+            {
+                if (SymbolTable.Retrieve(node.ID) is null)
+                    SymbolTable.Insert(node.ID, node.Type, true);
+                else
+                    throw new FunctionAlreadyDeclaredException(node,
+                        $"The function \"{node.ID}\" has already been declared in the current or parent scope.");
+            }
             else
-                throw new FunctionAlreadyDeclaredException(node,
-                    $"The function \"{node.ID}\" has already been declared in the current or parent scope.");
-
-            SymbolTable.OpenScope();
+                throw new Exception(
+                    $"The function \"{node.ID}\" was declared in a function. Nested function are not allowed in ML4D.");
+            
+            SymbolTable.OpenScope(node.Type);
             base.Visit(node);
             SymbolTable.CloseScope();
         }
