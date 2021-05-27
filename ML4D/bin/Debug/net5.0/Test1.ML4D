@@ -1,0 +1,20 @@
+﻿tensor a[2][3] = { [-1.0, 412, -55.2],
+		   [77.1, 981, -48] };
+
+tensor b[3][2] = { [-144, 412],
+		   [-1, 5],
+		   [55, 13] };
+
+tensor c[2][2] = a * b;
+tensor d[2][1] = { [1],
+		   [-1] };
+
+tensor e[2][1] = c * d;
+
+tensor f[1][2] = { [11, -19] };
+tensor result[1][1] = (f * e)**0.5;
+
+gradients(result, (aGrads << a), {
+	int g = 0;
+	//read the gradients in debugger (ML4D has no print function atm)
+});

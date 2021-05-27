@@ -1,0 +1,45 @@
+﻿from micrograd.engine import Value
+
+x1 = Value(0)
+y1 = Value(0)
+
+x2 = Value(1)
+y2 = Value(1)
+
+x3 = Value(2)
+y3 = Value(2)
+
+x4 = Value(3)
+y4 = Value(3)
+
+x5 = Value(4)
+y5 = Value(4)
+
+a = Value(-1)
+b = Value(2)
+
+step_size = Value(0.1)
+
+for _ in range(100):
+
+    d1 = a * x1 + b - y1
+
+    d2 = a * x2 + b - y2
+
+    d3 = a * x3 + b - y3
+
+    d4 = a * x4 + b - y4
+
+    d5 = a * x5 + b - y5
+
+    loss = (d1**2 + d2**2 + d3**2 + d4**2 + d5**2)/5
+    loss.backward()
+
+    a -= a.grad * step_size
+    b -= b.grad * step_size
+
+    a.grad = 0
+    b.grad = 0
+
+print("a = ", a)
+print("b = ", b)
