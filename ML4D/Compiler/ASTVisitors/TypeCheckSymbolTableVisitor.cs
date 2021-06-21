@@ -128,7 +128,7 @@ namespace ML4D.Compiler.ASTVisitors
             else
                 node.Type = variableDCL.Type;
 
-            if (node.Type != node.Right.Type && (node.Type == "double" && node.Right.Type == "int"))
+            if (node.Type != node.Right.Type && (node.Type != "double" && node.Right.Type != "int"))
                 throw new VariableAssignmentException(node,
                     $"Illegal assignment. Left side: \"{node.Type}\", right side: \"{node.Right.Type}\".");
         }
@@ -159,7 +159,7 @@ namespace ML4D.Compiler.ASTVisitors
                         $"Function has return type: {funcType} but you are returning a {node.Inner.Type}.\n");
                 node.Type = node.Inner.Type;
             }
-            else if(funcType is not "void")
+            else if (funcType is not "void")
                 throw new InvalidOperationException(
                         $"Function has return type: {funcType} but you are returning a void.\n");
         }
