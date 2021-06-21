@@ -210,11 +210,11 @@ namespace ML4D.Compiler.ASTVisitors
 
         public override void Visit(GradientsNode node)
         {
-            Emit("tensorBackwards(" + node.tensorID + ");\n");
+            Emit("{\ntensorBackwards(" + node.tensorID + ");\n");
             for (int i = 0; i < node.GradVariables.Count; i++)
                 Emit("Tensor* " + node.GradVariables[i] + " = readGradients(" + node.GradTensors[i] + ");\n");
             Visit(node.Body);
-            Emit("zeroGradients(" + node.tensorID + ");\n");
+            Emit("zeroGradients(" + node.tensorID + ");\n}\n");
         }
 
         // --- Values ---
@@ -237,8 +237,7 @@ namespace ML4D.Compiler.ASTVisitors
         {
             Emit(node.Value.ToString().ToLower());
         }
-
-
+        
         // --- Arithmetic ---
         public override void Visit(InfixExpressionNode node)
         {
@@ -329,7 +328,6 @@ namespace ML4D.Compiler.ASTVisitors
                     Emit(")");
                     break;
                 
-                // Left or right is a tensor
                 case MultiplicationNode when node.Left.Type != "tensor" || node.Right.Type != "tensor":
                     Emit("scalarmul(");
                     if (node.Left.Type != "tensor")
@@ -348,14 +346,7 @@ namespace ML4D.Compiler.ASTVisitors
                     }
                     break;
                 
-                // Left and right are tensors
-                case MultiplicationNode:
-                    Emit("tmul(");
-                    Visit(node.Left);
-                    Emit(", ");
-                    Visit(node.Right);
-                    Emit(")");
-                    break;
+                // Left is tensor and right is double/int
                 case DivisionNode:
                     Emit("tdiv(");
                     Visit(node.Left);
@@ -366,6 +357,15 @@ namespace ML4D.Compiler.ASTVisitors
 
                 case PowerNode:
                     Emit("tpow(");
+                    Visit(node.Left);
+                    Emit(", ");
+                    Visit(node.Right);
+                    Emit(")");
+                    break;
+                
+                // Left and right are tensors
+                case MultiplicationNode:
+                    Emit("tmul(");
                     Visit(node.Left);
                     Emit(", ");
                     Visit(node.Right);
